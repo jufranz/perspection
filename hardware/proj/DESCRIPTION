@@ -1,0 +1,13 @@
+<h1>Perspection Projects</h1>
+
+<h3>perspection-bot</h3>
+PCB for robot
+
+<h3>perspection-control</h3>
+PCB for haptic controller
+
+<h3>perspection-rf</h3>
+PCB for wireless communication, used by a 3 other boards
+
+<h3>perspection-vision</h3>
+PCB for headset, IMU
