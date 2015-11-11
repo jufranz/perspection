@@ -76,9 +76,9 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 
+    leds_toggle(LEDS_GREEN);
     packetbuf_copyfrom("Sup", 4);
     broadcast_send(&broadcast);
-    leds_toggle(LEDS_GREEN);
   }
 
   PROCESS_END();
