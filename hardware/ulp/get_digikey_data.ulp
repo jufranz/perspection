@@ -35,19 +35,8 @@ if(library) {
     string base_dir = filedir(path_ulp[desired_dir]);
     string python_dir = base_dir + "python/get_digikey_data.py";
 
-    //if directory names contain spaces, add escape characters
-    if(strchr(python_dir, ' ')){
-      string split_string[];
-      //this gets rid of spaces
-      strsplit(split_string, python_dir, ' ');
-      python_dir = split_string[0];
-      for(int i = 1; strlen(split_string[i]) > 0; i++){
-        //this replaces spaces with escaped spaces
-        python_dir = python_dir + "\\ " + split_string[i]; 
-      }
-    }
-
-    string cmd_string = "python " + python_dir + " " + url + " 2> /tmp/err.txt";
+    string cmd_string = "python \"" + python_dir + "\" " + url + " 2> /tmp/err.txt";
+    dlgMessageBox(cmd_string);
     if(system(cmd_string) != 0) {
         dlgMessageBox("uh oh");
     }
