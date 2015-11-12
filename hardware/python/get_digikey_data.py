@@ -39,6 +39,6 @@ output_scr.write("attribute DIST_NAME '" + DIST_NAME + "'\n")
 output_scr.write("attribute DIST_PN '" + DIST_PN + "'\n")
 output_scr.write("attribute MFG_NAME '" + MFG_NAME + "'\n")
 output_scr.write("attribute MFG_PN '" + MFG_PN + "'\n")
-output_scr.write("description '" + DESC + "'\n")
+output_scr.write("description '" + DESC + "'<br><a href=\"" + url + "\">Digi-key Page</a>\n")
 
 output_scr.close()
