@@ -1,7 +1,6 @@
 #usage "Add DIST_NAME, DIST_PN, MFG_NAME, MFG_PN to part from digikey URL"
-"Usage: RUN get_digikey_data.ulp [url]"
-string base_dir = filedir(path_ulp[0]);
-string python_dir = base_dir + "python/get_digikey_data.py";
+"Usage: RUN get_digikey_data.ulp [url] [unique_substring_in_file_path]"
+
 string url = "";
 if(library) {
     library(L) {
@@ -12,6 +11,7 @@ if(library) {
                 exit(-1);
                 break;
             case 2:
+            case 3:
                 url = argv[1];
                 break;
             default:
@@ -19,7 +19,35 @@ if(library) {
                 exit(-1);
         }
     }
-    string cmd_string = "python " + python_dir + " '" + url + "' 2> /tmp/err.txt";
+
+    //LOGIC TO PARSE PYTHON DIRECTORY
+    int desired_dir = 0;
+      //if third argument, find path that contains substring
+      if(argc > 2){
+      for(int i = 0; strlen(path_ulp[i]) > 0; i++){
+        if(strstr(path_ulp[i], argv[2]) != -1){
+          desired_dir = i;
+          break;
+        }
+      }
+    }
+
+    string base_dir = filedir(path_ulp[desired_dir]);
+    string python_dir = base_dir + "python/get_digikey_data.py";
+
+    //if directory names contain spaces, add escape characters
+    if(strchr(python_dir, ' ')){
+      string split_string[];
+      //this gets rid of spaces
+      strsplit(split_string, python_dir, ' ');
+      python_dir = split_string[0];
+      for(int i = 1; strlen(split_string[i]) > 0; i++){
+        //this replaces spaces with escaped spaces
+        python_dir = python_dir + "\\ " + split_string[i]; 
+      }
+    }
+
+    string cmd_string = "python " + python_dir + " " + url + " 2> /tmp/err.txt";
     if(system(cmd_string) != 0) {
         dlgMessageBox("uh oh");
     }
