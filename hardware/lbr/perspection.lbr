@@ -16,7 +16,7 @@
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
@@ -830,6 +830,114 @@
 <circle x="-4.57" y="-2.86" radius="0.148659375" width="0.254" layer="21"/>
 <text x="-5.25" y="-3.25" size="1.27" layer="25" rot="R90">&gt;NAME</text>
 </package>
+<package name="TI-HTSSOP-56">
+<smd name="43" x="-0.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="44" x="-0.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="45" x="-1.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="46" x="-1.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="47" x="-2.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="48" x="-2.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="49" x="-3.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="50" x="-3.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="51" x="-4.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="52" x="-4.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="53" x="-5.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="54" x="-5.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="55" x="-6.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="56" x="-6.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="29" x="6.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="30" x="6.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="31" x="5.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="32" x="5.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="33" x="4.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="34" x="4.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="35" x="3.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="36" x="3.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="37" x="2.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="38" x="2.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="39" x="1.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="40" x="1.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="41" x="0.75" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="42" x="0.25" y="3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="14" x="-0.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="13" x="-0.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="12" x="-1.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="11" x="-1.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="10" x="-2.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="9" x="-2.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="8" x="-3.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="7" x="-3.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="6" x="-4.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="5" x="-4.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="4" x="-5.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="3" x="-5.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="2" x="-6.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="1" x="-6.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="28" x="6.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="27" x="6.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="26" x="5.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="25" x="5.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="24" x="4.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="23" x="4.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="22" x="3.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="21" x="3.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="20" x="2.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="19" x="2.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="18" x="1.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="17" x="1.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="16" x="0.75" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="15" x="0.25" y="-3.75" dx="1.55" dy="0.3" layer="1" rot="R90"/>
+<smd name="57" x="0" y="0" dx="6.35" dy="3.61" layer="1" thermals="no"/>
+<rectangle x1="-7" y1="-2.55" x2="7" y2="2.55" layer="1"/>
+<pad name="P$58" x="0" y="0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$59" x="0" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$60" x="0" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$61" x="0" y="-0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$62" x="1.3" y="0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$63" x="1.3" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$64" x="1.3" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$65" x="1.3" y="-0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$66" x="2.6" y="0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$67" x="2.6" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$68" x="2.6" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$69" x="2.6" y="-0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$70" x="3.9" y="0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$71" x="3.9" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$72" x="3.9" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$73" x="3.9" y="-0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$74" x="5.2" y="0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$75" x="5.2" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$76" x="5.2" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$77" x="5.2" y="-0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$78" x="6.5" y="0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$79" x="6.5" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$80" x="6.5" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$81" x="6.5" y="-0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$82" x="-1.3" y="0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$83" x="-1.3" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$84" x="-1.3" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$85" x="-1.3" y="-0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$86" x="-2.6" y="0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$87" x="-2.6" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$88" x="-2.6" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$89" x="-2.6" y="-0.65" drill="0.2" diameter="0.4064" thermals="no"/>
+<pad name="P$90" x="-3.9" y="0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$91" x="-3.9" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$92" x="-3.9" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$93" x="-3.9" y="-0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$94" x="-5.2" y="0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$95" x="-5.2" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$96" x="-5.2" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$97" x="-5.2" y="-0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$98" x="-6.5" y="0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$99" x="-6.5" y="1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$100" x="-6.5" y="-1.95" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<pad name="P$101" x="-6.5" y="-0.65" drill="0.2" diameter="0.4064" stop="no" thermals="no"/>
+<text x="-7.7" y="-2.6" size="1.27" layer="21" font="vector" ratio="15" rot="R90">&gt;NAME</text>
+<circle x="-7.3" y="-3.7" radius="0.22360625" width="0.12" layer="21"/>
+<wire x1="-7.05" y1="3.1" x2="-7.05" y2="-3.1" width="0.127" layer="21"/>
+<wire x1="7.05" y1="3.1" x2="7.05" y2="-3.1" width="0.127" layer="21"/>
+</package>
 </packages>
 <symbols>
 <symbol name="C">
@@ -1232,6 +1340,89 @@
 <text x="-1.27" y="2.286" size="1.778" layer="97">V+</text>
 <text x="-1.27" y="-4.064" size="1.778" layer="97">V-</text>
 <text x="1.27" y="5.588" size="1.778" layer="95">&gt;NAME</text>
+</symbol>
+<symbol name="DRV8301_PWR">
+<pin name="RT_CLK" x="-20.32" y="10.16" length="middle"/>
+<pin name="COMP" x="-20.32" y="2.54" length="middle"/>
+<pin name="VSENSE" x="-20.32" y="0" length="middle"/>
+<pin name="PWRGD" x="-20.32" y="-2.54" length="middle"/>
+<pin name="N_OCTW" x="-20.32" y="-27.94" length="middle"/>
+<pin name="N_FAULT" x="-20.32" y="-25.4" length="middle"/>
+<pin name="DTC" x="-20.32" y="-22.86" length="middle"/>
+<pin name="N_SCS" x="20.32" y="12.7" length="middle" rot="R180"/>
+<pin name="SDI" x="20.32" y="10.16" length="middle" rot="R180"/>
+<pin name="SDO" x="20.32" y="7.62" length="middle" rot="R180"/>
+<pin name="SCLK" x="20.32" y="5.08" length="middle" rot="R180"/>
+<pin name="DC_CAL" x="20.32" y="22.86" length="middle" rot="R180"/>
+<pin name="GVDD" x="-20.32" y="-17.78" length="middle"/>
+<pin name="CP1" x="20.32" y="0" length="middle" rot="R180"/>
+<pin name="CP2" x="20.32" y="-2.54" length="middle" rot="R180"/>
+<pin name="EN_GATE" x="20.32" y="25.4" length="middle" rot="R180"/>
+<pin name="DVDD" x="-20.32" y="27.94" length="middle"/>
+<pin name="REF" x="20.32" y="20.32" length="middle" rot="R180"/>
+<pin name="SO1" x="20.32" y="-22.86" length="middle" rot="R180"/>
+<pin name="SO2" x="20.32" y="-25.4" length="middle" rot="R180"/>
+<pin name="AVDD" x="-20.32" y="20.32" length="middle"/>
+<pin name="AGND" x="-20.32" y="17.78" length="middle"/>
+<pin name="PVDD1" x="20.32" y="27.94" length="middle" rot="R180"/>
+<pin name="SP2" x="20.32" y="-17.78" length="middle" rot="R180"/>
+<pin name="SN2" x="20.32" y="-15.24" length="middle" rot="R180"/>
+<pin name="SP1" x="20.32" y="-10.16" length="middle" rot="R180"/>
+<pin name="SN1" x="20.32" y="-7.62" length="middle" rot="R180"/>
+<pin name="VDD_SPI" x="20.32" y="15.24" length="middle" rot="R180"/>
+<pin name="PH" x="-20.32" y="-12.7" length="middle"/>
+<pin name="BST_BK" x="-20.32" y="-10.16" length="middle"/>
+<pin name="PVDD2" x="-20.32" y="12.7" length="middle"/>
+<pin name="EN_BUCK" x="-20.32" y="7.62" length="middle"/>
+<pin name="SS_TR" x="-20.32" y="-7.62" length="middle"/>
+<pin name="GND" x="-20.32" y="25.4" length="middle"/>
+<wire x1="-15.24" y1="30.48" x2="15.24" y2="30.48" width="0.254" layer="94"/>
+<wire x1="15.24" y1="30.48" x2="15.24" y2="-30.48" width="0.254" layer="94"/>
+<wire x1="15.24" y1="-30.48" x2="-15.24" y2="-30.48" width="0.254" layer="94"/>
+<wire x1="-15.24" y1="-30.48" x2="-15.24" y2="30.48" width="0.254" layer="94"/>
+<text x="-15.494" y="31.496" size="1.27" layer="95">&gt;NAME</text>
+</symbol>
+<symbol name="DRV8301_A">
+<pin name="INH_A" x="-15.24" y="2.54" length="middle"/>
+<pin name="INL_A" x="-15.24" y="-2.54" length="middle"/>
+<pin name="SL_A" x="15.24" y="-5.08" length="middle" rot="R180"/>
+<pin name="GL_A" x="15.24" y="-2.54" length="middle" rot="R180"/>
+<pin name="SH_A" x="15.24" y="0" length="middle" rot="R180"/>
+<pin name="GH_A" x="15.24" y="2.54" length="middle" rot="R180"/>
+<pin name="BST_A" x="15.24" y="5.08" length="middle" rot="R180"/>
+<wire x1="10.16" y1="7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="7.62" x2="-10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-7.62" x2="10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<text x="-10.16" y="8.382" size="1.27" layer="95">&gt;NAME</text>
+</symbol>
+<symbol name="DRV8301_B">
+<pin name="INH_B" x="-15.24" y="2.54" length="middle"/>
+<pin name="INL_B" x="-15.24" y="-2.54" length="middle"/>
+<pin name="SL_B" x="15.24" y="-5.08" length="middle" rot="R180"/>
+<pin name="GL_B" x="15.24" y="-2.54" length="middle" rot="R180"/>
+<pin name="SH_B" x="15.24" y="0" length="middle" rot="R180"/>
+<pin name="GH_B" x="15.24" y="2.54" length="middle" rot="R180"/>
+<pin name="BST_B" x="15.24" y="5.08" length="middle" rot="R180"/>
+<wire x1="10.16" y1="7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="7.62" x2="-10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-7.62" x2="10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<text x="-10.16" y="8.382" size="1.27" layer="95">&gt;NAME</text>
+</symbol>
+<symbol name="DRV8301_C">
+<pin name="INH_C" x="-15.24" y="2.54" length="middle"/>
+<pin name="INL_C" x="-15.24" y="-2.54" length="middle"/>
+<pin name="SL_C" x="15.24" y="-5.08" length="middle" rot="R180"/>
+<pin name="GL_C" x="15.24" y="-2.54" length="middle" rot="R180"/>
+<pin name="SH_C" x="15.24" y="0" length="middle" rot="R180"/>
+<pin name="GH_C" x="15.24" y="2.54" length="middle" rot="R180"/>
+<pin name="BST_C" x="15.24" y="5.08" length="middle" rot="R180"/>
+<wire x1="10.16" y1="7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="7.62" x2="-10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-7.62" x2="10.16" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<text x="-10.16" y="8.636" size="1.27" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -1824,7 +2015,7 @@ DIN A3, landscape with location and doc. field</description>
 </devices>
 </deviceset>
 <deviceset name="OPAMP" prefix="U">
-<description>SENSOR CURRENT HALL 5A AC/DC &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/ACS712ELCTR-05B-T/620-1189-1-ND/1284606"&gt;Digi-key Page&lt;/a&gt;</description>
+<description>IC OPAMP GP 1MHZ RRO SOT23-5 &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/OPA344NA%2F250/OPA344NACT-ND/362263"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name=".AMP" symbol="OPAMP" x="-2.54" y="-7.62"/>
 <gate name=".RAIL" symbol="OPAMP_RAILS" x="0" y="10.16"/>
@@ -1841,16 +2032,16 @@ DIN A3, landscape with location and doc. field</description>
 <technologies>
 <technology name="">
 <attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
-<attribute name="DIST_PN" value="620-1189-1-ND" constant="no"/>
-<attribute name="MFG_NAME" value="Allegro MicroSystems, LLC" constant="no"/>
-<attribute name="MFG_PN" value="ACS712ELCTR-05B-T" constant="no"/>
+<attribute name="DIST_PN" value="OPA344NACT-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="OPA344NA/250" constant="no"/>
 </technology>
 </technologies>
 </device>
 </devices>
 </deviceset>
 <deviceset name="OPAMP_4">
-<description>SENSOR CURRENT HALL 5A AC/DC &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/ACS712ELCTR-05B-T/620-1189-1-ND/1284606"&gt;Digi-key Page&lt;/a&gt;</description>
+<description>IC OPAMP GP 1MHZ RRO 14TSSOP &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/OPA4344EA%2F250/OPA4344EACT-ND/362284"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name=".1" symbol="OPAMP" x="-15.24" y="10.16"/>
 <gate name=".2" symbol="OPAMP" x="-15.24" y="-10.16"/>
@@ -1877,7 +2068,12 @@ DIN A3, landscape with location and doc. field</description>
 <connect gate=".RAIL" pin="V-" pad="11"/>
 </connects>
 <technologies>
-<technology name=""/>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="OPA4344EACT-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="OPA4344EA/250" constant="no"/>
+</technology>
 </technologies>
 </device>
 <device name="_TSSOP" package="TSSOP-14">
@@ -1904,6 +2100,78 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="MFG_NAME" value="Allegro MicroSystems, LLC" constant="no"/>
 <attribute name="MFG_PN" value="ACS712ELCTR-05B-T" constant="no"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="DRV8301">
+<gates>
+<gate name=".PWR" symbol="DRV8301_PWR" x="-33.02" y="2.54"/>
+<gate name=".A" symbol="DRV8301_A" x="27.94" y="25.4"/>
+<gate name=".B" symbol="DRV8301_B" x="27.94" y="2.54"/>
+<gate name=".C" symbol="DRV8301_C" x="27.94" y="-20.32"/>
+</gates>
+<devices>
+<device name="" package="TI-HTSSOP-56">
+<connects>
+<connect gate=".A" pin="BST_A" pad="48"/>
+<connect gate=".A" pin="GH_A" pad="47"/>
+<connect gate=".A" pin="GL_A" pad="45"/>
+<connect gate=".A" pin="INH_A" pad="17"/>
+<connect gate=".A" pin="INL_A" pad="18"/>
+<connect gate=".A" pin="SH_A" pad="46"/>
+<connect gate=".A" pin="SL_A" pad="44"/>
+<connect gate=".B" pin="BST_B" pad="43"/>
+<connect gate=".B" pin="GH_B" pad="42"/>
+<connect gate=".B" pin="GL_B" pad="40"/>
+<connect gate=".B" pin="INH_B" pad="19"/>
+<connect gate=".B" pin="INL_B" pad="20"/>
+<connect gate=".B" pin="SH_B" pad="41"/>
+<connect gate=".B" pin="SL_B" pad="39"/>
+<connect gate=".C" pin="BST_C" pad="38"/>
+<connect gate=".C" pin="GH_C" pad="37"/>
+<connect gate=".C" pin="GL_C" pad="35"/>
+<connect gate=".C" pin="INH_C" pad="21"/>
+<connect gate=".C" pin="INL_C" pad="22"/>
+<connect gate=".C" pin="SH_C" pad="36"/>
+<connect gate=".C" pin="SL_C" pad="34"/>
+<connect gate=".PWR" pin="AGND" pad="28"/>
+<connect gate=".PWR" pin="AVDD" pad="27"/>
+<connect gate=".PWR" pin="BST_BK" pad="52"/>
+<connect gate=".PWR" pin="COMP" pad="2"/>
+<connect gate=".PWR" pin="CP1" pad="14"/>
+<connect gate=".PWR" pin="CP2" pad="15"/>
+<connect gate=".PWR" pin="DC_CAL" pad="12"/>
+<connect gate=".PWR" pin="DTC" pad="7"/>
+<connect gate=".PWR" pin="DVDD" pad="23"/>
+<connect gate=".PWR" pin="EN_BUCK" pad="55"/>
+<connect gate=".PWR" pin="EN_GATE" pad="16"/>
+<connect gate=".PWR" pin="GND" pad="57"/>
+<connect gate=".PWR" pin="GVDD" pad="13"/>
+<connect gate=".PWR" pin="N_FAULT" pad="6"/>
+<connect gate=".PWR" pin="N_OCTW" pad="5"/>
+<connect gate=".PWR" pin="N_SCS" pad="8"/>
+<connect gate=".PWR" pin="PH" pad="50 51"/>
+<connect gate=".PWR" pin="PVDD1" pad="29"/>
+<connect gate=".PWR" pin="PVDD2" pad="53 54"/>
+<connect gate=".PWR" pin="PWRGD" pad="4"/>
+<connect gate=".PWR" pin="REF" pad="24"/>
+<connect gate=".PWR" pin="RT_CLK" pad="1"/>
+<connect gate=".PWR" pin="SCLK" pad="11"/>
+<connect gate=".PWR" pin="SDI" pad="9"/>
+<connect gate=".PWR" pin="SDO" pad="10"/>
+<connect gate=".PWR" pin="SN1" pad="33"/>
+<connect gate=".PWR" pin="SN2" pad="31"/>
+<connect gate=".PWR" pin="SO1" pad="25"/>
+<connect gate=".PWR" pin="SO2" pad="26"/>
+<connect gate=".PWR" pin="SP1" pad="32"/>
+<connect gate=".PWR" pin="SP2" pad="30"/>
+<connect gate=".PWR" pin="SS_TR" pad="56"/>
+<connect gate=".PWR" pin="VDD_SPI" pad="49"/>
+<connect gate=".PWR" pin="VSENSE" pad="3"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
