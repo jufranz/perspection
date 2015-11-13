@@ -39,6 +39,7 @@ if(library) {
     //dlgMessageBox(cmd_string);
     if(system(cmd_string) != 0) {
         dlgMessageBox("uh oh");
+        exit(-1);
     }
 }
 

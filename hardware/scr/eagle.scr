@@ -1,6 +1,10 @@
 BRD:
 Grid mm 1 on;
 Grid alt mm 0.1;
+Change Font vector;
+Change ratio 15;
+Change width 0.12;
+Change size 0.8;
 Change Font proportional;
 Assign M+1 'Edit .sch';
 Assign M+2 'Route';
@@ -71,8 +75,12 @@ Assign SM+F 'window fit';
 PAC:
 Grid mm 1 on;
 Grid alt mm 0.1;
-Change Font proportional;
+Change Font vector;
 Change ratio 15;
+Change width 0.12;
+Change size 0.8;
+Assign SM+1 'change align bottom-left; change layer tnames; text >NAME';
+Assign SM+2 'change align center; change layer ttest; text >NAME';
 Assign M+3 'Move';
 Assign M+4 'Delete';
 Assign M+5 'Copy';
