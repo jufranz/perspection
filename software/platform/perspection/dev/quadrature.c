@@ -10,7 +10,7 @@
 #define CHANNEL_B_PIN 5
 
 #define COUNTS_PER_REV 4096.0
-#define DEGREES_PER_COUNT (360.0 / 4096.0)
+#define DEGREES_PER_COUNT (360.0 / COUNTS_PER_REV)
 
 QuadratureCallback registeredCallback;
 
