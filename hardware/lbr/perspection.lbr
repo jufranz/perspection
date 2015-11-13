@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.4.0">
+<eagle version="6.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -2186,6 +2186,7 @@ DIN A3, landscape with location and doc. field</description>
 </devices>
 </deviceset>
 <deviceset name="DRV8301">
+<description>IC MOTOR CONTROLLER SPI 56HTSSOP &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/DRV8301DCAR/296-29433-1-ND/2743170"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name=".PWR" symbol="DRV8301_PWR" x="-33.02" y="2.54"/>
 <gate name=".A" symbol="DRV8301_A" x="27.94" y="25.4"/>
@@ -2193,7 +2194,7 @@ DIN A3, landscape with location and doc. field</description>
 <gate name=".C" symbol="DRV8301_C" x="27.94" y="-20.32"/>
 </gates>
 <devices>
-<device name="" package="TI-HTSSOP-56">
+<device name="DCAR" package="TI-HTSSOP-56">
 <connects>
 <connect gate=".A" pin="BST_A" pad="48"/>
 <connect gate=".A" pin="GH_A" pad="47"/>
@@ -2252,7 +2253,12 @@ DIN A3, landscape with location and doc. field</description>
 <connect gate=".PWR" pin="VSENSE" pad="3"/>
 </connects>
 <technologies>
-<technology name=""/>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="296-29433-1-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="DRV8301DCAR" constant="no"/>
+</technology>
 </technologies>
 </device>
 </devices>
