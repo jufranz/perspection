@@ -36,7 +36,7 @@ if(library) {
     string python_dir = base_dir + "python/get_digikey_data.py";
 
     string cmd_string = "python \"" + python_dir + "\" " + url + " 2> /tmp/err.txt";
-    dlgMessageBox(cmd_string);
+    //dlgMessageBox(cmd_string);
     if(system(cmd_string) != 0) {
         dlgMessageBox("uh oh");
     }
