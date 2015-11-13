@@ -9,15 +9,18 @@
 #define CHANNEL_A_PIN 4
 #define CHANNEL_B_PIN 5
 
+#define COUNTS_PER_REV 4096.0
+#define DEGREES_PER_COUNT (360.0 / 4096.0)
+
 QuadratureCallback registeredCallback;
 
-int32_t current_position;
+double current_position;
 
 void channel_a_positive_edge(uint8_t port, uint8_t pin) {
     if(GPIO_READ_PIN(GPIO_B_BASE, GPIO_PIN_MASK(CHANNEL_B_PIN)) == 0) {
-        current_position++;
+        current_position += DEGREES_PER_COUNT;
     } else {
-        current_position--;
+        current_position -= DEGREES_PER_COUNT;
     }
 
     if(registeredCallback != NULL) {
@@ -29,9 +32,9 @@ void channel_a_positive_edge(uint8_t port, uint8_t pin) {
 
 void channel_b_positive_edge(uint8_t port, uint8_t pin) {
     if(GPIO_READ_PIN(GPIO_B_BASE, GPIO_PIN_MASK(CHANNEL_A_PIN)) == 0) {
-        current_position--;
+        current_position += DEGREES_PER_COUNT;
     } else {
-        current_position++;
+        current_position -= DEGREES_PER_COUNT;
     }
 
     if(registeredCallback != NULL) {

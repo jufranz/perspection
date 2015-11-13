@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-typedef void (*QuadratureCallback)(int32_t currentPos, double velocity);
+typedef void (*QuadratureCallback)(double currentPos, double velocity);
 
 void quadrature_init();
 

@@ -9,9 +9,9 @@
 #include <stdio.h>
 
 static struct etimer periodic_timer_adc_read;
-static int curPos = 0;
+static double curPos = 0;
 
-void quad_callback(int32_t currentPos, double velocity) {
+void quad_callback(double currentPos, double velocity) {
     curPos = currentPos;
 }
 
@@ -39,7 +39,7 @@ PROCESS_THREAD(haptics_process, ev, data) {
                 /*leds_off(LEDS_RED);*/
             /*}*/
 
-            printf("%d\r\n", curPos);
+            printf("%d\r\n", (int)curPos);
 
 			etimer_restart(&periodic_timer_adc_read);
 		}
