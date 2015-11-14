@@ -25,10 +25,10 @@ except:
 d = next(item for item in items if item.itemtype[0] == microdata.URI("http://schema.org/Product")).json_dict()
 #d = item.json_dict()
 DIST_NAME = "Digi-Key"
-DIST_PN = d['properties']['productID'][0][4:]
-MFG_NAME = d['properties']['manufacturer'][0]
-MFG_PN = d['properties']['model'][0]
-DESC = d['properties']['description'][0]
+DIST_PN = d['properties']['productID'][0][4:].encode('ascii','ignore')
+MFG_NAME = d['properties']['manufacturer'][0].encode('ascii','ignore')
+MFG_PN = d['properties']['model'][0].encode('ascii','ignore')
+DESC = d['properties']['description'][0].encode('ascii','ignore').replace('\n', '<br>')
 print "DIST_NAME: " + DIST_NAME
 print "DIST_PN: " + DIST_PN
 print "MFG_NAME: " + MFG_NAME
@@ -39,6 +39,6 @@ output_scr.write("attribute DIST_NAME '" + DIST_NAME + "'\n")
 output_scr.write("attribute DIST_PN '" + DIST_PN + "'\n")
 output_scr.write("attribute MFG_NAME '" + MFG_NAME + "'\n")
 output_scr.write("attribute MFG_PN '" + MFG_PN + "'\n")
-output_scr.write("description '" + DESC + "'<br><a href=\"" + url + "\">Digi-key Page</a>\n")
+output_scr.write("description '" + DESC + "<br><a href=\"" + url + "\">Digi-key Page</a>';\n")
 
 output_scr.close()
