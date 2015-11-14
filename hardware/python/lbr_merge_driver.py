@@ -68,7 +68,7 @@ def run():
             conflict = True
         library.append(result[0])
     #print ElementTree.tostring(root_a)
-    tree_a.write(sys.argv[4])
+    tree_a.write(sys.argv[1])
     exit(-1 if conflict else 0)
 
 #pdb.set_trace()
