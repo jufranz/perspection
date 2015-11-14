@@ -198,6 +198,16 @@
 <wire x1="1.981" y1="-1.631" x2="-1.981" y2="-1.631" width="0.127" layer="21"/>
 <wire x1="-1.981" y1="-1.631" x2="-1.981" y2="1.631" width="0.127" layer="21"/>
 </package>
+<package name="BLAH">
+<smd name="P$1" x="-7" y="0" dx="1.27" dy="0.635" layer="1"/>
+<smd name="P$2" x="2" y="3" dx="1.27" dy="0.635" layer="1"/>
+<smd name="P$3" x="3" y="-3" dx="1.27" dy="0.635" layer="1"/>
+<smd name="P$4" x="-7" y="-3" dx="1.27" dy="0.635" layer="1"/>
+<smd name="P$5" x="-5" y="0" dx="1.27" dy="0.635" layer="1"/>
+<smd name="P$6" x="-2" y="-3" dx="1.27" dy="0.635" layer="1"/>
+<smd name="P$7" x="3" y="-1" dx="1.27" dy="0.635" layer="1"/>
+<smd name="P$8" x="-6" y="1" dx="1.27" dy="0.635" layer="1"/>
+</package>
 </packages>
 <symbols>
 <symbol name="LM340MPX-5.0/N0PB">
