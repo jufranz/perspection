@@ -2787,6 +2787,7 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <wire x1="15.24" y1="-30.48" x2="-15.24" y2="-30.48" width="0.254" layer="94"/>
 <wire x1="-15.24" y1="-30.48" x2="-15.24" y2="22.86" width="0.254" layer="94"/>
 <text x="-15.494" y="23.876" size="1.27" layer="95">&gt;NAME</text>
+<text x="-14.986" y="-32.258" size="1.27" layer="96">&gt;VALUE</text>
 </symbol>
 <symbol name="DRV8301_A">
 <pin name="INH_A" x="-15.24" y="2.54" length="middle"/>
@@ -4488,7 +4489,7 @@ DIN A3, landscape with location and doc. field</description>
 </devices>
 </deviceset>
 <deviceset name="LED-PWR" prefix="D">
-<description>LED XLAMP COOL WHITE 6000K 2SMD &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/MX3AWT-A1-0000-000E50/MX3AWT-A1-0000-000E50CT-ND/3659981"&gt;Digi-key Page&lt;/a&gt;</description>
+<description>LED XLAMP NEUTRAL WHT 4000K 2SMD &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/MX3SWT-A1-0000-000CE5/MX3SWT-A1-0000-000CE5CT-ND/2421169"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name="G$1" symbol="LED-PWR" x="0" y="0"/>
 </gates>
@@ -4502,9 +4503,9 @@ DIN A3, landscape with location and doc. field</description>
 <technologies>
 <technology name="">
 <attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
-<attribute name="DIST_PN" value="MX3AWT-A1-0000-000E50CT-ND" constant="no"/>
+<attribute name="DIST_PN" value="MX3SWT-A1-0000-000CE5CT-ND" constant="no"/>
 <attribute name="MFG_NAME" value="Cree Inc." constant="no"/>
-<attribute name="MFG_PN" value="MX3AWT-A1-0000-000E50" constant="no"/>
+<attribute name="MFG_PN" value="MX3SWT-A1-0000-000CE5" constant="no"/>
 </technology>
 </technologies>
 </device>
