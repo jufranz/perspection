@@ -17,24 +17,16 @@ void quadrature_set_up_gpio(int pin_number);
 
 void channel_a_positive_edge(uint8_t port, uint8_t pin) {
     if(GPIO_READ_PIN(GPIO_B_BASE, GPIO_PIN_MASK(CHANNEL_B_PIN)) == 0) {
-        leds_off(LEDS_RED);
-        leds_toggle(LEDS_GREEN);
         current_position += DEGREES_PER_COUNT;
     } else {
-        leds_off(LEDS_GREEN);
-        leds_toggle(LEDS_RED);
         current_position -= DEGREES_PER_COUNT;
     }
 }
 
 void channel_b_positive_edge(uint8_t port, uint8_t pin) {
     if(GPIO_READ_PIN(GPIO_B_BASE, GPIO_PIN_MASK(CHANNEL_A_PIN)) == 0) {
-        leds_off(LEDS_GREEN);
-        leds_toggle(LEDS_RED);
         current_position -= DEGREES_PER_COUNT;
     } else {
-        leds_off(LEDS_RED);
-        leds_toggle(LEDS_GREEN);
         current_position += DEGREES_PER_COUNT;
     }
 }
