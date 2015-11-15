@@ -2165,6 +2165,37 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <text x="-1.7" y="-2.6" size="1.27" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
 <circle x="-0.9652" y="-2.1082" radius="0.198378125" width="0.127" layer="21"/>
 </package>
+<package name="SSA22/DPDT">
+<wire x1="-4.5" y1="2.25" x2="4.5" y2="2.25" width="0.127" layer="21"/>
+<wire x1="4.5" y1="2.25" x2="4.5" y2="-2.25" width="0.127" layer="21"/>
+<wire x1="4.5" y1="-2.25" x2="-4.5" y2="-2.25" width="0.127" layer="21"/>
+<wire x1="-4.5" y1="-2.25" x2="-4.5" y2="2.25" width="0.127" layer="21"/>
+<wire x1="-2.5" y1="1.5" x2="-2.5" y2="-1.5" width="0.127" layer="51"/>
+<wire x1="-2.5" y1="-1.5" x2="2.5" y2="-1.5" width="0.127" layer="51"/>
+<wire x1="2.5" y1="-1.5" x2="2.5" y2="1.5" width="0.127" layer="51"/>
+<wire x1="2.5" y1="1.5" x2="-2.5" y2="1.5" width="0.127" layer="51"/>
+<rectangle x1="0" y1="-1.5" x2="2.5" y2="1.5" layer="51"/>
+<pad name="A1" x="2.5" y="1" drill="1.0922"/>
+<pad name="A2" x="2.5" y="-1" drill="1.0922"/>
+<pad name="B1" x="-2.5" y="1" drill="1.0922"/>
+<pad name="B2" x="-2.5" y="-1" drill="1.0922"/>
+<pad name="COM1" x="0" y="1" drill="1.0922"/>
+<pad name="COM2" x="0" y="-1" drill="1.0922"/>
+<text x="0" y="2.5" size="1.27" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+</package>
+<package name="EVQP2">
+<circle x="0" y="-0.0572" radius="0.8893" width="0.127" layer="21"/>
+<wire x1="-2.286" y1="-1.632" x2="2.286" y2="-1.632" width="0.127" layer="21"/>
+<wire x1="2.286" y1="-1.632" x2="2.286" y2="1.67" width="0.127" layer="21"/>
+<wire x1="2.286" y1="1.67" x2="-2.286" y2="1.67" width="0.127" layer="21"/>
+<wire x1="-2.286" y1="1.67" x2="-2.286" y2="-1.632" width="0.127" layer="21"/>
+<smd name="P$1" x="-2.54" y="-0.87" dx="1.6764" dy="0.8128" layer="1"/>
+<smd name="P$2" x="-2.54" y="0.908" dx="1.6764" dy="0.8128" layer="1"/>
+<smd name="P$3" x="2.54" y="-0.87" dx="1.6764" dy="0.8128" layer="1"/>
+<smd name="P$4" x="2.54" y="0.908" dx="1.6764" dy="0.8128" layer="1"/>
+<text x="-3.302" y="1.924" size="1.27" layer="25" font="vector" ratio="10">&gt;NAME</text>
+<text x="-3.302" y="-3.156" size="1.27" layer="27" font="vector" ratio="10">&gt;VALUE</text>
+</package>
 </packages>
 <symbols>
 <symbol name="C">
@@ -3077,6 +3108,43 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <wire x1="1.27" y1="-2.54" x2="1.27" y2="2.54" width="0.254" layer="94"/>
 <wire x1="1.27" y1="2.54" x2="-3.81" y2="2.54" width="0.254" layer="94"/>
 <pin name="HEAT" x="2.54" y="-2.54" visible="off" length="short" rot="R180"/>
+</symbol>
+<symbol name="SPDT">
+<circle x="0" y="0" radius="0.762" width="0.254" layer="94"/>
+<circle x="5.08" y="2.54" radius="0.762" width="0.254" layer="94"/>
+<circle x="5.08" y="-2.54" radius="0.762" width="0.254" layer="94"/>
+<wire x1="0" y1="0" x2="4.572" y2="4.064" width="0.254" layer="94"/>
+<pin name="1" x="7.62" y="2.54" visible="off" length="short" rot="R180"/>
+<pin name="2" x="-2.54" y="0" visible="off" length="short"/>
+<pin name="3" x="7.62" y="-2.54" visible="off" length="short" rot="R180"/>
+<text x="6.604" y="2.794" size="1.016" layer="94" align="bottom-center">A</text>
+<text x="6.604" y="-2.286" size="1.016" layer="94" align="bottom-center">B</text>
+<text x="-2.54" y="-7.62" size="1.27" layer="95">&gt;NAME</text>
+<text x="-2.54" y="-10.16" size="1.27" layer="96">&gt;VALUE</text>
+</symbol>
+<symbol name="EVQP2">
+<circle x="2.54" y="2.54" radius="0.3592" width="0.254" layer="94"/>
+<circle x="-2.54" y="2.54" radius="0.3592" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="2.54" x2="-2.54" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="0" x2="-2.54" y2="0" width="0.254" layer="94"/>
+<wire x1="2.54" y1="2.54" x2="7.62" y2="2.54" width="0.254" layer="94"/>
+<wire x1="2.54" y1="0" x2="7.62" y2="0" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="2.54" x2="1.27" y2="5.08" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="6.35" x2="-2.54" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="7.62" x2="0" y2="7.62" width="0.254" layer="94"/>
+<wire x1="0" y1="7.62" x2="2.54" y2="7.62" width="0.254" layer="94"/>
+<wire x1="2.54" y1="7.62" x2="2.54" y2="6.35" width="0.254" layer="94"/>
+<wire x1="0" y1="7.62" x2="0" y2="6.35" width="0.254" layer="94"/>
+<wire x1="0" y1="5.08" x2="0" y2="3.81" width="0.254" layer="94"/>
+<wire x1="0" y1="2.54" x2="0" y2="1.016" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="0" x2="-2.54" y2="2.54" width="0.254" layer="94"/>
+<wire x1="2.54" y1="0" x2="2.54" y2="2.54" width="0.254" layer="94"/>
+<pin name="P$1" x="-7.62" y="2.54" visible="pad" length="middle" direction="pas"/>
+<pin name="P$2" x="7.62" y="2.54" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="P$3" x="-7.62" y="0" visible="pad" length="middle" direction="pas"/>
+<pin name="P$4" x="7.62" y="0" visible="pad" length="middle" direction="pas" rot="R180"/>
+<text x="-2.54" y="-2.54" size="1.778" layer="95">&gt;NAME</text>
+<text x="-2.54" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -4507,6 +4575,46 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="MFG_NAME" value="Cree Inc." constant="no"/>
 <attribute name="MFG_PN" value="MX3SWT-A1-0000-000CE5" constant="no"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="SSA22/DPDT">
+<description>SW SLIDE DPDT 2POS SSA SER 30V</description>
+<gates>
+<gate name="G$1" symbol="SPDT" x="0" y="12.7"/>
+<gate name="G$2" symbol="SPDT" x="0" y="-10.16"/>
+</gates>
+<devices>
+<device name="" package="SSA22/DPDT">
+<connects>
+<connect gate="G$1" pin="1" pad="A1"/>
+<connect gate="G$1" pin="2" pad="COM1"/>
+<connect gate="G$1" pin="3" pad="B1"/>
+<connect gate="G$2" pin="1" pad="A2"/>
+<connect gate="G$2" pin="2" pad="COM2"/>
+<connect gate="G$2" pin="3" pad="B2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="EVQP2" prefix="S">
+<gates>
+<gate name="G$1" symbol="EVQP2" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="EVQP2">
+<connects>
+<connect gate="G$1" pin="P$1" pad="P$1"/>
+<connect gate="G$1" pin="P$2" pad="P$2"/>
+<connect gate="G$1" pin="P$3" pad="P$3"/>
+<connect gate="G$1" pin="P$4" pad="P$4"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
