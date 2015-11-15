@@ -8,12 +8,7 @@
 
 #include <stdio.h>
 
-static struct etimer periodic_timer_adc_read;
-double curPos;
-
-void quad_callback(double currentPos, double velocity) {
-    curPos = currentPos;
-}
+static struct etimer periodic_timer_quadrature_read;
 
 /*---------------------------------------------------------------------------*/
 PROCESS(haptics_process, "Haptics");
@@ -24,15 +19,13 @@ PROCESS_THREAD(haptics_process, ev, data) {
 	PROCESS_BEGIN();
 
     //adc_init();
-    curPos = 0.0;
     quadrature_init();
-    quadrature_register_callback(&quad_callback);
-	etimer_set(&periodic_timer_adc_read, CLOCK_SECOND / 5);
+	etimer_set(&periodic_timer_quadrature_read, CLOCK_SECOND / 5);
 
 	while(1) {
 		PROCESS_YIELD();
 
-		if (etimer_expired(&periodic_timer_adc_read)) {
+		if (etimer_expired(&periodic_timer_quadrature_read)) {
             /*int16_t adc_raw = adc_get(SOC_ADC_ADCCON_CH_AIN3, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512);*/
             /*if(adc_raw > 16000) {*/
                 /*leds_on(LEDS_RED);*/
@@ -40,9 +33,9 @@ PROCESS_THREAD(haptics_process, ev, data) {
                 /*leds_off(LEDS_RED);*/
             /*}*/
 
-            printf("%ld\r\n", (int32_t)curPos);
+            printf("%ld\r\n", (int32_t)quadrature_get_position());
 
-			etimer_restart(&periodic_timer_adc_read);
+			etimer_restart(&periodic_timer_quadrature_read);
 		}
 	}
 
