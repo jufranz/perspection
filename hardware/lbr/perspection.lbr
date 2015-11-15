@@ -2230,6 +2230,30 @@ reflow soldering</description>
 <text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 <text x="-3" y="-2" size="0.8" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
 </package>
+<package name="PANASONIC-6.3MM-SMD">
+<smd name="POS" x="0" y="2.5" dx="1.6" dy="3.2" layer="1"/>
+<smd name="NEG" x="0" y="-2.5" dx="1.6" dy="3.2" layer="1"/>
+<wire x1="-3.3" y1="-3.3" x2="3.3" y2="-3.3" width="0.12" layer="37"/>
+<wire x1="3.3" y1="-3.3" x2="3.3" y2="2.3" width="0.12" layer="37"/>
+<wire x1="3.3" y1="2.3" x2="2.3" y2="3.3" width="0.12" layer="37"/>
+<wire x1="2.3" y1="3.3" x2="-2.3" y2="3.3" width="0.12" layer="37"/>
+<wire x1="-2.3" y1="3.3" x2="-3.3" y2="2.3" width="0.12" layer="37"/>
+<wire x1="-3.3" y1="2.3" x2="-3.3" y2="-3.3" width="0.12" layer="37"/>
+<wire x1="2.3" y1="3.3" x2="0.9" y2="3.3" width="0.12" layer="21"/>
+<wire x1="-0.9" y1="3.3" x2="-2.3" y2="3.3" width="0.12" layer="21"/>
+<wire x1="-2.3" y1="3.3" x2="-3.3" y2="2.3" width="0.12" layer="21"/>
+<wire x1="-3.3" y1="2.3" x2="-3.3" y2="-3.3" width="0.12" layer="21"/>
+<wire x1="-3.3" y1="-3.3" x2="-0.9" y2="-3.3" width="0.12" layer="21"/>
+<wire x1="0.9" y1="-3.3" x2="3.3" y2="-3.3" width="0.12" layer="21"/>
+<wire x1="3.3" y1="-3.3" x2="3.3" y2="2.3" width="0.12" layer="21"/>
+<wire x1="3.3" y1="2.3" x2="2.3" y2="3.3" width="0.12" layer="21"/>
+<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
+<text x="4.3" y="-3.2" size="0.8" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
+<wire x1="1.0773625" y1="2.96003125" x2="1.0773625" y2="-2.96003125" width="0.12" layer="21" curve="-140.000026"/>
+<wire x1="-1.0773625" y1="2.96003125" x2="-1.0773625" y2="-2.96003125" width="0.12" layer="21" curve="140.000026"/>
+<wire x1="1.6" y1="4.1" x2="2.4" y2="4.1" width="0.12" layer="21"/>
+<wire x1="2" y1="4.5" x2="2" y2="3.7" width="0.12" layer="21"/>
+</package>
 </packages>
 <symbols>
 <symbol name="C">
@@ -4735,6 +4759,29 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="DIST_PN" value="296-29496-1-ND" constant="no"/>
 <attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
 <attribute name="MFG_PN" value="OPA170AIDBVT" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="CPOL" prefix="C" uservalue="yes">
+<description>CAP ALUM 220UF 20% 25V SMD&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/EEE-FTE221XAP/PCE5009CT-ND/2652064"&gt;Digi-key Page&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="CPOL" x="0" y="0"/>
+</gates>
+<devices>
+<device name="-PANASONIC-6.3MM-SMD-220UF-25V" package="PANASONIC-6.3MM-SMD">
+<connects>
+<connect gate="G$1" pin="+" pad="POS"/>
+<connect gate="G$1" pin="-" pad="NEG"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="PCE5009CT-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Panasonic Electronic Components" constant="no"/>
+<attribute name="MFG_PN" value="EEE-FTE221XAP" constant="no"/>
+<attribute name="VALUE" value="220uF" constant="no"/>
 </technology>
 </technologies>
 </device>
