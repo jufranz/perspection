@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -1452,6 +1452,51 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 <text x="4" y="-3" size="0.8" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
 </package>
+<package name="LTC-SOT23-3">
+<smd name="3" x="0" y="1.37" dx="0.7" dy="0.8" layer="1"/>
+<smd name="2" x="0.96" y="-1.37" dx="0.7" dy="0.8" layer="1"/>
+<smd name="1" x="-0.96" y="-1.37" dx="0.7" dy="0.8" layer="1"/>
+<wire x1="-1.4" y1="0.6" x2="1.4" y2="0.6" width="0.127" layer="21"/>
+<wire x1="1.4" y1="0.6" x2="1.4" y2="-0.6" width="0.127" layer="21"/>
+<wire x1="1.4" y1="-0.6" x2="-1.4" y2="-0.6" width="0.127" layer="21"/>
+<wire x1="-1.4" y1="-0.6" x2="-1.4" y2="0.6" width="0.127" layer="21"/>
+<text x="-1.7" y="-2.6" size="1.27" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
+<circle x="-0.9652" y="-2.1082" radius="0.198378125" width="0.127" layer="21"/>
+</package>
+<package name="XLAMP-MX3">
+<smd name="ANODE" x="-3.125" y="0" dx="1.75" dy="3.9" layer="1"/>
+<smd name="CATHODE" x="3.125" y="0" dx="1.75" dy="3.9" layer="1"/>
+<smd name="HEAT@1" x="0" y="0" dx="1.1" dy="3.9" layer="1"/>
+<pad name="HEAT@2" x="-0.3492" y="1.7492" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@3" x="0.3492" y="1.7492" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@11" x="0.3492" y="-1.7492" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@10" x="-0.3492" y="-1.7492" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@6" x="-0.3492" y="0" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@7" x="0.3492" y="0" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@4" x="-0.3492" y="0.9" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@5" x="0.3492" y="0.9" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@8" x="-0.3492" y="-0.9" drill="0.254" diameter="0.4064"/>
+<pad name="HEAT@9" x="0.3492" y="-0.9" drill="0.254" diameter="0.4064"/>
+<wire x1="-2.05" y1="-2.5" x2="1.75" y2="-2.5" width="0.127" layer="21"/>
+<wire x1="1.75" y1="-2.5" x2="2.05" y2="-2.5" width="0.127" layer="21"/>
+<wire x1="2.05" y1="2.5" x2="-2.05" y2="2.5" width="0.127" layer="21"/>
+<wire x1="0.95" y1="0.6" x2="0.95" y2="-0.6" width="0.127" layer="21"/>
+<wire x1="0.95" y1="-0.6" x2="1.9" y2="0" width="0.127" layer="21"/>
+<wire x1="1.9" y1="0" x2="0.95" y2="0.6" width="0.127" layer="21"/>
+<wire x1="2.5" y1="2.05" x2="2.05" y2="2.5" width="0.127" layer="21" curve="90"/>
+<wire x1="-2.5" y1="2.05" x2="-2.05" y2="2.5" width="0.127" layer="21" curve="-90"/>
+<wire x1="-2.5" y1="-2.05" x2="-2.05" y2="-2.5" width="0.127" layer="21" curve="90"/>
+<wire x1="2.5" y1="-2.05" x2="2.05" y2="-2.5" width="0.127" layer="21" curve="-90"/>
+<wire x1="1.75" y1="-2.5" x2="2.25" y2="-2.05" width="0.127" layer="21"/>
+<polygon width="0.127" layer="21">
+<vertex x="1.85" y="-2.45"/>
+<vertex x="2.2" y="-2.45"/>
+<vertex x="2.4" y="-2.25"/>
+<vertex x="2.5" y="-2.05"/>
+<vertex x="2.25" y="-2.05"/>
+</polygon>
+<text x="-2.54" y="3.175" size="1.27" layer="21" font="vector" ratio="15">&gt;NAME</text>
+</package>
 </packages>
 <symbols>
 <symbol name="A3L-LOC">
@@ -2033,6 +2078,31 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <pin name="3" x="5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="4" x="5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="2" x="-5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="2"/>
+</symbol>
+<symbol name="LED-PWR">
+<wire x1="-2.54" y1="1.27" x2="-2.54" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="-1.27" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="0" y1="0" x2="-2.54" y2="1.27" width="0.254" layer="94"/>
+<wire x1="0" y1="1.27" x2="0" y2="-1.27" width="0.254" layer="94"/>
+<pin name="ANODE" x="-5.08" y="0" visible="off" length="short"/>
+<pin name="CATHODE" x="2.54" y="0" visible="off" length="short" rot="R180"/>
+<wire x1="1.016" y1="3.302" x2="3.048" y2="6.096" width="0.254" layer="94"/>
+<wire x1="3.048" y1="6.096" x2="2.032" y2="5.334" width="0.254" layer="94"/>
+<wire x1="2.032" y1="5.334" x2="2.54" y2="4.826" width="0.254" layer="94"/>
+<wire x1="2.54" y1="4.826" x2="3.048" y2="6.096" width="0.254" layer="94"/>
+<wire x1="2.54" y1="5.08" x2="2.286" y2="5.334" width="0.254" layer="94"/>
+<wire x1="-0.508" y1="4.318" x2="1.524" y2="7.112" width="0.254" layer="94"/>
+<wire x1="1.524" y1="7.112" x2="0.508" y2="6.35" width="0.254" layer="94"/>
+<wire x1="0.508" y1="6.35" x2="1.016" y2="5.842" width="0.254" layer="94"/>
+<wire x1="1.016" y1="5.842" x2="1.524" y2="7.112" width="0.254" layer="94"/>
+<wire x1="1.016" y1="6.096" x2="0.762" y2="6.35" width="0.254" layer="94"/>
+<text x="-5.588" y="-5.08" size="1.778" layer="95" ratio="15">&gt;NAME</text>
+<text x="-3.81" y="3.048" size="0.635" layer="94" font="vector" ratio="15">&gt;COLOR</text>
+<wire x1="-3.81" y1="2.54" x2="-3.81" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-3.81" y1="-2.54" x2="1.27" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="1.27" y1="-2.54" x2="1.27" y2="2.54" width="0.254" layer="94"/>
+<wire x1="1.27" y1="2.54" x2="-3.81" y2="2.54" width="0.254" layer="94"/>
+<pin name="HEAT" x="2.54" y="-2.54" visible="off" length="short" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -2900,6 +2970,67 @@ DIN A3, landscape with location and doc. field</description>
 </device>
 </devices>
 </deviceset>
+<deviceset name="NMOS" prefix="Q">
+<description>MOSFET N-CH 55V 540MA SOT23 &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/BSS670S2L%20H6327/BSS670S2L%20H6327CT-ND/3196653"&gt;Digi-key Page&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="N-MOSFET" x="0" y="0"/>
+</gates>
+<devices>
+<device name="-CSD18533Q5A" package="SON-5X6">
+<connects>
+<connect gate="G$1" pin="D" pad="D"/>
+<connect gate="G$1" pin="G" pad="G"/>
+<connect gate="G$1" pin="S" pad="S1 S2 S3"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="296-35027-1-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="CSD18533Q5A" constant="no"/>
+</technology>
+</technologies>
+</device>
+<device name="-BSS670S2L_H6327" package="LTC-SOT23-3">
+<connects>
+<connect gate="G$1" pin="D" pad="3"/>
+<connect gate="G$1" pin="G" pad="1"/>
+<connect gate="G$1" pin="S" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="BSS670S2L H6327CT-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Infineon Technologies" constant="no"/>
+<attribute name="MFG_PN" value="BSS670S2L H6327" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="LED-PWR" prefix="D">
+<description>LED XLAMP NEUTRAL WHT 4000K 2SMD &lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/MX3SWT-A1-0000-000CE5/MX3SWT-A1-0000-000CE5CT-ND/2421169"&gt;Digi-key Page&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="LED-PWR" x="0" y="0"/>
+</gates>
+<devices>
+<device name="-XLAMP_MX3" package="XLAMP-MX3">
+<connects>
+<connect gate="G$1" pin="ANODE" pad="ANODE"/>
+<connect gate="G$1" pin="CATHODE" pad="CATHODE"/>
+<connect gate="G$1" pin="HEAT" pad="HEAT@1 HEAT@2 HEAT@3 HEAT@4 HEAT@5 HEAT@6 HEAT@7 HEAT@8 HEAT@9 HEAT@10 HEAT@11"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="MX3SWT-A1-0000-000CE5CT-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Cree Inc." constant="no"/>
+<attribute name="MFG_PN" value="MX3SWT-A1-0000-000CE5" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
 </devicesets>
 </library>
 </libraries>
@@ -3238,6 +3369,13 @@ DIN A3, landscape with location and doc. field</description>
 <part name="GND62" library="perspection" deviceset="GND" device=""/>
 <part name="+3V18" library="perspection" deviceset="+3V3" device=""/>
 <part name="GND63" library="perspection" deviceset="GND" device=""/>
+<part name="P+15" library="perspection" deviceset="VBAT" device=""/>
+<part name="FRAME7" library="perspection" deviceset="A3L-LOC" device=""/>
+<part name="Q7" library="perspection" deviceset="NMOS" device="-CSD18533Q5A"/>
+<part name="D6" library="perspection" deviceset="LED-PWR" device="-XLAMP_MX3"/>
+<part name="R79" library="perspection" deviceset="R" device="0805"/>
+<part name="GND64" library="perspection" deviceset="GND" device=""/>
+<part name="R80" library="perspection" deviceset="R" device="0402"/>
 </parts>
 <sheets>
 <sheet>
@@ -6436,6 +6574,58 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="317.5" y1="142.24" x2="320.04" y2="142.24" width="0.1524" layer="91"/>
 <junction x="317.5" y="142.24"/>
 <label x="320.04" y="142.24" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+</nets>
+</sheet>
+<sheet>
+<plain>
+</plain>
+<instances>
+<instance part="P+15" gate="G$1" x="66.04" y="101.6"/>
+<instance part="FRAME7" gate="G$1" x="0" y="0"/>
+<instance part="Q7" gate="G$1" x="63.5" y="83.82"/>
+<instance part="D6" gate="G$1" x="66.04" y="93.98" rot="R270"/>
+<instance part="R79" gate="G$1" x="66.04" y="63.5" rot="R90"/>
+<instance part="GND64" gate="1" x="66.04" y="50.8"/>
+<instance part="R80" gate="G$1" x="53.34" y="81.28" rot="R180"/>
+</instances>
+<busses>
+</busses>
+<nets>
+<net name="VBAT" class="0">
+<segment>
+<pinref part="D6" gate="G$1" pin="ANODE"/>
+<pinref part="P+15" gate="G$1" pin="VBAT"/>
+<wire x1="66.04" y1="99.06" x2="66.04" y2="101.6" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$59" class="0">
+<segment>
+<pinref part="D6" gate="G$1" pin="CATHODE"/>
+<pinref part="Q7" gate="G$1" pin="D"/>
+<wire x1="66.04" y1="88.9" x2="66.04" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$60" class="0">
+<segment>
+<pinref part="Q7" gate="G$1" pin="S"/>
+<pinref part="R79" gate="G$1" pin="2"/>
+<wire x1="66.04" y1="68.58" x2="66.04" y2="78.74" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="GND" class="0">
+<segment>
+<pinref part="R79" gate="G$1" pin="1"/>
+<pinref part="GND64" gate="1" pin="GND"/>
+<wire x1="66.04" y1="53.34" x2="66.04" y2="58.42" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$61" class="0">
+<segment>
+<pinref part="Q7" gate="G$1" pin="G"/>
+<pinref part="R80" gate="G$1" pin="1"/>
+<wire x1="58.42" y1="81.28" x2="60.96" y2="81.28" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
