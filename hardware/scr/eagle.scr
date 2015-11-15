@@ -49,7 +49,7 @@ DEV:
 Assign M+3 'Move';
 Assign M+4 'Delete';
 Assign M+5 'Copy';
-Assign M+6 'Group';
+Assign M+G 'Group';
 Assign M+E 'Info';
 Assign M+I 'Info';
 Assign M+F 'show';
