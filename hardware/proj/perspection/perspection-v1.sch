@@ -1497,6 +1497,24 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 </polygon>
 <text x="-2.54" y="3.175" size="1.27" layer="21" font="vector" ratio="15">&gt;NAME</text>
 </package>
+<package name="ST-4EA">
+<smd name="2" x="0" y="2" dx="2" dy="2" layer="1"/>
+<smd name="3" x="-1.175" y="-2" dx="1.6" dy="2" layer="1"/>
+<smd name="1" x="1.175" y="-2" dx="1.6" dy="2" layer="1"/>
+<wire x1="-2.5" y1="2.25" x2="-1.2" y2="2.25" width="0.12" layer="21"/>
+<wire x1="1.2" y1="2.25" x2="2.5" y2="2.25" width="0.12" layer="21"/>
+<wire x1="2.5" y1="2.25" x2="2.5" y2="-2.25" width="0.12" layer="37"/>
+<wire x1="2.5" y1="-2.25" x2="2.1" y2="-2.25" width="0.12" layer="21"/>
+<wire x1="0.2" y1="-2.25" x2="-0.2" y2="-2.25" width="0.12" layer="21"/>
+<wire x1="-2.1" y1="-2.25" x2="-2.5" y2="-2.25" width="0.12" layer="21"/>
+<wire x1="-2.5" y1="-2.25" x2="-2.5" y2="2.25" width="0.12" layer="21"/>
+<wire x1="-2.5" y1="-2.25" x2="-2.5" y2="2.25" width="0.12" layer="37"/>
+<wire x1="-2.5" y1="2.25" x2="2.5" y2="2.25" width="0.12" layer="37"/>
+<wire x1="2.5" y1="2.25" x2="2.5" y2="-2.25" width="0.12" layer="21"/>
+<wire x1="2.5" y1="-2.25" x2="-2.5" y2="-2.25" width="0.12" layer="37"/>
+<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
+<text x="-3" y="-2" size="0.8" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
+</package>
 </packages>
 <symbols>
 <symbol name="A3L-LOC">
@@ -2103,6 +2121,28 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <wire x1="1.27" y1="-2.54" x2="1.27" y2="2.54" width="0.254" layer="94"/>
 <wire x1="1.27" y1="2.54" x2="-3.81" y2="2.54" width="0.254" layer="94"/>
 <pin name="HEAT" x="2.54" y="-2.54" visible="off" length="short" rot="R180"/>
+</symbol>
+<symbol name="R-TRIM">
+<wire x1="-2.54" y1="0" x2="-2.159" y2="1.016" width="0.2032" layer="94"/>
+<wire x1="-2.159" y1="1.016" x2="-1.524" y2="-1.016" width="0.2032" layer="94"/>
+<wire x1="-1.524" y1="-1.016" x2="-0.889" y2="1.016" width="0.2032" layer="94"/>
+<wire x1="-0.889" y1="1.016" x2="-0.254" y2="-1.016" width="0.2032" layer="94"/>
+<wire x1="-0.254" y1="-1.016" x2="0.381" y2="1.016" width="0.2032" layer="94"/>
+<wire x1="0.381" y1="1.016" x2="1.016" y2="-1.016" width="0.2032" layer="94"/>
+<wire x1="1.016" y1="-1.016" x2="1.651" y2="1.016" width="0.2032" layer="94"/>
+<wire x1="1.651" y1="1.016" x2="2.286" y2="-1.016" width="0.2032" layer="94"/>
+<wire x1="2.286" y1="-1.016" x2="2.54" y2="0" width="0.2032" layer="94"/>
+<text x="-3.81" y="4.0386" size="1.778" layer="95">&gt;NAME</text>
+<text x="-3.81" y="1.778" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="2" x="5.08" y="0" visible="off" length="short" direction="pas" swaplevel="1" rot="R180"/>
+<pin name="1" x="-5.08" y="0" visible="off" length="short" direction="pas" swaplevel="1"/>
+<pin name="WIPER" x="0" y="-5.08" visible="off" length="short" direction="pas" rot="R90"/>
+<wire x1="0" y1="-2.54" x2="0" y2="-1.27" width="0.1524" layer="94"/>
+<polygon width="0.1778" layer="94">
+<vertex x="0" y="-1.016"/>
+<vertex x="-0.508" y="-2.032"/>
+<vertex x="0.508" y="-2.032"/>
+</polygon>
 </symbol>
 </symbols>
 <devicesets>
@@ -2923,7 +2963,8 @@ DIN A3, landscape with location and doc. field</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="OPA2374">
+<deviceset name="OPA2374" prefix="U">
+<description>IC OPAMP GP 6.5MHZ RRO SOT23-8&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/OPA2374AIDCNR/296-37645-1-ND/4833881"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name=".1" symbol="OPAMP+-" x="0" y="12.7"/>
 <gate name=".2" symbol="OPAMP" x="0" y="-7.62"/>
@@ -2941,7 +2982,12 @@ DIN A3, landscape with location and doc. field</description>
 <connect gate=".2" pin="OUT" pad="7"/>
 </connects>
 <technologies>
-<technology name=""/>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="296-37645-1-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="OPA2374AIDCNR" constant="no"/>
+</technology>
 </technologies>
 </device>
 </devices>
@@ -3026,6 +3072,55 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="DIST_PN" value="MX3SWT-A1-0000-000CE5CT-ND" constant="no"/>
 <attribute name="MFG_NAME" value="Cree Inc." constant="no"/>
 <attribute name="MFG_PN" value="MX3SWT-A1-0000-000CE5" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="OPA170" prefix="U">
+<description>IC OPAMP GP 1.2MHZ RRO SOT23-5&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/OPA170AIDBVT/296-29496-1-ND/2748511"&gt;Digi-key Page&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="OPAMP+-" x="0" y="0"/>
+</gates>
+<devices>
+<device name="AIDBVR" package="SOT23-5">
+<connects>
+<connect gate="G$1" pin="+IN" pad="3"/>
+<connect gate="G$1" pin="-IN" pad="4"/>
+<connect gate="G$1" pin="OUT" pad="1"/>
+<connect gate="G$1" pin="V+" pad="5"/>
+<connect gate="G$1" pin="V-" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="296-29496-1-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="OPA170AIDBVT" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="R-TRIM" prefix="VR" uservalue="yes">
+<description>TRIMMER 200K OHM 0.25W SMD&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/ST4ETA204/ST4ETA204CT-ND/738503"&gt;Digi-key Page&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="R-TRIM" x="0" y="0"/>
+</gates>
+<devices>
+<device name="-ST4ETA204" package="ST-4EA">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="3"/>
+<connect gate="G$1" pin="WIPER" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="ST4ETA204CT-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Copal Electronics Inc." constant="no"/>
+<attribute name="MFG_PN" value="ST4ETA204" constant="no"/>
+<attribute name="VALUE" value="200k" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -3376,6 +3471,11 @@ DIN A3, landscape with location and doc. field</description>
 <part name="R79" library="perspection" deviceset="R" device="0805"/>
 <part name="GND64" library="perspection" deviceset="GND" device=""/>
 <part name="R80" library="perspection" deviceset="R" device="0402"/>
+<part name="U12" library="perspection" deviceset="OPA170" device="AIDBVR"/>
+<part name="R81" library="perspection" deviceset="R" device="0402"/>
+<part name="R82" library="perspection" deviceset="R" device="0402"/>
+<part name="VR1" library="perspection" deviceset="R-TRIM" device="-ST4ETA204" value="200k"/>
+<part name="GND65" library="perspection" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6589,6 +6689,11 @@ DIN A3, landscape with location and doc. field</description>
 <instance part="R79" gate="G$1" x="66.04" y="63.5" rot="R90"/>
 <instance part="GND64" gate="1" x="66.04" y="50.8"/>
 <instance part="R80" gate="G$1" x="53.34" y="81.28" rot="R180"/>
+<instance part="U12" gate="G$1" x="43.18" y="68.58" rot="R180"/>
+<instance part="R81" gate="G$1" x="58.42" y="71.12" rot="R180"/>
+<instance part="R82" gate="G$1" x="55.88" y="55.88" rot="R270"/>
+<instance part="VR1" gate="G$1" x="55.88" y="43.18" rot="R270"/>
+<instance part="GND65" gate="1" x="55.88" y="30.48"/>
 </instances>
 <busses>
 </busses>
@@ -6607,18 +6712,16 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="66.04" y1="88.9" x2="66.04" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$60" class="0">
-<segment>
-<pinref part="Q7" gate="G$1" pin="S"/>
-<pinref part="R79" gate="G$1" pin="2"/>
-<wire x1="66.04" y1="68.58" x2="66.04" y2="78.74" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="GND" class="0">
 <segment>
 <pinref part="R79" gate="G$1" pin="1"/>
 <pinref part="GND64" gate="1" pin="GND"/>
 <wire x1="66.04" y1="53.34" x2="66.04" y2="58.42" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="VR1" gate="G$1" pin="2"/>
+<pinref part="GND65" gate="1" pin="GND"/>
+<wire x1="55.88" y1="33.02" x2="55.88" y2="38.1" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$61" class="0">
@@ -6626,6 +6729,31 @@ DIN A3, landscape with location and doc. field</description>
 <pinref part="Q7" gate="G$1" pin="G"/>
 <pinref part="R80" gate="G$1" pin="1"/>
 <wire x1="58.42" y1="81.28" x2="60.96" y2="81.28" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$62" class="0">
+<segment>
+<pinref part="R81" gate="G$1" pin="2"/>
+<pinref part="U12" gate="G$1" pin="-IN"/>
+<wire x1="50.8" y1="71.12" x2="53.34" y2="71.12" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$60" class="0">
+<segment>
+<pinref part="Q7" gate="G$1" pin="S"/>
+<pinref part="R79" gate="G$1" pin="2"/>
+<wire x1="66.04" y1="78.74" x2="66.04" y2="71.12" width="0.1524" layer="91"/>
+<pinref part="R81" gate="G$1" pin="1"/>
+<wire x1="66.04" y1="71.12" x2="66.04" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="71.12" x2="66.04" y2="71.12" width="0.1524" layer="91"/>
+<junction x="66.04" y="71.12"/>
+</segment>
+</net>
+<net name="N$63" class="0">
+<segment>
+<pinref part="R82" gate="G$1" pin="2"/>
+<pinref part="VR1" gate="G$1" pin="1"/>
+<wire x1="55.88" y1="48.26" x2="55.88" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
