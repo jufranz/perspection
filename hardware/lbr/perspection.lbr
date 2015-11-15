@@ -4111,7 +4111,8 @@ DIN A3, landscape with location and doc. field</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="OPA2374">
+<deviceset name="OPA2374" prefix="U">
+<description>IC OPAMP GP 6.5MHZ RRO SOT23-8&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/OPA2374AIDCNR/296-37645-1-ND/4833881"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name=".1" symbol="OPAMP+-" x="0" y="12.7"/>
 <gate name=".2" symbol="OPAMP" x="0" y="-7.62"/>
@@ -4129,7 +4130,12 @@ DIN A3, landscape with location and doc. field</description>
 <connect gate=".2" pin="OUT" pad="7"/>
 </connects>
 <technologies>
-<technology name=""/>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="296-37645-1-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="OPA2374AIDCNR" constant="no"/>
+</technology>
 </technologies>
 </device>
 </devices>

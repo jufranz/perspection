@@ -1,7 +1,7 @@
 [Eagle]
-Version="07 04 00"
+Version="06 06 00"
 Platform="Mac OS X"
-Serial="6E039A1D15-LSR-WLM-1EL"
+Serial="6E1EA14967-LSR-WLM50EP"
 Globals="Globals"
 Desktop="Desktop"
 
@@ -9,5 +9,12 @@ Desktop="Desktop"
 AutoSaveProject=1
 UsedLibrary="/Users/jfranz/perspection/hardware/lbr/perspection.lbr"
 
+[Win_1]
+Type="Control Panel"
+Loc="156 116 1297 598"
+State=2
+Number=0
+
 [Desktop]
-Screen="4240 1440"
+Screen="1680 1050"
+Window="Win_1"
