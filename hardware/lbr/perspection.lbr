@@ -4715,6 +4715,31 @@ DIN A3, landscape with location and doc. field</description>
 </device>
 </devices>
 </deviceset>
+<deviceset name="OPA170" prefix="U">
+<description>IC OPAMP GP 1.2MHZ RRO SOT23-5&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/OPA170AIDBVT/296-29496-1-ND/2748511"&gt;Digi-key Page&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="OPAMP+-" x="0" y="0"/>
+</gates>
+<devices>
+<device name="AIDBVR" package="SOT23-5">
+<connects>
+<connect gate="G$1" pin="+IN" pad="3"/>
+<connect gate="G$1" pin="-IN" pad="4"/>
+<connect gate="G$1" pin="OUT" pad="1"/>
+<connect gate="G$1" pin="V+" pad="5"/>
+<connect gate="G$1" pin="V-" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
+<attribute name="DIST_PN" value="296-29496-1-ND" constant="no"/>
+<attribute name="MFG_NAME" value="Texas Instruments" constant="no"/>
+<attribute name="MFG_PN" value="OPA170AIDBVT" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
 </devicesets>
 </library>
 </drawing>
