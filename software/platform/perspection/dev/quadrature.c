@@ -13,7 +13,7 @@
 
 static double current_position;
 
-void quadrature_set_up_gpio(int pin_number);
+void quadrature_set_up_gpio(uint32_t pin_number);
 
 void channel_a_positive_edge(uint8_t port, uint8_t pin) {
     if(GPIO_READ_PIN(GPIO_B_BASE, GPIO_PIN_MASK(CHANNEL_B_PIN)) == 0) {
@@ -43,7 +43,7 @@ void quadrature_init() {
     gpio_register_callback(&channel_b_positive_edge, GPIO_B_NUM, CHANNEL_B_PIN);
 }
 
-void quadrature_set_up_gpio(int pin_number) {
+void quadrature_set_up_gpio(uint32_t pin_number) {
     GPIO_SOFTWARE_CONTROL(GPIO_B_BASE, GPIO_PIN_MASK(pin_number));
     GPIO_SET_INPUT(GPIO_B_BASE, GPIO_PIN_MASK(pin_number));
     GPIO_DETECT_EDGE(GPIO_B_BASE, GPIO_PIN_MASK(pin_number));
