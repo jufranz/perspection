@@ -914,32 +914,12 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <vertex x="0.5" y="-0.25"/>
 <vertex x="-0.5" y="-0.25"/>
 </polygon>
-<wire x1="-0.2" y1="0.2" x2="0.2" y2="0.2" width="0.12" layer="21"/>
-<wire x1="-0.2" y1="-0.2" x2="0.2" y2="-0.2" width="0.12" layer="21"/>
+<wire x1="0" y1="0.2" x2="0" y2="-0.2" width="0.12" layer="21"/>
 <wire x1="-1" y1="0.4" x2="1" y2="0.4" width="0.1" layer="37"/>
 <wire x1="1" y1="0.4" x2="1" y2="-0.4" width="0.1" layer="37"/>
 <wire x1="1" y1="-0.4" x2="-1" y2="-0.4" width="0.1" layer="37"/>
 <wire x1="-1" y1="-0.4" x2="-1" y2="0.4" width="0.1" layer="37"/>
 <text x="0" y="0" size="0.5" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
-</package>
-<package name="C0603">
-<description>&lt;b&gt;CAPACITOR&lt;/b&gt;</description>
-<smd name="1" x="-0.775" y="0" dx="0.65" dy="1" layer="1"/>
-<smd name="2" x="0.775" y="0" dx="0.65" dy="1" layer="1"/>
-<text x="-1.1" y="0.7" size="0.8" layer="25" font="vector" ratio="15">&gt;NAME</text>
-<polygon width="0" layer="51">
-<vertex x="-0.8" y="0.4"/>
-<vertex x="0.8" y="0.4"/>
-<vertex x="0.8" y="-0.4"/>
-<vertex x="-0.8" y="-0.4"/>
-</polygon>
-<wire x1="-0.3" y1="0.4" x2="0.3" y2="0.4" width="0.12" layer="21"/>
-<wire x1="-0.3" y1="-0.4" x2="0.3" y2="-0.4" width="0.12" layer="21"/>
-<wire x1="-1.3" y1="0.5" x2="1.3" y2="0.5" width="0.1" layer="37"/>
-<wire x1="1.3" y1="0.5" x2="1.3" y2="-0.5" width="0.1" layer="37"/>
-<wire x1="1.3" y1="-0.5" x2="-1.3" y2="-0.5" width="0.1" layer="37"/>
-<wire x1="-1.3" y1="-0.5" x2="-1.3" y2="0.5" width="0.1" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="C0805">
 <description>&lt;b&gt;CAPACITOR&lt;/b&gt;&lt;p&gt;</description>
@@ -1863,6 +1843,24 @@ http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</description>
 <wire x1="1.25" y1="-2.5" x2="-1.25" y2="-2.5" width="0.12" layer="37"/>
 <text x="-1.25" y="3.75" size="0.8" layer="25" font="vector" ratio="15">&gt;NAME</text>
 <text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" rot="R90" align="center">&gt;NAME</text>
+</package>
+<package name="C0603">
+<description>&lt;b&gt;CAPACITOR&lt;/b&gt;</description>
+<smd name="1" x="-0.775" y="0" dx="0.65" dy="1" layer="1"/>
+<smd name="2" x="0.775" y="0" dx="0.65" dy="1" layer="1"/>
+<text x="-1.1" y="0.7" size="0.8" layer="25" font="vector" ratio="15">&gt;NAME</text>
+<polygon width="0" layer="51">
+<vertex x="-0.8" y="0.4"/>
+<vertex x="0.8" y="0.4"/>
+<vertex x="0.8" y="-0.4"/>
+<vertex x="-0.8" y="-0.4"/>
+</polygon>
+<wire x1="0" y1="0.4" x2="0" y2="-0.4" width="0.12" layer="21"/>
+<wire x1="-1.3" y1="0.5" x2="1.3" y2="0.5" width="0.1" layer="37"/>
+<wire x1="1.3" y1="0.5" x2="1.3" y2="-0.5" width="0.1" layer="37"/>
+<wire x1="1.3" y1="-0.5" x2="-1.3" y2="-0.5" width="0.1" layer="37"/>
+<wire x1="-1.3" y1="-0.5" x2="-1.3" y2="0.5" width="0.1" layer="37"/>
+<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 </packages>
 <symbols>
@@ -4234,7 +4232,7 @@ DIN A3, landscape with location and doc. field</description>
 <part name="+3V17" library="perspection" deviceset="+3V3" device=""/>
 <part name="GND60" library="perspection" deviceset="GND" device=""/>
 <part name="GND61" library="perspection" deviceset="GND" device=""/>
-<part name="S1" library="perspection" deviceset="TACTILE-SWITCH" device="-SMD"/>
+<part name="S1" library="perspection" deviceset="TACTILE-SWITCH" device="-EVQP2" value="TACTILE-SWITCH-EVQP2"/>
 <part name="R78" library="perspection" deviceset="R" device="0402" value="2.2k"/>
 <part name="C81" library="perspection" deviceset="C" device="0402" value="0.1uF"/>
 <part name="GND62" library="perspection" deviceset="GND" device=""/>
@@ -6374,7 +6372,7 @@ DIN A3, landscape with location and doc. field</description>
 <label x="63.5" y="190.5" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$16" class="0">
+<net name="SENSE1" class="0">
 <segment>
 <pinref part="U6" gate="G$1" pin="SENSE"/>
 <wire x1="91.44" y1="193.04" x2="83.82" y2="193.04" width="0.1524" layer="91"/>
@@ -6406,7 +6404,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="78.74" y1="134.62" x2="78.74" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$21" class="0">
+<net name="SENSE2" class="0">
 <segment>
 <pinref part="U7" gate="G$1" pin="SENSE"/>
 <wire x1="91.44" y1="114.3" x2="83.82" y2="114.3" width="0.1524" layer="91"/>
@@ -6438,7 +6436,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="78.74" y1="53.34" x2="78.74" y2="66.04" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$25" class="0">
+<net name="SENSE3" class="0">
 <segment>
 <pinref part="U8" gate="G$1" pin="SENSE"/>
 <wire x1="91.44" y1="33.02" x2="83.82" y2="33.02" width="0.1524" layer="91"/>
@@ -6510,7 +6508,7 @@ DIN A3, landscape with location and doc. field</description>
 <junction x="68.58" y="38.1"/>
 </segment>
 </net>
-<net name="N$17" class="0">
+<net name="_VPROPI1" class="0">
 <segment>
 <pinref part="U6" gate="G$1" pin="VPROPI"/>
 <wire x1="91.44" y1="195.58" x2="81.28" y2="195.58" width="0.1524" layer="91"/>
@@ -6519,7 +6517,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="81.28" y1="190.5" x2="78.74" y2="190.5" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$26" class="0">
+<net name="_VPROPI2" class="0">
 <segment>
 <pinref part="U7" gate="G$1" pin="VPROPI"/>
 <pinref part="R11" gate="G$1" pin="2"/>
@@ -6528,7 +6526,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="81.28" y1="116.84" x2="91.44" y2="116.84" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$27" class="0">
+<net name="_VPROPI3" class="0">
 <segment>
 <pinref part="R14" gate="G$1" pin="2"/>
 <wire x1="78.74" y1="33.02" x2="81.28" y2="33.02" width="0.1524" layer="91"/>
@@ -6583,7 +6581,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="276.86" y1="144.78" x2="276.86" y2="157.48" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$31" class="0">
+<net name="AUX_SENSE" class="0">
 <segment>
 <pinref part="U9" gate="G$1" pin="SENSE"/>
 <wire x1="289.56" y1="124.46" x2="281.94" y2="124.46" width="0.1524" layer="91"/>
@@ -6591,7 +6589,7 @@ DIN A3, landscape with location and doc. field</description>
 <pinref part="R19" gate="G$1" pin="2"/>
 </segment>
 </net>
-<net name="N$32" class="0">
+<net name="_AUX_VPROPI" class="0">
 <segment>
 <pinref part="U9" gate="G$1" pin="VPROPI"/>
 <wire x1="289.56" y1="127" x2="279.4" y2="127" width="0.1524" layer="91"/>
@@ -6667,7 +6665,7 @@ DIN A3, landscape with location and doc. field</description>
 <label x="261.62" y="121.92" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$64" class="0">
+<net name="M1+" class="0">
 <segment>
 <pinref part="J2" gate="G$1" pin="1"/>
 <wire x1="167.64" y1="172.72" x2="149.86" y2="172.72" width="0.1524" layer="91"/>
@@ -6676,7 +6674,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="149.86" y1="215.9" x2="127" y2="215.9" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$65" class="0">
+<net name="M1-" class="0">
 <segment>
 <pinref part="U6" gate="G$1" pin="OUT-"/>
 <wire x1="127" y1="205.74" x2="147.32" y2="205.74" width="0.1524" layer="91"/>
@@ -6685,7 +6683,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="147.32" y1="170.18" x2="167.64" y2="170.18" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$66" class="0">
+<net name="M2+" class="0">
 <segment>
 <pinref part="J2" gate="G$1" pin="3"/>
 <wire x1="167.64" y1="167.64" x2="147.32" y2="167.64" width="0.1524" layer="91"/>
@@ -6694,7 +6692,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="147.32" y1="137.16" x2="127" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$67" class="0">
+<net name="M2-" class="0">
 <segment>
 <pinref part="U7" gate="G$1" pin="OUT-"/>
 <wire x1="127" y1="127" x2="149.86" y2="127" width="0.1524" layer="91"/>
@@ -6703,7 +6701,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="149.86" y1="165.1" x2="167.64" y2="165.1" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$68" class="0">
+<net name="M3+" class="0">
 <segment>
 <pinref part="J2" gate="G$1" pin="5"/>
 <wire x1="167.64" y1="162.56" x2="152.4" y2="162.56" width="0.1524" layer="91"/>
@@ -6712,7 +6710,7 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="152.4" y1="55.88" x2="127" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$69" class="0">
+<net name="M3-" class="0">
 <segment>
 <pinref part="U8" gate="G$1" pin="OUT-"/>
 <wire x1="127" y1="45.72" x2="154.94" y2="45.72" width="0.1524" layer="91"/>
@@ -6721,14 +6719,14 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="154.94" y1="160.02" x2="167.64" y2="160.02" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$70" class="0">
+<net name="M_AUX+" class="0">
 <segment>
 <pinref part="U9" gate="G$1" pin="OUT+"/>
 <pinref part="J3" gate="G$1" pin="1"/>
 <wire x1="325.12" y1="147.32" x2="335.28" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$71" class="0">
+<net name="M_AUX-" class="0">
 <segment>
 <pinref part="U9" gate="G$1" pin="OUT-"/>
 <wire x1="325.12" y1="137.16" x2="327.66" y2="137.16" width="0.1524" layer="91"/>
