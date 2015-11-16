@@ -5,8 +5,8 @@
 #include "dev/nvic.h"
 #include "dev/leds.h"
 
-#define CHANNEL_A_PIN 4
-#define CHANNEL_B_PIN 5
+#define CHANNEL_A_PIN 5
+#define CHANNEL_B_PIN 6
 
 #define COUNTS_PER_REV 4096.0
 #define DEGREES_PER_COUNT (360.0 / COUNTS_PER_REV)
