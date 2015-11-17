@@ -11,7 +11,7 @@ UsedLibrary="/Users/jfranz/perspection/hardware/lbr/perspection.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="7 23 1148 505"
+Loc="7 -7 1148 475"
 State=2
 Number=0
 
