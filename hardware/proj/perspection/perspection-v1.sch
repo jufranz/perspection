@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -6175,7 +6175,7 @@ Select</text>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="U5" gate=".1" x="248.92" y="172.72"/>
 <instance part="U5" gate=".2" x="172.72" y="55.88"/>
-<instance part="R40" gate="G$1" x="78.74" y="45.72"/>
+<instance part="R40" gate="G$1" x="248.92" y="81.28" rot="R180"/>
 <instance part="R41" gate="G$1" x="78.74" y="53.34"/>
 <instance part="R42" gate="G$1" x="243.84" y="76.2"/>
 <instance part="R43" gate="G$1" x="314.96" y="167.64"/>
@@ -6192,7 +6192,7 @@ Select</text>
 <instance part="R54" gate="G$1" x="78.74" y="63.5"/>
 <instance part="R55" gate="G$1" x="71.12" y="58.42"/>
 <instance part="R56" gate="G$1" x="243.84" y="86.36"/>
-<instance part="R57" gate="G$1" x="248.92" y="81.28" rot="R180"/>
+<instance part="R57" gate="G$1" x="88.9" y="27.94"/>
 <instance part="R58" gate="G$1" x="96.52" y="22.86"/>
 <instance part="R59" gate="G$1" x="264.16" y="48.26"/>
 <instance part="R60" gate="G$1" x="256.54" y="43.18"/>
@@ -6259,15 +6259,6 @@ Select</text>
 <busses>
 </busses>
 <nets>
-<net name="_!FAULT" class="0">
-<segment>
-<pinref part="U5" gate=".2" pin="GPIO15/ECAP2/SCI_RXDB/!SPISTEB"/>
-<pinref part="R40" gate="G$1" pin="2"/>
-<wire x1="83.82" y1="45.72" x2="86.36" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="86.36" y1="45.72" x2="86.36" y2="48.26" width="0.1524" layer="91"/>
-<wire x1="86.36" y1="48.26" x2="119.38" y2="48.26" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="_DRV_SCK" class="0">
 <segment>
 <pinref part="U5" gate=".2" pin="GPIO14/!TZ3!/SCITXDB/SPICLKB"/>
@@ -6474,15 +6465,17 @@ Select</text>
 <net name="!FAULT" class="0">
 <segment>
 <pinref part="R40" gate="G$1" pin="1"/>
-<wire x1="73.66" y1="45.72" x2="60.96" y2="45.72" width="0.1524" layer="91"/>
-<label x="60.96" y="45.72" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="254" y1="81.28" x2="256.54" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="256.54" y1="81.28" x2="256.54" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="256.54" y1="83.82" x2="261.62" y2="83.82" width="0.1524" layer="91"/>
+<label x="261.62" y="83.82" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="DRV_SDI" class="0">
 <segment>
 <pinref part="R57" gate="G$1" pin="1"/>
-<wire x1="254" y1="81.28" x2="261.62" y2="81.28" width="0.1524" layer="91"/>
-<label x="261.62" y="81.28" size="1.27" layer="95" xref="yes"/>
+<wire x1="83.82" y1="27.94" x2="78.74" y2="27.94" width="0.1524" layer="91"/>
+<label x="78.74" y="27.94" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="DRV_SDO" class="0">
@@ -7141,15 +7134,6 @@ Select</text>
 <label x="233.68" y="68.58" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="N$21" class="0">
-<segment>
-<pinref part="U5" gate=".2" pin="GPIO28/SCI_RXDA/SDAA/!TZ2"/>
-<wire x1="226.06" y1="83.82" x2="236.22" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="236.22" y1="83.82" x2="236.22" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="236.22" y1="81.28" x2="243.84" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="R57" gate="G$1" pin="2"/>
-</segment>
-</net>
 <net name="N$49" class="0">
 <segment>
 <pinref part="U5" gate=".2" pin="GPIO29/SCI_TXDA/SCLA/!TZ3"/>
@@ -7207,6 +7191,22 @@ Select</text>
 <pinref part="R126" gate="G$1" pin="1"/>
 <wire x1="248.92" y1="71.12" x2="248.92" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="63.5" x2="251.46" y2="63.5" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$21" class="0">
+<segment>
+<pinref part="U5" gate=".2" pin="GPIO24/ECAP1/EQEP2A/SPISIMOB"/>
+<pinref part="R57" gate="G$1" pin="2"/>
+<wire x1="93.98" y1="27.94" x2="119.38" y2="27.94" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$52" class="0">
+<segment>
+<pinref part="R40" gate="G$1" pin="2"/>
+<wire x1="243.84" y1="81.28" x2="236.22" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="U5" gate=".2" pin="GPIO28/SCI_RXDA/SDAA/!TZ2"/>
+<wire x1="226.06" y1="83.82" x2="236.22" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="83.82" x2="236.22" y2="81.28" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -9499,8 +9499,6 @@ Select</text>
 </sheet>
 </sheets>
 <errors>
-<approved hash="106,2,236.22,198.12,ATUM_ADC6,,,,,"/>
-<approved hash="106,2,236.22,200.66,ATUM_ADC7,,,,,"/>
 <approved hash="113,8,237.765,116.84,R79,,,,,"/>
 <approved hash="113,8,143.785,160.02,R82,,,,,"/>
 </errors>
