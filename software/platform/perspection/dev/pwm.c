@@ -56,7 +56,7 @@ void pwm_set_timing(uint32_t gptimer_base, uint32_t timer_sel, double period_ms,
     // Figure out and write the duty cycle value
 
     uint32_t match_register = (timer_sel == PWM_TIMER_1_SEL) ? GPTIMER_TAMATCHR : GPTIMER_TBMATCHR;
-    uint16_t duty_cycle_value = (uint16_t)(period_value * duty_cycle);
+    uint16_t duty_cycle_value = (uint16_t)((double)period_value * duty_cycle);
     REG(gptimer_base + match_register) = duty_cycle_value;
 }
 
