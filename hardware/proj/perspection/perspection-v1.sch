@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -4576,6 +4576,9 @@ DIN A3, landscape with location and doc. field</description>
 <part name="+3V25" library="perspection" deviceset="+3V3" device=""/>
 <part name="R122" library="perspection" deviceset="R" device="0402"/>
 <part name="GND88" library="perspection" deviceset="GND" device=""/>
+<part name="R123" library="perspection" deviceset="R" device="0402" value="0"/>
+<part name="C96" library="perspection" deviceset="C" device="0402" value="0.1uF"/>
+<part name="GND89" library="perspection" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -4687,6 +4690,9 @@ DIN A3, landscape with location and doc. field</description>
 <instance part="R106" gate="G$1" x="182.88" y="177.8"/>
 <instance part="R107" gate="G$1" x="231.14" y="147.32"/>
 <instance part="R108" gate="G$1" x="231.14" y="139.7"/>
+<instance part="R123" gate="G$1" x="284.48" y="187.96"/>
+<instance part="C96" gate="G$1" x="276.86" y="182.88"/>
+<instance part="GND89" gate="1" x="276.86" y="172.72"/>
 </instances>
 <busses>
 </busses>
@@ -4977,6 +4983,11 @@ DIN A3, landscape with location and doc. field</description>
 <pinref part="C94" gate="G$1" pin="2"/>
 <wire x1="180.34" y1="213.36" x2="180.34" y2="215.9" width="0.1524" layer="91"/>
 <pinref part="GND81" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C96" gate="G$1" pin="2"/>
+<pinref part="GND89" gate="1" pin="GND"/>
+<wire x1="276.86" y1="175.26" x2="276.86" y2="177.8" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="BOOTLOADER_RX" class="0">
@@ -5278,7 +5289,9 @@ DIN A3, landscape with location and doc. field</description>
 <segment>
 <pinref part="U1" gate="G$1" pin="BTLDR_CTRL"/>
 <wire x1="269.24" y1="187.96" x2="271.78" y2="187.96" width="0.1524" layer="91"/>
-<label x="271.78" y="187.96" size="1.27" layer="95" xref="yes"/>
+<wire x1="271.78" y1="187.96" x2="271.78" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="167.64" x2="274.32" y2="167.64" width="0.1524" layer="91"/>
+<label x="274.32" y="167.64" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="S2" gate=".2" pin="1"/>
@@ -5335,13 +5348,6 @@ DIN A3, landscape with location and doc. field</description>
 <pinref part="R108" gate="G$1" pin="2"/>
 <wire x1="246.38" y1="170.18" x2="246.38" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="139.7" x2="236.22" y2="139.7" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="ATUM_ADC3" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="ADC3"/>
-<wire x1="269.24" y1="190.5" x2="271.78" y2="190.5" width="0.1524" layer="91"/>
-<label x="271.78" y="190.5" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ATUM_ADC4" class="0">
@@ -5572,6 +5578,26 @@ DIN A3, landscape with location and doc. field</description>
 <pinref part="R108" gate="G$1" pin="1"/>
 <wire x1="226.06" y1="139.7" x2="223.52" y2="139.7" width="0.1524" layer="91"/>
 <label x="223.52" y="139.7" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="ADC3"/>
+<pinref part="R123" gate="G$1" pin="1"/>
+<wire x1="279.4" y1="187.96" x2="276.86" y2="187.96" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="187.96" x2="274.32" y2="187.96" width="0.1524" layer="91"/>
+<wire x1="274.32" y1="187.96" x2="274.32" y2="190.5" width="0.1524" layer="91"/>
+<wire x1="274.32" y1="190.5" x2="269.24" y2="190.5" width="0.1524" layer="91"/>
+<pinref part="C96" gate="G$1" pin="1"/>
+<wire x1="276.86" y1="185.42" x2="276.86" y2="187.96" width="0.1524" layer="91"/>
+<junction x="276.86" y="187.96"/>
+</segment>
+</net>
+<net name="AUX_VPROPI" class="0">
+<segment>
+<pinref part="R123" gate="G$1" pin="2"/>
+<label x="292.1" y="187.96" size="1.27" layer="95" xref="yes"/>
+<wire x1="289.56" y1="187.96" x2="292.1" y2="187.96" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
