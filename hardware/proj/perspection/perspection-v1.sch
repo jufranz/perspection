@@ -902,11 +902,6 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <wire x1="-1.325" y1="0.875" x2="-1.525" y2="0.875" width="0.12" layer="21"/>
 <text x="-1.9" y="-2" size="0.8" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
 <circle x="-0.95" y="-2.21" radius="0.14141875" width="0.12" layer="25"/>
-<wire x1="-1.6" y1="0.9" x2="1.6" y2="0.9" width="0.12" layer="37"/>
-<wire x1="1.6" y1="0.9" x2="1.6" y2="-0.9" width="0.12" layer="37"/>
-<wire x1="1.6" y1="-0.9" x2="-1.6" y2="-0.9" width="0.12" layer="37"/>
-<wire x1="-1.6" y1="-0.9" x2="-1.6" y2="0.9" width="0.12" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="C0402">
 <description>&lt;b&gt;CAPACITOR&lt;/b&gt;</description>
@@ -1320,11 +1315,6 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <circle x="-7.3" y="-3.7" radius="0.22360625" width="0.12" layer="21"/>
 <wire x1="-7.05" y1="3.1" x2="-7.05" y2="-3.1" width="0.127" layer="21"/>
 <wire x1="7.05" y1="3.1" x2="7.05" y2="-3.1" width="0.127" layer="21"/>
-<wire x1="-6.858" y1="3.048" x2="-6.858" y2="-2.794" width="0.12" layer="37"/>
-<wire x1="-6.858" y1="-2.794" x2="6.858" y2="-2.794" width="0.12" layer="37"/>
-<wire x1="6.858" y1="-2.794" x2="6.858" y2="3.048" width="0.12" layer="37"/>
-<wire x1="6.858" y1="3.048" x2="-6.858" y2="3.048" width="0.12" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="TI-SOT23-8">
 <smd name="1" x="-0.975" y="-1.3" dx="1.1" dy="0.45" layer="1" rot="R90"/>
@@ -1374,16 +1364,16 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <smd name="ANODE" x="-3.125" y="0" dx="1.75" dy="3.9" layer="1"/>
 <smd name="CATHODE" x="3.125" y="0" dx="1.75" dy="3.9" layer="1"/>
 <smd name="THERM" x="0" y="0" dx="1.1" dy="3.9" layer="1"/>
-<wire x1="-2.05" y1="-2.5" x2="2.05" y2="-2.5" width="0.127" layer="37"/>
+<wire x1="-2.05" y1="-2.5" x2="1.75" y2="-2.5" width="0.127" layer="21"/>
 <wire x1="1.75" y1="-2.5" x2="2.05" y2="-2.5" width="0.127" layer="21"/>
 <wire x1="2.05" y1="2.5" x2="-2.05" y2="2.5" width="0.127" layer="21"/>
 <wire x1="0.95" y1="0.6" x2="0.95" y2="-0.6" width="0.127" layer="21"/>
 <wire x1="0.95" y1="-0.6" x2="1.9" y2="0" width="0.127" layer="21"/>
 <wire x1="1.9" y1="0" x2="0.95" y2="0.6" width="0.127" layer="21"/>
-<wire x1="2.5" y1="2.05" x2="2.05" y2="2.5" width="0.127" layer="37" curve="90"/>
-<wire x1="-2.5" y1="2.05" x2="-2.05" y2="2.5" width="0.127" layer="37" curve="-90"/>
+<wire x1="2.5" y1="2.05" x2="2.05" y2="2.5" width="0.127" layer="21" curve="90"/>
+<wire x1="-2.5" y1="2.05" x2="-2.05" y2="2.5" width="0.127" layer="21" curve="-90"/>
 <wire x1="-2.5" y1="-2.05" x2="-2.05" y2="-2.5" width="0.127" layer="21" curve="90"/>
-<wire x1="2.5" y1="-2.05" x2="2.05" y2="-2.5" width="0.127" layer="37" curve="-90"/>
+<wire x1="2.5" y1="-2.05" x2="2.05" y2="-2.5" width="0.127" layer="21" curve="-90"/>
 <wire x1="1.75" y1="-2.5" x2="2.25" y2="-2.05" width="0.127" layer="21"/>
 <polygon width="0.127" layer="21">
 <vertex x="1.85" y="-2.45"/>
@@ -1392,7 +1382,7 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <vertex x="2.5" y="-2.05"/>
 <vertex x="2.25" y="-2.05"/>
 </polygon>
-<text x="-2.54" y="3.175" size="1.27" layer="25" font="vector" ratio="15">&gt;NAME</text>
+<text x="-2.54" y="3.175" size="1.27" layer="21" font="vector" ratio="15">&gt;NAME</text>
 <pad name="THERM1" x="0" y="0" drill="0.254" diameter="0.4064"/>
 <pad name="THERM2" x="0" y="1" drill="0.254" diameter="0.4064"/>
 <pad name="THERM3" x="0" y="-1" drill="0.254" diameter="0.4064"/>
@@ -1404,15 +1394,6 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <pad name="THERM9" x="0.3" y="-0.5" drill="0.254" diameter="0.4064"/>
 <pad name="THERM10" x="0.3" y="-1.5" drill="0.254" diameter="0.4064"/>
 <pad name="THERM11" x="-0.3" y="-1.5" drill="0.254" diameter="0.4064"/>
-<wire x1="2.05" y1="2.5" x2="-2.05" y2="2.5" width="0.127" layer="37"/>
-<wire x1="-2.5" y1="2.05" x2="-2.05" y2="2.5" width="0.127" layer="21" curve="-90"/>
-<wire x1="2.5" y1="2.05" x2="2.05" y2="2.5" width="0.127" layer="21" curve="90"/>
-<wire x1="-2.05" y1="-2.5" x2="1.75" y2="-2.5" width="0.127" layer="21"/>
-<wire x1="-2.5" y1="-2.05" x2="-2.05" y2="-2.5" width="0.127" layer="37" curve="90"/>
-<wire x1="2.5" y1="-2.05" x2="2.05" y2="-2.5" width="0.127" layer="21" curve="-90"/>
-<wire x1="-2.5" y1="-2" x2="-2.5" y2="2" width="0.12" layer="37"/>
-<wire x1="2.5" y1="2" x2="2.5" y2="-2" width="0.12" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="ST-4EA">
 <smd name="2" x="0" y="2" dx="2" dy="2" layer="1"/>
@@ -1491,11 +1472,6 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <wire x1="-12" y1="-4.7" x2="-10.5" y2="-4.7" width="0.127" layer="21"/>
 <text x="-11.8" y="7.8" size="0.8" layer="25" font="vector" ratio="15">&gt;NAME</text>
 <circle x="-8.75" y="-1.2" radius="0.360553125" width="0.127" layer="21"/>
-<wire x1="-12" y1="7.3" x2="-12" y2="-4.7" width="0.12" layer="37"/>
-<wire x1="-12" y1="-4.7" x2="10.5" y2="-4.7" width="0.12" layer="37"/>
-<wire x1="10.5" y1="-4.7" x2="10.5" y2="7.3" width="0.12" layer="37"/>
-<wire x1="10.5" y1="7.3" x2="-12" y2="7.3" width="0.12" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="JST-PH-2-SMD">
 <description>http://www.jst-mfg.com/product/pdf/eng/ePH.pdf</description>
@@ -1537,11 +1513,6 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <wire x1="-5" y1="-4.7" x2="-3.5" y2="-4.7" width="0.127" layer="21"/>
 <text x="-4.9" y="7.7" size="0.8" layer="25" font="vector" ratio="15">&gt;NAME</text>
 <circle x="-1.75" y="-1.4" radius="0.282840625" width="0.127" layer="21"/>
-<wire x1="-5" y1="7.3" x2="-5" y2="-4.7" width="0.12" layer="37"/>
-<wire x1="-5" y1="-4.7" x2="3.5" y2="-4.7" width="0.12" layer="37"/>
-<wire x1="3.5" y1="-4.7" x2="3.5" y2="7.3" width="0.12" layer="37"/>
-<wire x1="3.5" y1="7.3" x2="-5" y2="7.3" width="0.12" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="LGA-28">
 <smd name="1" x="1.7875" y="2.25" dx="0.25" dy="0.925" layer="1" rot="R90"/>
@@ -1628,11 +1599,6 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <smd name="4" x="2.54" y="0.908" dx="1.6764" dy="0.8128" layer="1"/>
 <text x="-3.302" y="1.924" size="1.27" layer="25" font="vector" ratio="10">&gt;NAME</text>
 <text x="-3.302" y="-3.156" size="1.27" layer="27" font="vector" ratio="10">&gt;VALUE</text>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
-<wire x1="-2.3" y1="1.7" x2="-2.3" y2="-1.7" width="0.12" layer="37"/>
-<wire x1="-2.3" y1="-1.7" x2="2.3" y2="-1.7" width="0.12" layer="37"/>
-<wire x1="2.3" y1="-1.7" x2="2.3" y2="1.7" width="0.12" layer="37"/>
-<wire x1="2.3" y1="1.7" x2="-2.3" y2="1.7" width="0.12" layer="37"/>
 </package>
 <package name="SOJ-4">
 <smd name="4" x="-2.75" y="1.6" dx="1.3" dy="1.9" layer="1"/>
@@ -1685,7 +1651,7 @@ reflow soldering</description>
 <wire x1="-4.5" y1="2.25" x2="4.5" y2="2.25" width="0.127" layer="21"/>
 <wire x1="4.5" y1="2.25" x2="4.5" y2="-2.25" width="0.127" layer="21"/>
 <wire x1="4.5" y1="-2.25" x2="-4.5" y2="-2.25" width="0.127" layer="21"/>
-<wire x1="-4.5" y1="-2.25" x2="-4.5" y2="2.25" width="0.127" layer="37"/>
+<wire x1="-4.5" y1="-2.25" x2="-4.5" y2="2.25" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="1.5" x2="-2.5" y2="-1.5" width="0.127" layer="51"/>
 <wire x1="-2.5" y1="-1.5" x2="2.5" y2="-1.5" width="0.127" layer="51"/>
 <wire x1="2.5" y1="-1.5" x2="2.5" y2="1.5" width="0.127" layer="51"/>
@@ -1698,10 +1664,6 @@ reflow soldering</description>
 <pad name="COM1" x="0" y="1" drill="1.0922"/>
 <pad name="COM2" x="0" y="-1" drill="1.0922"/>
 <text x="0" y="2.5" size="1.27" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
-<wire x1="-4.5" y1="2.25" x2="4.5" y2="2.25" width="0.127" layer="37"/>
-<wire x1="-4.5" y1="-2.25" x2="-4.5" y2="2.25" width="0.127" layer="21"/>
-<wire x1="4.5" y1="-2.25" x2="-4.5" y2="-2.25" width="0.127" layer="37"/>
-<wire x1="4.5" y1="2.25" x2="4.5" y2="-2.25" width="0.127" layer="37"/>
 </package>
 <package name="SSOP28">
 <description>&lt;b&gt;Shrink Small Outline Package&lt;/b&gt; SSOP-28&lt;p&gt;
@@ -1786,13 +1748,6 @@ http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</description>
 <text x="-2.54" y="-17.78" size="0.8128" layer="49">Board Edge</text>
 <text x="-7.62" y="1.27" size="5.08" layer="21" ratio="15" align="center">+</text>
 <text x="8.89" y="1.27" size="5.08" layer="21" ratio="15" align="center">-</text>
-<wire x1="-11.4" y1="-15.1" x2="-11.4" y2="-15" width="0.12" layer="37"/>
-<wire x1="-11.4" y1="-15" x2="-11.4" y2="5" width="0.12" layer="37"/>
-<wire x1="-11.4" y1="5" x2="11.4" y2="5" width="0.12" layer="37"/>
-<wire x1="11.4" y1="5" x2="11.4" y2="-15.3" width="0.12" layer="37"/>
-<wire x1="11.4" y1="-15.3" x2="-11.4" y2="-15.3" width="0.12" layer="37"/>
-<wire x1="-11.4" y1="-15.3" x2="-11.4" y2="-15.1" width="0.12" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="TC2050-IDC">
 <smd name="10" x="1.27" y="-0.635" dx="0.7874" dy="0.7874" layer="1" roundness="100" cream="no"/>
@@ -1859,11 +1814,6 @@ http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</description>
 <wire x1="-4.1" y1="1" x2="-4.1" y2="-1" width="0.127" layer="21"/>
 <wire x1="-4.1" y1="-1" x2="-3.7" y2="-1.4" width="0.127" layer="21"/>
 <text x="-4.445" y="-1.905" size="0.8" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
-<wire x1="-4" y1="1.3" x2="-4" y2="-1.4" width="0.12" layer="37"/>
-<wire x1="-4" y1="-1.4" x2="3.8" y2="-1.4" width="0.12" layer="37"/>
-<wire x1="3.8" y1="-1.4" x2="3.8" y2="1.3" width="0.12" layer="37"/>
-<wire x1="3.8" y1="1.3" x2="-4" y2="1.3" width="0.12" layer="37"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
 </package>
 <package name="R2010-4">
 <smd name="I1" x="-1.025" y="1.975" dx="1.55" dy="2.55" layer="1"/>
@@ -1898,22 +1848,6 @@ http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</description>
 <wire x1="1.3" y1="-0.5" x2="-1.3" y2="-0.5" width="0.1" layer="37"/>
 <wire x1="-1.3" y1="-0.5" x2="-1.3" y2="0.5" width="0.1" layer="37"/>
 <text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
-</package>
-<package name="LTC-SOT23-3">
-<smd name="3" x="0" y="1.37" dx="0.7" dy="0.8" layer="1"/>
-<smd name="2" x="0.96" y="-1.37" dx="0.7" dy="0.8" layer="1"/>
-<smd name="1" x="-0.96" y="-1.37" dx="0.7" dy="0.8" layer="1"/>
-<wire x1="-1.4" y1="0.6" x2="1.4" y2="0.6" width="0.127" layer="21"/>
-<wire x1="1.4" y1="0.6" x2="1.4" y2="-0.6" width="0.127" layer="21"/>
-<wire x1="1.4" y1="-0.6" x2="-1.4" y2="-0.6" width="0.127" layer="21"/>
-<wire x1="-1.4" y1="-0.6" x2="-1.4" y2="0.6" width="0.127" layer="37"/>
-<text x="-1.7" y="-2.6" size="1.27" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
-<circle x="-0.9652" y="-2.1082" radius="0.198378125" width="0.127" layer="21"/>
-<text x="0" y="0" size="0.8" layer="37" font="vector" ratio="15" align="center">&gt;NAME</text>
-<wire x1="-1.4" y1="-0.6" x2="-1.4" y2="0.6" width="0.127" layer="21"/>
-<wire x1="-1.4" y1="0.6" x2="1.4" y2="0.6" width="0.127" layer="37"/>
-<wire x1="1.4" y1="-0.6" x2="-1.4" y2="-0.6" width="0.127" layer="37"/>
-<wire x1="1.4" y1="0.6" x2="1.4" y2="-0.6" width="0.127" layer="37"/>
 </package>
 <package name="1X5_0.1IN_THRUHOLE">
 <pad name="1" x="-5.08" y="0" drill="1.1"/>
@@ -1990,6 +1924,17 @@ http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</description>
 <circle x="-1.8" y="1" radius="0.14141875" width="0.127" layer="37"/>
 <wire x1="-1.5" y1="0.6" x2="-0.5" y2="0.6" width="0.127" layer="37"/>
 <wire x1="-0.5" y1="0.6" x2="-0.5" y2="1.3" width="0.127" layer="37"/>
+</package>
+<package name="LTC-SOT23-3">
+<smd name="3" x="0" y="1.37" dx="0.7" dy="0.8" layer="1"/>
+<smd name="2" x="0.96" y="-1.37" dx="0.7" dy="0.8" layer="1"/>
+<smd name="1" x="-0.96" y="-1.37" dx="0.7" dy="0.8" layer="1"/>
+<wire x1="-1.4" y1="0.6" x2="1.4" y2="0.6" width="0.127" layer="21"/>
+<wire x1="1.4" y1="0.6" x2="1.4" y2="-0.6" width="0.127" layer="21"/>
+<wire x1="1.4" y1="-0.6" x2="-1.4" y2="-0.6" width="0.127" layer="21"/>
+<wire x1="-1.4" y1="-0.6" x2="-1.4" y2="0.6" width="0.127" layer="21"/>
+<text x="-1.7" y="-2.6" size="1.27" layer="25" font="vector" ratio="15" rot="R90">&gt;NAME</text>
+<circle x="-0.9652" y="-2.1082" radius="0.198378125" width="0.127" layer="21"/>
 </package>
 </packages>
 <symbols>
@@ -5611,7 +5556,7 @@ DIN A3, landscape with location and doc. field</description>
 <instance part="U5" gate=".2" x="172.72" y="55.88"/>
 <instance part="R40" gate="G$1" x="78.74" y="45.72"/>
 <instance part="R41" gate="G$1" x="78.74" y="53.34"/>
-<instance part="R42" gate="G$1" x="254" y="17.78"/>
+<instance part="R42" gate="G$1" x="243.84" y="76.2"/>
 <instance part="R43" gate="G$1" x="314.96" y="167.64"/>
 <instance part="R44" gate="G$1" x="314.96" y="157.48"/>
 <instance part="R45" gate="G$1" x="322.58" y="182.88"/>
@@ -5625,8 +5570,8 @@ DIN A3, landscape with location and doc. field</description>
 <instance part="R53" gate="G$1" x="71.12" y="68.58"/>
 <instance part="R54" gate="G$1" x="78.74" y="63.5"/>
 <instance part="R55" gate="G$1" x="71.12" y="58.42"/>
-<instance part="R56" gate="G$1" x="246.38" y="86.36"/>
-<instance part="R57" gate="G$1" x="96.52" y="30.48"/>
+<instance part="R56" gate="G$1" x="243.84" y="86.36"/>
+<instance part="R57" gate="G$1" x="248.92" y="81.28" rot="R180"/>
 <instance part="R58" gate="G$1" x="96.52" y="22.86"/>
 <instance part="R59" gate="G$1" x="254" y="48.26"/>
 <instance part="R60" gate="G$1" x="246.38" y="43.18"/>
@@ -5719,15 +5664,6 @@ DIN A3, landscape with location and doc. field</description>
 <wire x1="83.82" y1="53.34" x2="86.36" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="53.34" x2="86.36" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="50.8" x2="119.38" y2="50.8" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="_!OCTW" class="0">
-<segment>
-<pinref part="U5" gate=".2" pin="GPIO58/MCLKRA/SCI_TXDB/EPWM7A"/>
-<pinref part="R42" gate="G$1" pin="1"/>
-<wire x1="248.92" y1="17.78" x2="236.22" y2="17.78" width="0.1524" layer="91"/>
-<wire x1="236.22" y1="17.78" x2="236.22" y2="25.4" width="0.1524" layer="91"/>
-<wire x1="236.22" y1="25.4" x2="226.06" y2="25.4" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="_DC_V_FB" class="0">
@@ -5845,16 +5781,7 @@ DIN A3, landscape with location and doc. field</description>
 <segment>
 <pinref part="U5" gate=".2" pin="GPIO27/HRCAP2/EQEP2S/!SPISTEB!/USB0DM"/>
 <pinref part="R56" gate="G$1" pin="1"/>
-<wire x1="241.3" y1="86.36" x2="226.06" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="_DRV_SDI" class="0">
-<segment>
-<pinref part="U5" gate=".2" pin="GPIO24/ECAP1/EQEP2A/SPISIMOB"/>
-<pinref part="R57" gate="G$1" pin="2"/>
-<wire x1="101.6" y1="30.48" x2="104.14" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="104.14" y1="30.48" x2="104.14" y2="27.94" width="0.1524" layer="91"/>
-<wire x1="104.14" y1="27.94" x2="119.38" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="238.76" y1="86.36" x2="226.06" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="_DRV_SDO" class="0">
@@ -5943,8 +5870,8 @@ DIN A3, landscape with location and doc. field</description>
 <net name="DRV_SDI" class="0">
 <segment>
 <pinref part="R57" gate="G$1" pin="1"/>
-<wire x1="91.44" y1="30.48" x2="78.74" y2="30.48" width="0.1524" layer="91"/>
-<label x="78.74" y="30.48" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="254" y1="81.28" x2="261.62" y2="81.28" width="0.1524" layer="91"/>
+<label x="261.62" y="81.28" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="DRV_SDO" class="0">
@@ -5971,15 +5898,15 @@ DIN A3, landscape with location and doc. field</description>
 <net name="!OCTW" class="0">
 <segment>
 <pinref part="R42" gate="G$1" pin="2"/>
-<wire x1="259.08" y1="17.78" x2="261.62" y2="17.78" width="0.1524" layer="91"/>
-<label x="261.62" y="17.78" size="1.27" layer="95" xref="yes"/>
+<wire x1="248.92" y1="76.2" x2="261.62" y2="76.2" width="0.1524" layer="91"/>
+<label x="261.62" y="76.2" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="!DRV_CS" class="0">
 <segment>
 <pinref part="R56" gate="G$1" pin="2"/>
-<wire x1="251.46" y1="86.36" x2="256.54" y2="86.36" width="0.1524" layer="91"/>
-<label x="256.54" y="86.36" size="1.27" layer="95" xref="yes"/>
+<wire x1="248.92" y1="86.36" x2="261.62" y2="86.36" width="0.1524" layer="91"/>
+<label x="261.62" y="86.36" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="IB_FB" class="0">
@@ -6714,6 +6641,24 @@ DIN A3, landscape with location and doc. field</description>
 <pinref part="U5" gate=".2" pin="GPIO34/COMP2OUT/COMP3OUT"/>
 <wire x1="226.06" y1="68.58" x2="233.68" y2="68.58" width="0.1524" layer="91"/>
 <label x="233.68" y="68.58" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="N$21" class="0">
+<segment>
+<pinref part="U5" gate=".2" pin="GPIO28/SCI_RXDA/SDAA/!TZ2"/>
+<wire x1="226.06" y1="83.82" x2="236.22" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="83.82" x2="236.22" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="81.28" x2="243.84" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="R57" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$49" class="0">
+<segment>
+<pinref part="U5" gate=".2" pin="GPIO29/SCI_TXDA/SCLA/!TZ3"/>
+<wire x1="226.06" y1="81.28" x2="233.68" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="233.68" y1="81.28" x2="233.68" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="233.68" y1="76.2" x2="238.76" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="R42" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
