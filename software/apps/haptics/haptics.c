@@ -31,7 +31,7 @@
 #define TORQUE_DIRECTION_POSITIVE 0
 #define TORQUE_DIRECTION_NEGATIVE 1
 
-#define DUTY_CYCLE_MAX_ADJUSTMENT 0.05
+#define DUTY_CYCLE_MAX_ADJUSTMENT 0.01
 
 // Helpful functions and state
 
@@ -51,19 +51,29 @@ double normalize_raw_torque(int16_t raw_torque);
 // Position is in degrees, torque should be -1.0 to 1.0
 
 double torque_from_position(double position) {
-    // Spring, should be full torque at -90.0 and 90.0 degrees
-    return (position / -90.0);
+    if(position > 90.0) {
+        leds_on(LEDS_RED);
+        leds_off(LEDS_GREEN);
+        leds_off(LEDS_BLUE);
+    } else if(position > 45.0) {
+        leds_off(LEDS_RED);
+        leds_off(LEDS_GREEN);
+        leds_on(LEDS_BLUE);
+    } else {
+        leds_off(LEDS_RED);
+        leds_on(LEDS_GREEN);
+        leds_off(LEDS_BLUE);
+    }
+
+    // Loose spring
+    /*return (position / -360.0);*/
 
     // Wall
-    /*if(position > 45.0) {*/
-        /*leds_on(LEDS_RED);*/
-        /*leds_off(LEDS_GREEN);*/
-        /*return -0.5;*/
-    /*} else {*/
-        /*leds_off(LEDS_RED);*/
-        /*leds_on(LEDS_GREEN);*/
-        /*return 0;*/
-    /*}*/
+    if(position > 45.0) {
+        return -0.5;
+    } else {
+        return 0;
+    }
 }
 
 // The torque control loop
