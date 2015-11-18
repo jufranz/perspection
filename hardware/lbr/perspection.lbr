@@ -11887,6 +11887,7 @@ reflow soldering</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -11901,6 +11902,7 @@ reflow soldering</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -11915,6 +11917,7 @@ reflow soldering</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -11929,6 +11932,7 @@ reflow soldering</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -11943,6 +11947,7 @@ reflow soldering</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
