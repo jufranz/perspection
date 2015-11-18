@@ -3255,6 +3255,7 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -3269,6 +3270,7 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -3283,6 +3285,7 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -3297,6 +3300,7 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -3311,6 +3315,7 @@ DIN A3, landscape with location and doc. field</description>
 <attribute name="DIST_PN" value="" constant="no"/>
 <attribute name="MFG_NAME" value="" constant="no"/>
 <attribute name="MFG_PN" value="" constant="no"/>
+<attribute name="VOLTAGE" value="" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -6415,7 +6420,7 @@ Select</text>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="U5" gate=".1" x="248.92" y="172.72"/>
 <instance part="U5" gate=".2" x="172.72" y="55.88"/>
-<instance part="R40" gate="G$1" x="78.74" y="45.72"/>
+<instance part="R40" gate="G$1" x="248.92" y="81.28" rot="R180"/>
 <instance part="R41" gate="G$1" x="78.74" y="53.34"/>
 <instance part="R42" gate="G$1" x="243.84" y="76.2"/>
 <instance part="R43" gate="G$1" x="314.96" y="167.64"/>
@@ -6432,7 +6437,7 @@ Select</text>
 <instance part="R54" gate="G$1" x="78.74" y="63.5"/>
 <instance part="R55" gate="G$1" x="71.12" y="58.42"/>
 <instance part="R56" gate="G$1" x="243.84" y="86.36"/>
-<instance part="R57" gate="G$1" x="248.92" y="81.28" rot="R180"/>
+<instance part="R57" gate="G$1" x="88.9" y="27.94"/>
 <instance part="R58" gate="G$1" x="96.52" y="22.86"/>
 <instance part="R59" gate="G$1" x="264.16" y="48.26"/>
 <instance part="R60" gate="G$1" x="256.54" y="43.18"/>
@@ -6531,15 +6536,6 @@ Select</text>
 <busses>
 </busses>
 <nets>
-<net name="_!FAULT" class="1">
-<segment>
-<pinref part="U5" gate=".2" pin="GPIO15/ECAP2/SCI_RXDB/!SPISTEB"/>
-<pinref part="R40" gate="G$1" pin="2"/>
-<wire x1="83.82" y1="45.72" x2="86.36" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="86.36" y1="45.72" x2="86.36" y2="48.26" width="0.1524" layer="91"/>
-<wire x1="86.36" y1="48.26" x2="119.38" y2="48.26" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="_DRV_SCK" class="1">
 <segment>
 <pinref part="U5" gate=".2" pin="GPIO14/!TZ3!/SCITXDB/SPICLKB"/>
@@ -6746,15 +6742,17 @@ Select</text>
 <net name="!FAULT" class="1">
 <segment>
 <pinref part="R40" gate="G$1" pin="1"/>
-<wire x1="73.66" y1="45.72" x2="60.96" y2="45.72" width="0.1524" layer="91"/>
-<label x="60.96" y="45.72" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="254" y1="81.28" x2="256.54" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="256.54" y1="81.28" x2="256.54" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="256.54" y1="83.82" x2="261.62" y2="83.82" width="0.1524" layer="91"/>
+<label x="261.62" y="83.82" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="DRV_SDI" class="1">
 <segment>
 <pinref part="R57" gate="G$1" pin="1"/>
-<wire x1="254" y1="81.28" x2="261.62" y2="81.28" width="0.1524" layer="91"/>
-<label x="261.62" y="81.28" size="1.27" layer="95" xref="yes"/>
+<wire x1="83.82" y1="27.94" x2="78.74" y2="27.94" width="0.1524" layer="91"/>
+<label x="78.74" y="27.94" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="DRV_SDO" class="1">
@@ -7413,15 +7411,6 @@ Select</text>
 <label x="233.68" y="68.58" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="N$21" class="1">
-<segment>
-<pinref part="U5" gate=".2" pin="GPIO28/SCI_RXDA/SDAA/!TZ2"/>
-<wire x1="226.06" y1="83.82" x2="236.22" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="236.22" y1="83.82" x2="236.22" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="236.22" y1="81.28" x2="243.84" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="R57" gate="G$1" pin="2"/>
-</segment>
-</net>
 <net name="N$49" class="1">
 <segment>
 <pinref part="U5" gate=".2" pin="GPIO29/SCI_TXDA/SCLA/!TZ3"/>
@@ -7479,6 +7468,22 @@ Select</text>
 <pinref part="R126" gate="G$1" pin="1"/>
 <wire x1="248.92" y1="71.12" x2="248.92" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="63.5" x2="251.46" y2="63.5" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$21" class="1">
+<segment>
+<pinref part="U5" gate=".2" pin="GPIO24/ECAP1/EQEP2A/SPISIMOB"/>
+<pinref part="R57" gate="G$1" pin="2"/>
+<wire x1="93.98" y1="27.94" x2="119.38" y2="27.94" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$52" class="1">
+<segment>
+<pinref part="R40" gate="G$1" pin="2"/>
+<wire x1="243.84" y1="81.28" x2="236.22" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="U5" gate=".2" pin="GPIO28/SCI_RXDA/SDAA/!TZ2"/>
+<wire x1="226.06" y1="83.82" x2="236.22" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="83.82" x2="236.22" y2="81.28" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -7579,16 +7584,16 @@ Select</text>
 </instance>
 <instance part="GND25" gate="1" x="264.16" y="104.14"/>
 <instance part="C82" gate="G$1" x="55.88" y="154.94">
-<attribute name="VOLTAGE" x="55.88" y="154.94" size="1.778" layer="96" display="off"/>
+<attribute name="VOLTAGE" x="55.88" y="154.94" size="1.778" layer="96"/>
 </instance>
 <instance part="C83" gate="G$1" x="55.88" y="73.66">
-<attribute name="VOLTAGE" x="55.88" y="73.66" size="1.778" layer="96" display="off"/>
+<attribute name="VOLTAGE" x="55.88" y="73.66" size="1.778" layer="96"/>
 </instance>
 <instance part="C84" gate="G$1" x="256.54" y="162.56">
-<attribute name="VOLTAGE" x="256.54" y="162.56" size="1.778" layer="96" display="off"/>
+<attribute name="VOLTAGE" x="256.54" y="162.56" size="1.778" layer="96"/>
 </instance>
 <instance part="C85" gate="G$1" x="58.42" y="231.14">
-<attribute name="VOLTAGE" x="58.42" y="231.14" size="1.778" layer="96" display="off"/>
+<attribute name="VOLTAGE" x="58.42" y="231.14" size="1.778" layer="96"/>
 </instance>
 <instance part="GND66" gate="1" x="55.88" y="144.78"/>
 <instance part="GND67" gate="1" x="55.88" y="63.5"/>
@@ -7604,7 +7609,7 @@ Select</text>
 <busses>
 </busses>
 <nets>
-<net name="CP2_M1" class="3">
+<net name="N$13" class="3">
 <segment>
 <pinref part="U6" gate="G$1" pin="CP2"/>
 <pinref part="C11" gate="G$1" pin="2"/>
@@ -7612,7 +7617,7 @@ Select</text>
 <wire x1="129.54" y1="190.5" x2="129.54" y2="193.04" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="CP1_M1" class="3">
+<net name="N$14" class="3">
 <segment>
 <pinref part="U6" gate="G$1" pin="CP1"/>
 <pinref part="C11" gate="G$1" pin="1"/>
@@ -7962,7 +7967,7 @@ Select</text>
 <label x="63.5" y="190.5" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="SENSE1" class="3">
+<net name="SENSE1" class="1">
 <segment>
 <pinref part="U6" gate="G$1" pin="SENSE"/>
 <wire x1="91.44" y1="193.04" x2="83.82" y2="193.04" width="0.1524" layer="91"/>
@@ -7970,7 +7975,7 @@ Select</text>
 <pinref part="R6" gate="G$1" pin="2"/>
 </segment>
 </net>
-<net name="CP2_M2" class="3">
+<net name="N$18" class="3">
 <segment>
 <pinref part="U7" gate="G$1" pin="CP2"/>
 <pinref part="C14" gate="G$1" pin="2"/>
@@ -7978,7 +7983,7 @@ Select</text>
 <wire x1="129.54" y1="111.76" x2="129.54" y2="114.3" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="CP1_M2" class="3">
+<net name="N$19" class="3">
 <segment>
 <pinref part="U7" gate="G$1" pin="CP1"/>
 <pinref part="C14" gate="G$1" pin="1"/>
@@ -7994,7 +7999,7 @@ Select</text>
 <wire x1="78.74" y1="134.62" x2="78.74" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="SENSE2" class="3">
+<net name="SENSE2" class="1">
 <segment>
 <pinref part="U7" gate="G$1" pin="SENSE"/>
 <wire x1="91.44" y1="114.3" x2="83.82" y2="114.3" width="0.1524" layer="91"/>
@@ -8002,7 +8007,7 @@ Select</text>
 <pinref part="R12" gate="G$1" pin="2"/>
 </segment>
 </net>
-<net name="CP2_M3" class="3">
+<net name="N$22" class="3">
 <segment>
 <pinref part="U8" gate="G$1" pin="CP2"/>
 <pinref part="C17" gate="G$1" pin="2"/>
@@ -8010,7 +8015,7 @@ Select</text>
 <wire x1="129.54" y1="30.48" x2="129.54" y2="33.02" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="CP1_M3" class="3">
+<net name="N$23" class="3">
 <segment>
 <pinref part="U8" gate="G$1" pin="CP1"/>
 <pinref part="C17" gate="G$1" pin="1"/>
@@ -8026,7 +8031,7 @@ Select</text>
 <wire x1="78.74" y1="53.34" x2="78.74" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="SENSE3" class="3">
+<net name="SENSE3" class="1">
 <segment>
 <pinref part="U8" gate="G$1" pin="SENSE"/>
 <wire x1="91.44" y1="33.02" x2="83.82" y2="33.02" width="0.1524" layer="91"/>
@@ -8149,7 +8154,7 @@ Select</text>
 <label x="63.5" y="33.02" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="CP2_MAUX" class="3">
+<net name="N$28" class="3">
 <segment>
 <pinref part="U9" gate="G$1" pin="CP2"/>
 <pinref part="C23" gate="G$1" pin="2"/>
@@ -8157,7 +8162,7 @@ Select</text>
 <wire x1="327.66" y1="121.92" x2="327.66" y2="124.46" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="CP1_MAUX" class="3">
+<net name="N$29" class="3">
 <segment>
 <pinref part="U9" gate="G$1" pin="CP1"/>
 <pinref part="C23" gate="G$1" pin="1"/>
@@ -8173,7 +8178,7 @@ Select</text>
 <wire x1="276.86" y1="144.78" x2="276.86" y2="157.48" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="AUX_SENSE" class="3">
+<net name="AUX_SENSE" class="1">
 <segment>
 <pinref part="U9" gate="G$1" pin="SENSE"/>
 <wire x1="289.56" y1="124.46" x2="281.94" y2="124.46" width="0.1524" layer="91"/>
@@ -8483,10 +8488,10 @@ Select</text>
 </instance>
 <instance part="GND53" gate="1" x="342.9" y="167.64"/>
 <instance part="C86" gate="G$1" x="152.4" y="228.6">
-<attribute name="VOLTAGE" x="152.4" y="228.6" size="1.778" layer="96" display="off"/>
+<attribute name="VOLTAGE" x="152.4" y="228.6" size="1.778" layer="96"/>
 </instance>
 <instance part="C87" gate="G$1" x="165.1" y="228.6">
-<attribute name="VOLTAGE" x="165.1" y="228.6" size="1.778" layer="96" display="off"/>
+<attribute name="VOLTAGE" x="165.1" y="228.6" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -9891,8 +9896,6 @@ Select</text>
 </sheet>
 </sheets>
 <errors>
-<approved hash="106,2,236.22,198.12,ATUM_ADC6,,,,,"/>
-<approved hash="106,2,236.22,200.66,ATUM_ADC7,,,,,"/>
 <approved hash="113,8,237.765,116.84,R79,,,,,"/>
 <approved hash="113,8,143.785,160.02,R82,,,,,"/>
 </errors>
