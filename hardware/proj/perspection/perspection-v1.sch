@@ -1974,9 +1974,9 @@ http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</description>
 <wire x1="1.4875" y1="1.3125" x2="1.4875" y2="-1.3125" width="0.127" layer="37"/>
 <wire x1="1.4875" y1="-1.3125" x2="-1.4875" y2="-1.3125" width="0.127" layer="37"/>
 <wire x1="-1.4875" y1="-1.3125" x2="-1.4875" y2="1.3125" width="0.127" layer="37"/>
-<circle x="-1.8" y="1" radius="0.14141875" width="0.127" layer="37"/>
-<wire x1="-1.5" y1="0.6" x2="-0.5" y2="0.6" width="0.127" layer="37"/>
-<wire x1="-0.5" y1="0.6" x2="-0.5" y2="1.3" width="0.127" layer="37"/>
+<circle x="-1.8" y="1" radius="0.14141875" width="0.127" layer="21"/>
+<wire x1="-1.5" y1="0.6" x2="-0.5" y2="0.6" width="0.127" layer="21"/>
+<wire x1="-0.5" y1="0.6" x2="-0.5" y2="1.3" width="0.127" layer="21"/>
 </package>
 <package name="LTC-SOT23-3">
 <smd name="3" x="0" y="1.37" dx="0.7" dy="0.8" layer="1"/>
