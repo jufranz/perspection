@@ -3838,7 +3838,7 @@ DIN A3, landscape with location and doc. field</description>
 </devices>
 </deviceset>
 <deviceset name="R-TRIM" prefix="VR" uservalue="yes">
-<description>TRIMMER 200K OHM 0.25W SMD&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/ST4ETA204/ST4ETA204CT-ND/738503"&gt;Digi-key Page&lt;/a&gt;</description>
+<description>TRIMMER 10K OHM 0.25W SMD&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/ST4ETA103/ST4ETA103CT-ND/738497"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name="G$1" symbol="R-TRIM" x="0" y="0"/>
 </gates>
@@ -3852,10 +3852,10 @@ DIN A3, landscape with location and doc. field</description>
 <technologies>
 <technology name="">
 <attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
-<attribute name="DIST_PN" value="ST4ETA204CT-ND" constant="no"/>
+<attribute name="DIST_PN" value="ST4ETA103CT-ND" constant="no"/>
 <attribute name="MFG_NAME" value="Copal Electronics Inc." constant="no"/>
-<attribute name="MFG_PN" value="ST4ETA204" constant="no"/>
-<attribute name="VALUE" value="200k" constant="no"/>
+<attribute name="MFG_PN" value="ST4ETA103" constant="no"/>
+<attribute name="VALUE" value="10k" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -4716,13 +4716,13 @@ DIN A3, landscape with location and doc. field</description>
 <part name="FRAME7" library="perspection" deviceset="A3L-LOC" device="" value="LED Drive"/>
 <part name="Q7" library="perspection" deviceset="NMOS" device="-CSD18533Q5A"/>
 <part name="D6" library="perspection" deviceset="LED-PWR" device="-XLAMP_MX3"/>
-<part name="R79" library="perspection" deviceset="R" device="0805"/>
+<part name="R79" library="perspection" deviceset="R" device="0805" value="0.68"/>
 <part name="GND64" library="perspection" deviceset="GND" device=""/>
 <part name="R80" library="perspection" deviceset="R" device="0402" value="10"/>
 <part name="U12" library="perspection" deviceset="OPA170" device="AIDBVR"/>
 <part name="R81" library="perspection" deviceset="R" device="0402" value="0"/>
-<part name="R82" library="perspection" deviceset="R" device="0402"/>
-<part name="VR1" library="perspection" deviceset="R-TRIM" device="-ST4ETA204" value="200k"/>
+<part name="R82" library="perspection" deviceset="R" device="0402" value="470k"/>
+<part name="VR1" library="perspection" deviceset="R-TRIM" device="-ST4ETA204" value="10k"/>
 <part name="GND65" library="perspection" deviceset="GND" device=""/>
 <part name="C82" library="perspection" deviceset="CPOL" device="-PANASONIC-6.3MM-SMD-220UF-25V" value="220uF">
 <attribute name="VOLTAGE" value="20V"/>
