@@ -3838,7 +3838,7 @@ DIN A3, landscape with location and doc. field</description>
 </devices>
 </deviceset>
 <deviceset name="R-TRIM" prefix="VR" uservalue="yes">
-<description>TRIMMER 200K OHM 0.25W SMD&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/ST4ETA204/ST4ETA204CT-ND/738503"&gt;Digi-key Page&lt;/a&gt;</description>
+<description>TRIMMER 10K OHM 0.25W SMD&lt;br&gt;&lt;a href="http://www.digikey.com/product-detail/en/ST4ETA103/ST4ETA103CT-ND/738497"&gt;Digi-key Page&lt;/a&gt;</description>
 <gates>
 <gate name="G$1" symbol="R-TRIM" x="0" y="0"/>
 </gates>
@@ -3852,10 +3852,10 @@ DIN A3, landscape with location and doc. field</description>
 <technologies>
 <technology name="">
 <attribute name="DIST_NAME" value="Digi-Key" constant="no"/>
-<attribute name="DIST_PN" value="ST4ETA204CT-ND" constant="no"/>
+<attribute name="DIST_PN" value="ST4ETA103CT-ND" constant="no"/>
 <attribute name="MFG_NAME" value="Copal Electronics Inc." constant="no"/>
-<attribute name="MFG_PN" value="ST4ETA204" constant="no"/>
-<attribute name="VALUE" value="200k" constant="no"/>
+<attribute name="MFG_PN" value="ST4ETA103" constant="no"/>
+<attribute name="VALUE" value="10k" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -4716,13 +4716,13 @@ DIN A3, landscape with location and doc. field</description>
 <part name="FRAME7" library="perspection" deviceset="A3L-LOC" device="" value="LED Drive"/>
 <part name="Q7" library="perspection" deviceset="NMOS" device="-CSD18533Q5A"/>
 <part name="D6" library="perspection" deviceset="LED-PWR" device="-XLAMP_MX3"/>
-<part name="R79" library="perspection" deviceset="R" device="0805"/>
+<part name="R79" library="perspection" deviceset="R" device="0805" value="0.68"/>
 <part name="GND64" library="perspection" deviceset="GND" device=""/>
 <part name="R80" library="perspection" deviceset="R" device="0402" value="10"/>
 <part name="U12" library="perspection" deviceset="OPA170" device="AIDBVR"/>
 <part name="R81" library="perspection" deviceset="R" device="0402" value="0"/>
-<part name="R82" library="perspection" deviceset="R" device="0402"/>
-<part name="VR1" library="perspection" deviceset="R-TRIM" device="-ST4ETA204" value="200k"/>
+<part name="R82" library="perspection" deviceset="R" device="0402" value="470k"/>
+<part name="VR1" library="perspection" deviceset="R-TRIM" device="-ST4ETA204" value="10k"/>
 <part name="GND65" library="perspection" deviceset="GND" device=""/>
 <part name="C82" library="perspection" deviceset="CPOL" device="-PANASONIC-6.3MM-SMD-220UF-25V" value="220uF">
 <attribute name="VOLTAGE" value="20V"/>
@@ -9753,7 +9753,7 @@ Select</text>
 <instance part="R82" gate="G$1" x="144.78" y="160.02" rot="MR270"/>
 <instance part="VR1" gate="G$1" x="144.78" y="144.78" rot="MR270"/>
 <instance part="GND65" gate="1" x="144.78" y="134.62" rot="MR0"/>
-<instance part="Q8" gate="G$1" x="165.1" y="137.16"/>
+<instance part="Q8" gate="G$1" x="165.1" y="129.54"/>
 <instance part="+3V21" gate="G$1" x="144.78" y="170.18" rot="MR0"/>
 <instance part="GND73" gate="1" x="182.88" y="129.54"/>
 <instance part="P+16" gate="G$1" x="182.88" y="160.02"/>
@@ -9762,7 +9762,7 @@ Select</text>
 </instance>
 <instance part="GND74" gate="1" x="198.12" y="149.86"/>
 <instance part="P+15" gate="G$1" x="238.76" y="177.8"/>
-<instance part="GND76" gate="1" x="167.64" y="127" rot="MR0"/>
+<instance part="GND76" gate="1" x="167.64" y="119.38" rot="MR0"/>
 <instance part="GND83" gate="1" x="233.68" y="154.94"/>
 </instances>
 <busses>
@@ -9799,7 +9799,7 @@ Select</text>
 </segment>
 <segment>
 <pinref part="Q8" gate="G$1" pin="S"/>
-<wire x1="167.64" y1="129.54" x2="167.64" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="121.92" x2="167.64" y2="124.46" width="0.1524" layer="91"/>
 <pinref part="GND76" gate="1" pin="GND"/>
 </segment>
 <segment>
@@ -9840,7 +9840,7 @@ Select</text>
 <pinref part="VR1" gate="G$1" pin="WIPER"/>
 <pinref part="Q8" gate="G$1" pin="D"/>
 <wire x1="149.86" y1="144.78" x2="167.64" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="167.64" y1="144.78" x2="167.64" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="144.78" x2="167.64" y2="134.62" width="0.1524" layer="91"/>
 <junction x="167.64" y="144.78"/>
 <pinref part="U12" gate="G$1" pin="+IN"/>
 <wire x1="175.26" y1="144.78" x2="167.64" y2="144.78" width="0.1524" layer="91"/>
@@ -9888,8 +9888,8 @@ Select</text>
 <net name="LED_PWM" class="1">
 <segment>
 <pinref part="Q8" gate="G$1" pin="G"/>
-<wire x1="162.56" y1="134.62" x2="160.02" y2="134.62" width="0.1524" layer="91"/>
-<label x="160.02" y="134.62" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="162.56" y1="127" x2="160.02" y2="127" width="0.1524" layer="91"/>
+<label x="160.02" y="127" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>

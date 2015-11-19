@@ -9,7 +9,7 @@
 <grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.1" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="2" name="Route2" color="11" fill="3" visible="yes" active="yes"/>
+<layer number="2" name="Route2" color="11" fill="3" visible="no" active="yes"/>
 <layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
@@ -11825,7 +11825,7 @@ design rules under a new name.
 <attribute name="DIST_PN" value="MX3SWT-A1-0000-000CE5CT-ND" x="113.27" y="-1.14" size="1.778" layer="27" display="off"/>
 <attribute name="MFG_PN" value="MX3SWT-A1-0000-000CE5" x="113.27" y="-1.14" size="1.778" layer="27" display="off"/>
 </element>
-<element name="R79" library="perspection" package="R0805" value="" x="31.8" y="45.1" smashed="yes" rot="R90">
+<element name="R79" library="perspection" package="R0805" value="0.68" x="31.8" y="45.1" smashed="yes" rot="R90">
 <attribute name="MFG_NAME" value="" x="105.46" y="71.77" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="DIST_NAME" value="" x="105.46" y="71.77" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="DIST_PN" value="" x="105.46" y="71.77" size="1.778" layer="27" rot="R90" display="off"/>
@@ -11857,7 +11857,7 @@ design rules under a new name.
 <attribute name="NAME" x="32.9" y="44.5" size="0.8" layer="25" font="vector" ratio="15" rot="R270"/>
 <attribute name="NAME" x="33.2" y="45.1" size="0.5" layer="37" font="vector" ratio="15" rot="R270" align="center"/>
 </element>
-<element name="R82" library="perspection" package="R0402" value="" x="21" y="40.1" smashed="yes" rot="R270">
+<element name="R82" library="perspection" package="R0402" value="470k" x="21" y="40.1" smashed="yes" rot="R270">
 <attribute name="MFG_NAME" value="" x="-75.52" y="-5.62" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="DIST_NAME" value="" x="-75.52" y="-5.62" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="DIST_PN" value="" x="-75.52" y="-5.62" size="1.778" layer="27" rot="R270" display="off"/>
@@ -11865,11 +11865,11 @@ design rules under a new name.
 <attribute name="NAME" x="20.6" y="39.2" size="0.8" layer="25" font="vector" ratio="15" rot="R90"/>
 <attribute name="NAME" x="21" y="40.1" size="0.5" layer="37" font="vector" ratio="15" rot="R270" align="center"/>
 </element>
-<element name="VR1" library="perspection" package="ST-4EA" value="200k" x="24.5" y="41.4" smashed="yes" rot="R270">
+<element name="VR1" library="perspection" package="ST-4EA" value="10k" x="24.5" y="41.4" smashed="yes" rot="R270">
 <attribute name="MFG_NAME" value="Copal Electronics Inc." x="-37.73" y="-13.21" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="DIST_NAME" value="Digi-Key" x="-37.73" y="-13.21" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="DIST_PN" value="ST4ETA204CT-ND" x="-37.73" y="-13.21" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="MFG_PN" value="ST4ETA204" x="-37.73" y="-13.21" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="DIST_PN" value="ST4ETA103CT-ND" x="-37.73" y="-13.21" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="MFG_PN" value="ST4ETA103" x="-37.73" y="-13.21" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="24.5" y="41.4" size="0.8" layer="37" font="vector" ratio="15" rot="R270" align="center"/>
 <attribute name="NAME" x="23.4" y="41" size="0.8" layer="25" font="vector" ratio="15"/>
 </element>
@@ -17335,7 +17335,6 @@ design rules under a new name.
 <via x="37.3" y="28.2" extent="1-16" drill="0.2"/>
 <via x="38.1" y="23.6" extent="1-16" drill="0.2"/>
 <via x="39.1" y="24.8" extent="1-16" drill="0.2"/>
-<wire x1="39.1" y1="24.8" x2="39.2" y2="24.9" width="0.127" layer="1"/>
 <wire x1="33.9" y1="26.1" x2="34.3" y2="26.1" width="0.127" layer="16"/>
 <wire x1="34.3" y1="26.1" x2="34.7" y2="26.5" width="0.127" layer="16"/>
 <wire x1="34.7" y1="26.5" x2="35.8" y2="26.5" width="0.127" layer="16"/>
@@ -17349,7 +17348,8 @@ design rules under a new name.
 <wire x1="38.1" y1="23.6" x2="37.5" y2="24.2" width="0.127" layer="1"/>
 <wire x1="37.5" y1="24.2" x2="37.5" y2="28" width="0.127" layer="1"/>
 <wire x1="37.5" y1="28" x2="37.3" y2="28.2" width="0.127" layer="1"/>
-<wire x1="39.2" y1="24.9" x2="40.3" y2="24.9" width="0" layer="19" extent="1-1"/>
+<wire x1="40.3" y1="24.9" x2="39.2" y2="24.9" width="0.127" layer="1"/>
+<wire x1="39.2" y1="24.9" x2="39.1" y2="24.8" width="0.127" layer="1"/>
 </signal>
 <signal name="_SPI_MISO" class="1">
 <contactref element="U5" pad="75"/>
