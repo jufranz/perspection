@@ -27,7 +27,7 @@ C:/ti/motorware/motorware_1_01_00_15/sw/modules/enc/src/32b/enc.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/filter/src/32b/filter_fo.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/flash/src/32b/f28x/f2806x/flash.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/gpio/src/32b/f28x/f2806x/gpio.c \
-C:/ti/motorware/motorware_1_01_00_15/sw/modules/hal/boards/boostxldrv8301_revB/f28x/f2806x/src/hal.c \
+../hal.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/ipark/src/32b/ipark.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/offset/src/32b/offset.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/osc/src/32b/f28x/f2806x/osc.c \
@@ -198,7 +198,7 @@ C_SRCS__QUOTED += \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/filter/src/32b/filter_fo.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/drivers/flash/src/32b/f28x/f2806x/flash.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/drivers/gpio/src/32b/f28x/f2806x/gpio.c" \
-"C:/ti/motorware/motorware_1_01_00_15/sw/modules/hal/boards/boostxldrv8301_revB/f28x/f2806x/src/hal.c" \
+"../hal.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/ipark/src/32b/ipark.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/offset/src/32b/offset.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/drivers/osc/src/32b/f28x/f2806x/osc.c" \

@@ -39,8 +39,8 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.2.compilerID.DEBUGGING_MODEL.1455597293" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.2.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.C2000_6.2.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.2.compilerID.INCLUDE_PATH.572191662" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.2.compilerID.INCLUDE_PATH" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\ti\ccsv6\tools\compiler\ti-cgt-c2000_6.4.9\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\ti\motorware\motorware_1_01_00_15\sw\solutions\instaspin_motion\boards\boostxldrv8301_revB\f28x\f2806xM\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\ti\motorware\motorware_1_01_00_15\sw\modules\hal\boards\boostxldrv8301_revB\f28x\f2806x\src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\ti\motorware\motorware_1_01_00_15\sw\solutions\instaspin_motion\boards\boostxldrv8301_revB\f28x\f2806xM\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\ti\motorware\motorware_1_01_00_15\sw\solutions\instaspin_motion\src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\ti\motorware\motorware_1_01_00_15&quot;"/>
 								</option>
@@ -98,7 +98,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="memCopy.c|F28069M.cmd|test_fast_secure_flash.cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="hal_both.c|memCopy.c|F28069M.cmd|test_fast_secure_flash.cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
