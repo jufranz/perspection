@@ -115,6 +115,13 @@ park.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/park/src/32b/park.c $(
 	@echo 'Finished building: $<'
 	@echo ' '
 
+perspection_adc.obj: ../perspection_adc.c $(GEN_OPTS) $(GEN_HDRS)
+	@echo 'Building file: $<'
+	@echo 'Invoking: C2000 Compiler'
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -ml -mt -O2 --include_path="C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --include_path="C:/ti/motorware/motorware_1_01_00_15/sw/modules/hal/boards/boostxldrv8301_revB/f28x/f2806x/src" --include_path="C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src" --include_path="C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/src" --include_path="C:/ti/motorware/motorware_1_01_00_15" -g --define=FAST_ROM_V1p6 --define=QEP --diag_warning=225 --display_error_number --preproc_with_compile --preproc_dependency="perspection_adc.pp" $(GEN_OPTS__FLAG) "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
 perspection_pwm.obj: ../perspection_pwm.c $(GEN_OPTS) $(GEN_HDRS)
 	@echo 'Building file: $<'
 	@echo 'Invoking: C2000 Compiler'

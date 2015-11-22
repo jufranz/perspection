@@ -2,6 +2,7 @@
 // the includes
 #include "main_position.h"
 #include "perspection_pwm.h"
+#include "perspection_adc.h"
 
 // **************************************************************************
 // the globals
@@ -36,6 +37,10 @@ void main(void) {
 
 	// get dis pwm rippin shit up yo
 	perspection_pwm_1a_init(halHandle, 40.0);
+	perspection_pwm_1b_init(halHandle, 40.0);
+
+	// ayyyyydc
+	perspection_adc_init(halHandle);
 
 	for (;;) {
 		uint32_t rawPosition = HAL_getQepPosnCounts(halHandle);
@@ -58,5 +63,8 @@ void main(void) {
 			HAL_turnLedOn(halHandle, (GPIO_Number_e) HAL_Gpio_LED3);
 			perspection_pwm_1a_set_duty_cycle(0.60);
 		}
+
+		uint16_t adc_val = perspection_adc_read_vpropi1(halHandle);
+		perspection_pwm_1b_set_duty_cycle((double)adc_val / (double)0xffff);
 	}
 }

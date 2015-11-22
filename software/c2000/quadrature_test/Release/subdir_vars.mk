@@ -32,6 +32,7 @@ C:/ti/motorware/motorware_1_01_00_15/sw/modules/ipark/src/32b/ipark.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/offset/src/32b/offset.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/osc/src/32b/f28x/f2806x/osc.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/park/src/32b/park.c \
+../perspection_adc.c \
 ../perspection_pwm.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/pid/src/32b/pid.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/pie/src/32b/f28x/f2806x/pie.c \
@@ -65,6 +66,7 @@ OBJS += \
 ./offset.obj \
 ./osc.obj \
 ./park.obj \
+./perspection_adc.obj \
 ./perspection_pwm.obj \
 ./pid.obj \
 ./pie.obj \
@@ -102,6 +104,7 @@ C_DEPS += \
 ./offset.pp \
 ./osc.pp \
 ./park.pp \
+./perspection_adc.pp \
 ./perspection_pwm.pp \
 ./pid.pp \
 ./pie.pp \
@@ -134,6 +137,7 @@ C_DEPS__QUOTED += \
 "offset.pp" \
 "osc.pp" \
 "park.pp" \
+"perspection_adc.pp" \
 "perspection_pwm.pp" \
 "pid.pp" \
 "pie.pp" \
@@ -167,6 +171,7 @@ OBJS__QUOTED += \
 "offset.obj" \
 "osc.obj" \
 "park.obj" \
+"perspection_adc.obj" \
 "perspection_pwm.obj" \
 "pid.obj" \
 "pie.obj" \
@@ -208,6 +213,7 @@ C_SRCS__QUOTED += \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/offset/src/32b/offset.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/drivers/osc/src/32b/f28x/f2806x/osc.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/park/src/32b/park.c" \
+"../perspection_adc.c" \
 "../perspection_pwm.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/pid/src/32b/pid.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/drivers/pie/src/32b/f28x/f2806x/pie.c" \

@@ -65,6 +65,7 @@ quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src/32b/spintac_pos_move.h
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src/32b/spintac_pos_plan.h
 quadrature_test.obj: ../perspection_pwm.h
+quadrature_test.obj: ../perspection_adc.h
 
 ../quadrature_test.c: 
 C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/src/main_position.h: 
@@ -131,3 +132,4 @@ C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src/32b/spintac_pos_ctl.
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src/32b/spintac_pos_move.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src/32b/spintac_pos_plan.h: 
 ../perspection_pwm.h: 
+../perspection_adc.h: 
