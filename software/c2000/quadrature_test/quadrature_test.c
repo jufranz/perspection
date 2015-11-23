@@ -29,6 +29,10 @@ void main(void) {
 	// setup faults
 	HAL_setupFaults(halHandle);
 
+	// yo these are important
+	HAL_initIntVectorTable(halHandle);
+	HAL_enableAdcInts(halHandle);
+
 	// enable global interrupts
 	HAL_enableGlobalInts(halHandle);
 
@@ -65,6 +69,10 @@ void main(void) {
 		}
 
 		uint16_t adc_val = perspection_adc_read_vpropi1(halHandle);
-		perspection_pwm_1b_set_duty_cycle((double)adc_val / (double)0xffff);
+		perspection_pwm_1b_set_duty_cycle((double)adc_val / (double)4096);
 	}
+}
+
+interrupt void mainISR(void) {
+
 }

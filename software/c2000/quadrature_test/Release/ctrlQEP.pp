@@ -52,7 +52,7 @@ ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Flux_st
 ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Ls_states.h
 ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Rs_states.h
 ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/src/32b/userParams.h
-ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j1.h
+ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j5.h
 ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/hal/boards/boostxldrv8301_revB/f28x/f2806x/src/hal.h
 ctrlQEP.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/svgen/src/32b/svgen_current.h
 
@@ -108,6 +108,6 @@ C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Flux_states.h:
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Ls_states.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Rs_states.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/src/32b/userParams.h: 
-C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j1.h: 
+C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j5.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/hal/boards/boostxldrv8301_revB/f28x/f2806x/src/hal.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/svgen/src/32b/svgen_current.h: 

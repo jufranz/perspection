@@ -50,7 +50,7 @@ perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/pid/src/32b
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/svgen/src/32b/svgen.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/traj/src/32b/traj.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/src/32b/userParams.h
-perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j1.h
+perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j5.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/svgen/src/32b/svgen_current.h
 
 ../perspection_adc.c: 
@@ -103,5 +103,5 @@ C:/ti/motorware/motorware_1_01_00_15/sw/modules/pid/src/32b/pid.h:
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/svgen/src/32b/svgen.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/traj/src/32b/traj.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/src/32b/userParams.h: 
-C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j1.h: 
+C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j5.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/svgen/src/32b/svgen_current.h: 

@@ -31,12 +31,12 @@ void perspection_pwm_make_obj(PWM_Handle* pwmHandle, uint32_t pwm_base_addr) {
 
 void perspection_pwm_init(HAL_Handle halHandle, PWM_Handle pwmHandle, uint16_t a_or_b, double period_usec) {
 	HAL_Obj* obj = (HAL_Obj*)halHandle;
-	uint16_t halfPeriodCycles = (uint16_t)(80000000.0 * period_usec) >> 1;
+	uint16_t periodVal = (uint16_t)(90.075 * period_usec);
 
 	CLK_disableTbClockSync(obj->clkHandle);
 
 	PWM_setCounterMode(pwmHandle, PWM_CounterMode_Up);
-	PWM_setPeriod(pwmHandle, halfPeriodCycles);
+	PWM_setPeriod(pwmHandle, periodVal);
 	PWM_enableCounterLoad(pwmHandle);
 	PWM_setPhase(pwmHandle, 0);
 	PWM_setCount(pwmHandle, 0);

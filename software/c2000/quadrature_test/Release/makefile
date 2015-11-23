@@ -166,7 +166,7 @@ all: quadrature_test.out
 quadrature_test.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: C2000 Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -ml -mt -O2 -g --define=FAST_ROM_V1p6 --define=QEP --diag_warning=225 --display_error_number -z -m"quadrature_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --disable_auto_rts --diag_suppress=16002 --xml_link_info="quadrature_test_linkInfo.xml" --rom_model -o "quadrature_test.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -ml -mt -Ooff -g --define=FAST_ROM_V1p6 --define=QEP --diag_warning=225 --display_error_number -z -m"quadrature_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --disable_auto_rts --diag_suppress=16002 --xml_link_info="quadrature_test_linkInfo.xml" --rom_model -o "quadrature_test.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

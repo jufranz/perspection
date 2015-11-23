@@ -56,7 +56,7 @@ quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Ls_states.h
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Rs_states.h
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/src/32b/userParams.h
-quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j1.h
+quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j5.h
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/hal/boards/boostxldrv8301_revB/f28x/f2806x/src/hal.h
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/src/spintac_position.h
 quadrature_test.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src/32b/spintac_pos_conv.h
@@ -123,7 +123,7 @@ C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Flux_states.h:
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Ls_states.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/est/src/est_Rs_states.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/src/32b/userParams.h: 
-C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j1.h: 
+C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j5.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/hal/boards/boostxldrv8301_revB/f28x/f2806x/src/hal.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/solutions/instaspin_motion/src/spintac_position.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/src/32b/spintac_pos_conv.h: 
