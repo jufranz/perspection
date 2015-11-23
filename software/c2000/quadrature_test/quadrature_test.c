@@ -19,7 +19,7 @@
 #define TORQUE_DIRECTION_POSITIVE 0
 #define TORQUE_DIRECTION_NEGATIVE 1
 
-#define DUTY_CYCLE_MAX_ADJUSTMENT 1.0
+#define DUTY_CYCLE_MAX_ADJUSTMENT 2.0
 
 // Global state
 
@@ -37,21 +37,25 @@ void set_duty_cycle(double new_duty_cycle);
 void calibrate_zero_torque();
 double get_current_torque();
 uint16_t read_raw_torque();
-double normalize_raw_torque(int16_t raw_torque);
+double normalize_raw_torque(uint16_t raw_torque);
 
 // Torque as a function of position
 // Position is in degrees, torque should be -1.0 to 1.0
 
 double torque_from_position(double position) {
     // Loose spring
-    /*return (position / -180.0);*/
+	if(position > 0.0 && position < 180.0) {
+		return (position / -180.0);
+	} else {
+		return ((position - 360.0) / -180.0);
+	}
 
     // Wall
-    if(position > 45.0) {
-        return -0.5;
-    } else {
-        return 0;
-    }
+//    if(position > 45.0) {
+//        return -0.5;
+//    } else {
+//        return 0;
+//    }
 
 //	return 0.0;
 }
@@ -105,6 +109,9 @@ void main(void) {
 	// calibrate
 	calibrate_zero_torque();
 
+	// reset shit
+	haptics_duty_cycle = 0.0;
+
 	for (;;) {
 		uint32_t rawPosition = HAL_getQepPosnCounts(halHandle);
 		double position = (double) (360 * rawPosition) / (double) HAL_getQepPosnMaximum(halHandle);
@@ -147,8 +154,8 @@ void calibrate_zero_torque() {
     uint16_t this_raw_torque;
 
     while(1) {
-    	// Wait 250ms
-    	usDelay(250000);
+    	// Wait 500ms
+    	usDelay(500000);
 
         // See how much the torque has changed
         this_raw_torque = read_raw_torque();
@@ -168,16 +175,15 @@ void calibrate_zero_torque() {
 }
 
 double get_current_torque() {
-    int16_t raw_torque = read_raw_torque();
+    uint16_t raw_torque = read_raw_torque();
     return normalize_raw_torque(raw_torque);
 }
 
 uint16_t read_raw_torque() {
-//	return torque_zero;
     return perspection_adc_read_vpropi1(halHandle);
 }
 
-double normalize_raw_torque(int16_t raw_torque) {
+double normalize_raw_torque(uint16_t raw_torque) {
     return (((double)raw_torque - torque_zero) / TORQUE_RANGE);
 }
 

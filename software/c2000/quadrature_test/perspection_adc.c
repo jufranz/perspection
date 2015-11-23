@@ -29,7 +29,7 @@ uint16_t perspection_adc_read(HAL_Handle halHandle, uint16_t socFrcMask, ADC_Res
 	HAL_Obj* obj = (HAL_Obj*) halHandle;
 
 	ADC_setSocFrcWord(obj->adcHandle, socFrcMask);
-	usDelay(ADC_DELAY_usec);
+	usDelay(ADC_READ_DELAY_USEC);
 	return ADC_readResult(obj->adcHandle, ADC_ResultNumber_8);
 }
 
@@ -42,7 +42,7 @@ void perspection_adc_init(HAL_Handle halHandle) {
 	ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_8, ADC_SocChanNumber_B0);
 	ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_8, ADC_NoIntTriggersSOC);
 	ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_8, ADC_SocTrigSrc_Sw);
-	ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_8, ADC_SocSampleDelay_9_cycles);
+	ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_8, ADC_SocSampleDelay_64_cycles);
 
 	// VPROPI2
 	ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_9, ADC_SocChanNumber_B1);
