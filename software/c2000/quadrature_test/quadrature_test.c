@@ -20,6 +20,7 @@
 #define TORQUE_DIRECTION_NEGATIVE 1
 
 #define DUTY_CYCLE_MAX_ADJUSTMENT 2.0
+#define DUTY_CYCLE_FILTER_LENGTH 10
 
 // Global state
 
@@ -27,12 +28,17 @@ HAL_Handle halHandle;
 USER_Params gUserParams;
 
 double haptics_duty_cycle;
+double duty_cycle_filter[DUTY_CYCLE_FILTER_LENGTH];
+uint16_t duty_cycle_filter_index;
 double torque_zero;
 
 // Functions
 
 void adjust_duty_cycle(double desired_torque);
 void set_duty_cycle(double new_duty_cycle);
+void init_duty_cycle_filter();
+void add_duty_cycle_to_filter(double duty_cycle);
+double get_duty_cycle_filter_value();
 
 void calibrate_zero_torque();
 double get_current_torque();
@@ -102,6 +108,7 @@ void main(void) {
 	// get dis pwm rippin shit up yo
 	perspection_pwm_1a_init(halHandle, 40.0);
 	perspection_pwm_1b_init(halHandle, 40.0);
+	init_duty_cycle_filter();
 
 	// ayyyyydc
 	perspection_adc_init(halHandle);
@@ -113,6 +120,8 @@ void main(void) {
 	haptics_duty_cycle = 0.0;
 
 	for (;;) {
+//		HAL_turnLedOn(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
+
 		uint32_t rawPosition = HAL_getQepPosnCounts(halHandle);
 		double position = (double) (360 * rawPosition) / (double) HAL_getQepPosnMaximum(halHandle);
 
@@ -124,13 +133,16 @@ void main(void) {
 		}
 
 		adjust_duty_cycle(desired_torque);
+
+//		HAL_turnLedOff(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
 	}
 }
 
 // Helpful function definitions
 
 void set_duty_cycle(double new_duty_cycle) {
-    haptics_duty_cycle = new_duty_cycle;
+	add_duty_cycle_to_filter(new_duty_cycle);
+    haptics_duty_cycle = get_duty_cycle_filter_value();
     if(haptics_duty_cycle < -1.0) {
         haptics_duty_cycle = -1.0;
     } else if(haptics_duty_cycle > 1.0) {
@@ -147,6 +159,31 @@ void set_duty_cycle(double new_duty_cycle) {
     	perspection_pwm_1a_set_duty_cycle(0.0);
     	perspection_pwm_1b_set_duty_cycle(0.0);
     }
+}
+
+void init_duty_cycle_filter() {
+	duty_cycle_filter_index = 0;
+	uint16_t i;
+	for(i = 0; i < DUTY_CYCLE_FILTER_LENGTH; i++) {
+		duty_cycle_filter[i] = 0.0;
+	}
+}
+
+void add_duty_cycle_to_filter(double duty_cycle) {
+	duty_cycle_filter[duty_cycle_filter_index] = duty_cycle;
+	duty_cycle_filter_index++;
+	if(duty_cycle_filter_index >= DUTY_CYCLE_FILTER_LENGTH) {
+		duty_cycle_filter_index = 0;
+	}
+}
+
+double get_duty_cycle_filter_value() {
+	double duty_cycle_average = 0.0;
+	uint16_t i;
+	for(i = 0; i < DUTY_CYCLE_FILTER_LENGTH; i++) {
+		duty_cycle_average += duty_cycle_filter[i];
+	}
+	return (duty_cycle_average / (double)DUTY_CYCLE_FILTER_LENGTH);
 }
 
 void calibrate_zero_torque() {
