@@ -1,17 +1,73 @@
-// **************************************************************************
-// the includes
 #include "main_position.h"
 #include "perspection_pwm.h"
 #include "perspection_adc.h"
 
-// **************************************************************************
-// the globals
+// Limits and defines
+
+#define PWM_FREQUENCY 20000.0
+#define PWM_PERIOD_MS (1000.0 / PWM_FREQUENCY)
+
+#define POS_DRIVER_CTL_PORT_NUM GPIO_B_NUM
+#define POS_DRIVER_CTL_PIN_NUM 3
+#define NEG_DRIVER_CTL_PORT_NUM GPIO_B_NUM
+#define NEG_DRIVER_CTL_PIN_NUM 4
+
+#define TORQUE_MAX 2508.0 // Calibrated to the hardware
+#define TORQUE_MIN 1180.0
+#define TORQUE_RANGE ((TORQUE_MAX - TORQUE_MIN) / 2.0)
+
+#define TORQUE_DIRECTION_POSITIVE 0
+#define TORQUE_DIRECTION_NEGATIVE 1
+
+#define DUTY_CYCLE_MAX_ADJUSTMENT 1.0
+
+// Global state
 
 HAL_Handle halHandle;
 USER_Params gUserParams;
 
-// **************************************************************************
-// the functions
+double haptics_duty_cycle;
+double torque_zero;
+
+// Functions
+
+void adjust_duty_cycle(double desired_torque);
+void set_duty_cycle(double new_duty_cycle);
+
+void calibrate_zero_torque();
+double get_current_torque();
+uint16_t read_raw_torque();
+double normalize_raw_torque(int16_t raw_torque);
+
+// Torque as a function of position
+// Position is in degrees, torque should be -1.0 to 1.0
+
+double torque_from_position(double position) {
+    // Loose spring
+    /*return (position / -180.0);*/
+
+    // Wall
+    if(position > 45.0) {
+        return -0.5;
+    } else {
+        return 0;
+    }
+
+//	return 0.0;
+}
+
+// The torque control loop
+
+void adjust_duty_cycle(double desired_torque) {
+    double current_torque = get_current_torque();
+
+    double torque_delta = desired_torque - current_torque; // Between -2.0 and 2.0
+    double normalized_torque_delta = torque_delta / 2.0; // Between -1.0 and 1.0
+    double duty_cycle_adjustment = (DUTY_CYCLE_MAX_ADJUSTMENT * normalized_torque_delta);
+    set_duty_cycle(haptics_duty_cycle + duty_cycle_adjustment);
+}
+
+// Real shit yo
 
 void main(void) {
 	// initialize the hardware abstraction layer
@@ -46,32 +102,86 @@ void main(void) {
 	// ayyyyydc
 	perspection_adc_init(halHandle);
 
+	// calibrate
+	calibrate_zero_torque();
+
 	for (;;) {
 		uint32_t rawPosition = HAL_getQepPosnCounts(halHandle);
 		double position = (double) (360 * rawPosition) / (double) HAL_getQepPosnMaximum(halHandle);
 
-		if (position > 330.0 || position < 30.0) {
-			HAL_turnLedOn(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
-			HAL_turnLedOff(halHandle, (GPIO_Number_e) HAL_Gpio_LED3);
-			perspection_pwm_1a_set_duty_cycle(0.15);
-		} else if (position > 270.0 || position < 90.0) {
-			HAL_turnLedOff(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
-			HAL_turnLedOn(halHandle, (GPIO_Number_e) HAL_Gpio_LED3);
-			perspection_pwm_1a_set_duty_cycle(0.35);
-		} else if (position < 210.0 && position > 150.0) {
-			HAL_turnLedOff(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
-			HAL_turnLedOff(halHandle, (GPIO_Number_e) HAL_Gpio_LED3);
-			perspection_pwm_1a_set_duty_cycle(0.90);
-		} else {
-			HAL_turnLedOn(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
-			HAL_turnLedOn(halHandle, (GPIO_Number_e) HAL_Gpio_LED3);
-			perspection_pwm_1a_set_duty_cycle(0.60);
+		double desired_torque = torque_from_position(position);
+		if(desired_torque < -1.0) {
+			desired_torque = -1.0;
+		} else if(desired_torque > 1.0) {
+			desired_torque = 1.0;
 		}
 
-		uint16_t adc_val = perspection_adc_read_vpropi1(halHandle);
-		perspection_pwm_1b_set_duty_cycle((double)adc_val / (double)4096);
+		adjust_duty_cycle(desired_torque);
 	}
 }
+
+// Helpful function definitions
+
+void set_duty_cycle(double new_duty_cycle) {
+    haptics_duty_cycle = new_duty_cycle;
+    if(haptics_duty_cycle < -1.0) {
+        haptics_duty_cycle = -1.0;
+    } else if(haptics_duty_cycle > 1.0) {
+        haptics_duty_cycle = 1.0;
+    }
+
+    if(haptics_duty_cycle < 0.0) {
+    	perspection_pwm_1a_set_duty_cycle(0.0);
+    	perspection_pwm_1b_set_duty_cycle(-haptics_duty_cycle);
+    } else if(haptics_duty_cycle > 0.0) {
+    	perspection_pwm_1a_set_duty_cycle(haptics_duty_cycle);
+    	perspection_pwm_1b_set_duty_cycle(0.0);
+    } else {
+    	perspection_pwm_1a_set_duty_cycle(0.0);
+    	perspection_pwm_1b_set_duty_cycle(0.0);
+    }
+}
+
+void calibrate_zero_torque() {
+    uint16_t last_raw_torque = read_raw_torque();
+    uint16_t this_raw_torque;
+
+    while(1) {
+    	// Wait 250ms
+    	usDelay(250000);
+
+        // See how much the torque has changed
+        this_raw_torque = read_raw_torque();
+        int16_t torque_change = (this_raw_torque - last_raw_torque);
+        torque_change = (torque_change < 0) ? (torque_change * -1) : torque_change;
+
+        // If it's changed less than +/- 4mV, we're calibrated
+        if(torque_change < 5) {
+            break;
+        }
+
+        // Else, try again
+        last_raw_torque = this_raw_torque;
+    }
+
+    torque_zero = (double)this_raw_torque;
+}
+
+double get_current_torque() {
+    int16_t raw_torque = read_raw_torque();
+    return normalize_raw_torque(raw_torque);
+}
+
+uint16_t read_raw_torque() {
+//	return torque_zero;
+    return perspection_adc_read_vpropi1(halHandle);
+}
+
+double normalize_raw_torque(int16_t raw_torque) {
+    return (((double)raw_torque - torque_zero) / TORQUE_RANGE);
+}
+
+// TI bullshit
 
 interrupt void mainISR(void) {
 
