@@ -18,7 +18,11 @@ static uint8_t channel_b_state;
 void quadrature_set_up_gpio(uint32_t pin_number);
 
 void channel_a_edge(uint8_t port, uint8_t pin) {
-    if(GPIO_READ_PIN(GPIO_B_BASE, GPIO_PIN_MASK(CHANNEL_A_PIN)) == 0) {
+    GPIO_SET_PIN(GPIO_B_BASE, GPIO_PIN_MASK(3));
+    uint8_t pinThing = GPIO_READ_PIN(GPIO_B_BASE, GPIO_PIN_MASK(CHANNEL_A_PIN));
+    GPIO_CLR_PIN(GPIO_B_BASE, GPIO_PIN_MASK(3));
+
+    if(pinThing == 0) {
         // Got a rising edge
         channel_a_state = 1;
         if(channel_b_state == 0) {
@@ -69,6 +73,10 @@ void quadrature_init() {
 
     gpio_register_callback(&channel_a_edge, GPIO_B_NUM, CHANNEL_A_PIN);
     gpio_register_callback(&channel_b_edge, GPIO_B_NUM, CHANNEL_B_PIN);
+
+    GPIO_SOFTWARE_CONTROL(GPIO_B_BASE, GPIO_PIN_MASK(3));
+    GPIO_SET_OUTPUT(GPIO_B_BASE, GPIO_PIN_MASK(3));
+    ioc_set_over(GPIO_B_BASE, 3, IOC_OVERRIDE_OE);
 }
 
 void quadrature_set_up_gpio(uint32_t pin_number) {
