@@ -72,7 +72,7 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
   while(1) {
 
     /* Delay 4 seconds */
-    etimer_set(&et, CLOCK_SECOND * 1);
+    etimer_set(&et, CLOCK_SECOND/1000);
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 
