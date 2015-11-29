@@ -1,0 +1,16 @@
+//==============================================PASTE THESE INTO SPI.C
+
+uint16_t SPI_read(SPI_Handle spiHandle)
+{
+  SPI_Obj *spi = (SPI_Obj *)spiHandle;
+
+
+  // read the data
+  uint16_t data = spi->SPIRXBUF;
+
+  return(data);
+} // end of SPI_read() function
+
+//==============================================PASTE INTO SPI.h
+
+extern uint16_t SPI_read(SPI_Handle spiHandle);

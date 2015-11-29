@@ -1,0 +1,113 @@
+//==================THIS DOCUMENT CONTAINS THE CODE THAT MUST BE PASTED INTO THE HAL.C FILE TO WORK
+
+//initializes the SPIAslave interface
+//search for "initialize drv8301 interface" past below
+obj->SPIAslaveHandle = SPIAslave_init(&obj->SPIAslave,sizeof(obj->SPIAslave));
+
+
+//THIS FUNCTION SETS UP SLAVE COMMUNICATION
+//YOU CAN EITHER MODIFTY THIS FOR A NEW SETUP FUNCTION, OR ADD THE 
+//CONTENTS OF THIS TO THE EXISTING FUNCTION WITH DRV STUFF
+void HAL_setupGate(HAL_Handle handle)
+{
+  HAL_Obj *obj = (HAL_Obj *)handle;
+
+  Arduino_setGpioHandle(obj->ArduinoHandle,obj->gpioHandle);
+  Arduino_setSpiHandle(obj->ArduinoHandle,obj->spiAHandle);
+  SPIB_setSpiHandle(obj->SPIBhandle, obj->spiBHandle); //this is for testing purposes only
+  Arduino_setGpioNumber(obj->ArduinoHandle,GPIO_Number_50);
+
+
+  return;
+} // HAL_setupGate() function
+
+//THIS FUNCTION READS FROM THE RXBUFFER WHEN RECEIVE INTERRUPT IS TRIGGERED
+uint16_t HAL_readSPIAslaveData(HAL_Handle handle)
+{
+  HAL_Obj  *obj = (HAL_Obj *)handle;
+  uint16_t dat = 0;
+  dat = SPIAslave_readSpi(obj->SPIAslaveHandle);
+  PIE_clearInt(obj->pieHandle,PIE_GroupNumber_6);
+
+  return dat;
+}  // end of HAL_readDrvData() function
+
+//Paste this in after the setup spi functions to setup SPIA as a slave
+//configures the SPI registers so it can be used as a slave
+void HAL_setupSpiAslave(HAL_Handle handle)
+{
+  HAL_Obj   *obj = (HAL_Obj *)handle;
+
+  SPI_reset(obj->spiAHandle);
+  SPI_setClkPolarity(obj->spiAHandle,SPI_ClkPolarity_OutputRisingEdge_InputFallingEdge);
+  //SPI_setClkPhase(o)
+  SPI_setMode(obj->spiAHandle,SPI_Mode_Slave);
+  SPI_disableLoopBack(obj->spiAHandle);
+  SPI_setCharLength(obj->spiAHandle,SPI_CharLength_16_Bits);
+  SPI_setClkPhase(obj->spiAHandle,SPI_ClkPhase_Normal);
+  //SPI_enableTx(obj->spiAHandle);
+  //SPI_enableChannels(obj->spiAHandle);
+  //SPI_enableTxFifoEnh(obj->spiAHandle);
+  //SPI_enableTxFifo(obj->spiAHandle);
+  //SPI_setTxDelay(obj->spiAHandle,0);
+  //SPI_clearTxFifoInt(obj->spiAHandle);
+  SPI_enableRxFifo(obj->spiAHandle);
+
+  //INTERRUPT STUFF
+  SPI_enableRxFifoInt(obj->spiAHandle);
+  SPI_setRxFifoIntLevel(obj->spiAHandle,SPI_FifoLevel_4_Words);
+
+  SPI_setSuspend(obj->spiAHandle,SPI_TxSuspend_free);
+  SPI_enable(obj->spiAHandle);
+
+  SPI_resetRxFifo(obj->spiAHandle);
+  SPI_enableRxFifo(obj->spiAHandle);
+
+  return;
+}  // end of HAL_setupSpiA() function
+
+uint16_t HAL_spiIntStatus(HAL_Handle handle){
+	HAL_Obj   *obj = (HAL_Obj *)handle;
+
+	return SPI_getRxFifoStatus(obj->spiAHandle);
+}
+
+
+//needs to be called in main to enable interrupts
+void HAL_enableSpiInt(HAL_Handle handle)//THIS IS MY FUNCTION
+{
+  HAL_Obj *obj = (HAL_Obj *)handle;
+
+  //enable the PIE
+  PIE_enableSpiInt(obj->pieHandle);
+
+  //TIMER_enableInt(obj->timerHandle[0]);
+  SPI_enableInt(obj->spiAHandle); // my line
+
+  //enable CPU interrupts
+  CPU_enableInt(obj->cpuHandle,CPU_IntNumber_6);
+
+  return;
+} // end THIS IS WHERE MY FUNCTION ENDS
+
+//==================================================THIS CHANGE IS FOR THE HAL_OBJ.h file
+//paste in this with the includes
+#include "sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.h"
+
+//paste this just below the SPI_handle declarations
+  SPIAslave_Handle SPIAslaveHandle;   //!< the Arduino interface handle
+  SPIAslave_Obj    SPIAslave;         //!< the Arduino interface object
+  
+//===================================================IN HAL.h PASTE IN THE FOLLOWING
+  uint16_t HAL_readSPIAslaveData(HAL_Handle handle);
+  
+  void HAL_setupSpiAslave(HAL_Handle handle);
+  
+  uint16_t HAL_spiIntStatus(HAL_Handle handle);
+  
+  void HAL_enableSpiInt(HAL_Handle handle)
+  
+  //In the IinitVectorTable function, between the protected register calls
+  //paste this along with the other ISRS
+  pie->SPIRXINTA = &spiISR;
+  //this tells the PIE to call this ISR when a recieve interrupt is triggered
