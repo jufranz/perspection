@@ -12,10 +12,10 @@ void HAL_setupGate(HAL_Handle handle)
 {
   HAL_Obj *obj = (HAL_Obj *)handle;
 
-  Arduino_setGpioHandle(obj->ArduinoHandle,obj->gpioHandle);
-  Arduino_setSpiHandle(obj->ArduinoHandle,obj->spiAHandle);
+  SPIAslave_setGpioHandle(obj->SPIAslaveHandle,obj->gpioHandle);
+  SPIAslave_setSpiHandle(obj->SPIAslaveHandle,obj->spiAHandle);
   SPIB_setSpiHandle(obj->SPIBhandle, obj->spiBHandle); //this is for testing purposes only
-  Arduino_setGpioNumber(obj->ArduinoHandle,GPIO_Number_50);
+  SPIAslave_setGpioNumber(obj->SPIAslaveHandle,GPIO_Number_50);
 
 
   return;
@@ -95,8 +95,8 @@ void HAL_enableSpiInt(HAL_Handle handle)//THIS IS MY FUNCTION
 #include "sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.h"
 
 //paste this just below the SPI_handle declarations
-  SPIAslave_Handle SPIAslaveHandle;   //!< the Arduino interface handle
-  SPIAslave_Obj    SPIAslave;         //!< the Arduino interface object
+  SPIAslave_Handle SPIAslaveHandle;   //!< the SPIAslave interface handle
+  SPIAslave_Obj    SPIAslave;         //!< the SPIAslave interface object
   
 //===================================================IN HAL.h PASTE IN THE FOLLOWING
   uint16_t HAL_readSPIAslaveData(HAL_Handle handle);
