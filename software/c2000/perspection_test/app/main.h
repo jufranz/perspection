@@ -36,10 +36,8 @@
 //! \brief Defines the structures, global initialization, and functions used in MAIN 
 //!
 //! (C) Copyright 2011, Texas Instruments, Inc.
-
 // **************************************************************************
 // the includes
-
 // modules
 #include "math.h"
 #include "memCopy.h"
@@ -49,19 +47,15 @@
 #include "fem.h"
 #include "cpu_usage.h"
 
-
 // drivers
-
 
 // platforms
 #include "ctrl.h"
 #include "hal.h"
 #include "user.h"
 
-
 // **************************************************************************
 // the defines
-
 
 //! \brief Defines the number of main iterations before global variables are updated
 //!
@@ -127,84 +121,79 @@
                          {0,0,0}, \
                          {0,0,0}}
 
-
 // **************************************************************************
 // the typedefs
 
-typedef struct _MOTOR_Vars_t_
-{
-  bool Flag_enableSys;
-  bool Flag_Run_Identify;
-  bool Flag_MotorIdentified;
-  bool Flag_enableForceAngle;
-  bool Flag_enableFieldWeakening;
-  bool Flag_enableRsRecalc;
-  bool Flag_enableUserParams;
-  bool Flag_enableOffsetcalc;
-  bool Flag_enablePowerWarp;
-  bool Flag_enableSpeedCtrl;
+typedef struct _MOTOR_Vars_t_ {
+    bool Flag_enableSys;
+    bool Flag_Run_Identify;
+    bool Flag_MotorIdentified;
+    bool Flag_enableForceAngle;
+    bool Flag_enableFieldWeakening;
+    bool Flag_enableRsRecalc;
+    bool Flag_enableUserParams;
+    bool Flag_enableOffsetcalc;
+    bool Flag_enablePowerWarp;
+    bool Flag_enableSpeedCtrl;
 
-  CTRL_State_e CtrlState;
-  EST_State_e EstState;
+    CTRL_State_e CtrlState;
+    EST_State_e EstState;
 
-  USER_ErrorCode_e UserErrorCode;
+    USER_ErrorCode_e UserErrorCode;
 
-  CTRL_Version CtrlVersion;
+    CTRL_Version CtrlVersion;
 
-  _iq IdRef_A;
-  _iq IqRef_A;
-  _iq SpeedRef_pu;
-  _iq SpeedRef_krpm;
-  _iq SpeedTraj_krpm;
-  _iq MaxAccel_krpmps;
-  _iq Speed_krpm;
-  _iq OverModulation;
-  _iq RsOnLineCurrent_A;
-  _iq SvgenMaxModulation_ticks;
-  _iq Flux_Wb;
-  _iq Torque_Nm;
+    _iq IdRef_A;
+    _iq IqRef_A;
+    _iq SpeedRef_pu;
+    _iq SpeedRef_krpm;
+    _iq SpeedTraj_krpm;
+    _iq MaxAccel_krpmps;
+    _iq Speed_krpm;
+    _iq OverModulation;
+    _iq RsOnLineCurrent_A;
+    _iq SvgenMaxModulation_ticks;
+    _iq Flux_Wb;
+    _iq Torque_Nm;
 
-  float_t MagnCurr_A;
-  float_t Rr_Ohm;
-  float_t Rs_Ohm;
-  float_t RsOnLine_Ohm;
-  float_t Lsd_H;
-  float_t Lsq_H;
-  float_t Flux_VpHz;
+    float_t MagnCurr_A;
+    float_t Rr_Ohm;
+    float_t Rs_Ohm;
+    float_t RsOnLine_Ohm;
+    float_t Lsd_H;
+    float_t Lsq_H;
+    float_t Flux_VpHz;
 
-  float_t ipd_excFreq_Hz;
-  _iq     ipd_Kspd;
-  _iq     ipd_excMag_coarse_pu;
-  _iq     ipd_excMag_fine_pu;
-  float   ipd_waitTime_coarse_sec;
-  float   ipd_waitTime_fine_sec;
+    float_t ipd_excFreq_Hz;
+    _iq ipd_Kspd;
+    _iq ipd_excMag_coarse_pu;
+    _iq ipd_excMag_fine_pu;
+    float ipd_waitTime_coarse_sec;
+    float ipd_waitTime_fine_sec;
 
-  _iq Kp_spd;
-  _iq Ki_spd;
+    _iq Kp_spd;
+    _iq Ki_spd;
 
-  _iq Kp_Idq;
-  _iq Ki_Idq;
+    _iq Kp_Idq;
+    _iq Ki_Idq;
 
-  _iq Vd;
-  _iq Vq;
-  _iq Vs;
-  _iq VsRef;
-  _iq VdcBus_kV;
+    _iq Vd;
+    _iq Vq;
+    _iq Vs;
+    _iq VsRef;
+    _iq VdcBus_kV;
 
-  _iq Id_A;
-  _iq Iq_A;
-  _iq Is_A;
+    _iq Id_A;
+    _iq Iq_A;
+    _iq Is_A;
 
-  MATH_vec3 I_bias;
-  MATH_vec3 V_bias;
+    MATH_vec3 I_bias;
+    MATH_vec3 V_bias;
 
-}MOTOR_Vars_t;
-
-
+} MOTOR_Vars_t;
 
 // **************************************************************************
 // the globals
-
 
 // **************************************************************************
 // the function prototypes
@@ -212,118 +201,98 @@ typedef struct _MOTOR_Vars_t_
 //! \brief The main interrupt service (ISR) routine
 //!
 interrupt void mainISR(void);
-
+interrupt void spiISR(void);
 
 void runCurrentIgnore(void);
 
-
 void runCurrentReconstruction(void);
-
 
 void runFieldWeakening(void);
 
-
 void runOffsetsCalculation(void);
 
-
 void runSetTrigger(void);
-
 
 //! \brief     Updates the global motor variables 
 //! 
 void updateGlobalVariables_motor(CTRL_Handle handle);
 
-
 //! \brief     Updates the global variables 
 //! 
 void updateGlobalVariables(EST_Handle handle);
-
 
 //! \brief     Updates version 1p6 of library
 //!
 void softwareUpdate1p6(EST_Handle handle);
 
-
 //! \brief     Reset Ls Q format to a higher value when Ls identification starts
 //!
 void CTRL_resetLs_qFmt(CTRL_Handle handle, const uint_least8_t qFmt);
-
 
 //! \brief     Recalculate Kp and Ki gains to fix the R/L limitation of 2000.0 and Kp limitation of 0.11
 //! \brief     as well as recalculates gains based on estimator state to allow low inductance pmsm to id
 //!
 void recalcKpKiPmsm(CTRL_Handle handle);
 
-
 //! \brief     Recalculate Kp and Ki gains to fix the R/L limitation of 2000.0 and Kp limitation of 0.11
 //!
 void recalcKpKi(CTRL_Handle handle);
-
 
 //! \brief     Calculates the maximum qFmt value for Ls identification, to get a more accurate Ls per unit
 //!
 void CTRL_calcMax_Ls_qFmt(CTRL_Handle handle, uint_least8_t *p_qFmt);
 
-
 //! \brief     Updates Iq reference and also sets the right sign to the speed reference for correct force angle
 //!
 void updateIqRef(CTRL_Handle handle);
-
 
 //! \brief     Updates Kp and Ki gains in the controller object
 //!
 void updateKpKiGains(CTRL_Handle handle);
 
-
 //! \brief     Runs Rs online
 //!
 void runRsOnLine(CTRL_Handle handle);
-
 
 //! \brief     Updates CPU usage
 //!
 void updateCPUusage(void);
 
-
 //! \brief     Set electrical frequency limit to zero while identifying an induction motor
 //!
 void setFeLimitZero(CTRL_Handle handle);
-
 
 //! \brief     Calculates Dir_qFmt for ACIM
 //!
 void acim_Dir_qFmtCalc(CTRL_Handle handle);
 
-
 //! \brief     Sets up the Clarke transform for current
 //!
-void setupClarke_I(CLARKE_Handle,const uint_least8_t);
-
+void setupClarke_I(CLARKE_Handle, const uint_least8_t);
 
 //! \brief     Sets up the Clarke transform for voltage
 //!
-void setupClarke_V(CLARKE_Handle,const uint_least8_t);
-
+void setupClarke_V(CLARKE_Handle, const uint_least8_t);
 
 _iq angleDelayComp(const _iq fm_pu, const _iq angleUncomp_pu);
 
-CTRL_Handle CTRL_init(void *pMemory,const size_t numBytes);
+CTRL_Handle CTRL_init(void *pMemory, const size_t numBytes);
 
-void EST_getIdq_pu(EST_Handle handle,MATH_vec2 *pIdq_pu);
+void EST_getIdq_pu(EST_Handle handle, MATH_vec2 *pIdq_pu);
 
 #if !defined(FAST_ROM_V1p6)
-void EST_setEstParams(EST_Handle handle,USER_Params *pUserParams);
+void EST_setEstParams(EST_Handle handle, USER_Params *pUserParams);
 void EST_setupEstIdleState(EST_Handle handle);
 #endif
 
-EST_Handle EST_init(void *pMemory,const size_t numBytes);
+EST_Handle EST_init(void *pMemory, const size_t numBytes);
 
 //! \brief     Runs PowerWarp
 //! \param[in] handle     The estimator (EST) handle
 //! \param[in] Id_int_pu  The intermediate value along the Id trajectory in pu
 //! \param[in] Iq_pu      The measured Iq value in pu
 //! \return    The target value for the Id trajectory in pu
-_iq EST_runPowerWarp(EST_Handle handle,const _iq Id_int_pu,const _iq Iq_pu);
+_iq EST_runPowerWarp(EST_Handle handle, const _iq Id_int_pu, const _iq Iq_pu);
 
 _iq getAbsElecAngle(const _iq angle_pu);
 
@@ -331,6 +300,4 @@ _iq getAbsMechAngle(_iq *pAngle_mech_poles, _iq *pAngle_z1_pu, const _iq angle_p
 
 //@} //defgroup
 #endif // end of _MAIN_H_ definition
-
-
 
