@@ -13,45 +13,45 @@ ORDERED_OBJS += \
 -l"rts2800_ml.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/lib/32b/f28x/f2806x/2806xRevB_FastSpinROMSymbols.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmath.lib" \
-"./lib/CodeStartBranch.obj" \
-"./lib/SPIB.obj" \
-"./lib/adc.obj" \
-"./lib/clarke.obj" \
-"./lib/clk.obj" \
-"./lib/cpu.obj" \
-"./lib/cpu_usage.obj" \
-"./lib/ctrlQEP.obj" \
-"./lib/dlog4ch.obj" \
-"./lib/dlog4chc.obj" \
-"./lib/drv8301.obj" \
-"./lib/enc.obj" \
-"./lib/fem.obj" \
-"./lib/filter_fo.obj" \
-"./lib/flash.obj" \
-"./lib/fw.obj" \
-"./lib/gpio.obj" \
-"./lib/hal.obj" \
-"./lib/ipark.obj" \
-"./lib/memCopy.obj" \
-"./lib/offset.obj" \
-"./lib/osc.obj" \
-"./lib/park.obj" \
-"./lib/pid.obj" \
-"./lib/pie.obj" \
-"./lib/pll.obj" \
-"./lib/pwm.obj" \
-"./lib/pwr.obj" \
-"./lib/qep.obj" \
-"./lib/slip.obj" \
-"./lib/spi.obj" \
-"./lib/spi_slave.obj" \
-"./lib/svgen.obj" \
-"./lib/svgen_current.obj" \
-"./lib/timer.obj" \
-"./lib/traj.obj" \
-"./lib/usDelay.obj" \
-"./lib/user.obj" \
-"./lib/wdog.obj" \
+"./motorware/CodeStartBranch.obj" \
+"./motorware/SPIB.obj" \
+"./motorware/adc.obj" \
+"./motorware/clarke.obj" \
+"./motorware/clk.obj" \
+"./motorware/cpu.obj" \
+"./motorware/cpu_usage.obj" \
+"./motorware/ctrlQEP.obj" \
+"./motorware/dlog4ch.obj" \
+"./motorware/dlog4chc.obj" \
+"./motorware/drv8301.obj" \
+"./motorware/enc.obj" \
+"./motorware/fem.obj" \
+"./motorware/filter_fo.obj" \
+"./motorware/flash.obj" \
+"./motorware/fw.obj" \
+"./motorware/gpio.obj" \
+"./motorware/hal.obj" \
+"./motorware/ipark.obj" \
+"./motorware/memCopy.obj" \
+"./motorware/offset.obj" \
+"./motorware/osc.obj" \
+"./motorware/park.obj" \
+"./motorware/pid.obj" \
+"./motorware/pie.obj" \
+"./motorware/pll.obj" \
+"./motorware/pwm.obj" \
+"./motorware/pwr.obj" \
+"./motorware/qep.obj" \
+"./motorware/slip.obj" \
+"./motorware/spi.obj" \
+"./motorware/spi_slave.obj" \
+"./motorware/svgen.obj" \
+"./motorware/svgen_current.obj" \
+"./motorware/timer.obj" \
+"./motorware/traj.obj" \
+"./motorware/usDelay.obj" \
+"./motorware/user.obj" \
+"./motorware/wdog.obj" \
 "./app/main.obj" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/ide/ccs/cmd/f2806x/f28069M_ram_lnk.cmd" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmathLog.lib" \
@@ -66,10 +66,10 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
--include lib/subdir_vars.mk
+-include motorware/subdir_vars.mk
 -include app/subdir_vars.mk
 -include subdir_rules.mk
--include lib/subdir_rules.mk
+-include motorware/subdir_rules.mk
 -include app/subdir_rules.mk
 -include objects.mk
 
@@ -196,9 +196,9 @@ perspection_test.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "lib\SPIB.pp" "lib\adc.pp" "lib\clarke.pp" "lib\clk.pp" "lib\cpu.pp" "lib\cpu_usage.pp" "lib\ctrlQEP.pp" "lib\dlog4ch.pp" "lib\drv8301.pp" "lib\enc.pp" "lib\fem.pp" "lib\filter_fo.pp" "lib\flash.pp" "lib\fw.pp" "lib\gpio.pp" "lib\hal.pp" "lib\ipark.pp" "lib\memCopy.pp" "lib\offset.pp" "lib\osc.pp" "lib\park.pp" "lib\pid.pp" "lib\pie.pp" "lib\pll.pp" "lib\pwm.pp" "lib\pwr.pp" "lib\qep.pp" "lib\slip.pp" "lib\spi.pp" "lib\spi_slave.pp" "lib\svgen.pp" "lib\svgen_current.pp" "lib\timer.pp" "lib\traj.pp" "lib\user.pp" "lib\wdog.pp" "app\main.pp" 
-	-$(RM) "lib\CodeStartBranch.obj" "lib\SPIB.obj" "lib\adc.obj" "lib\clarke.obj" "lib\clk.obj" "lib\cpu.obj" "lib\cpu_usage.obj" "lib\ctrlQEP.obj" "lib\dlog4ch.obj" "lib\dlog4chc.obj" "lib\drv8301.obj" "lib\enc.obj" "lib\fem.obj" "lib\filter_fo.obj" "lib\flash.obj" "lib\fw.obj" "lib\gpio.obj" "lib\hal.obj" "lib\ipark.obj" "lib\memCopy.obj" "lib\offset.obj" "lib\osc.obj" "lib\park.obj" "lib\pid.obj" "lib\pie.obj" "lib\pll.obj" "lib\pwm.obj" "lib\pwr.obj" "lib\qep.obj" "lib\slip.obj" "lib\spi.obj" "lib\spi_slave.obj" "lib\svgen.obj" "lib\svgen_current.obj" "lib\timer.obj" "lib\traj.obj" "lib\usDelay.obj" "lib\user.obj" "lib\wdog.obj" "app\main.obj" 
-	-$(RM) "lib\CodeStartBranch.pp" "lib\dlog4chc.pp" "lib\usDelay.pp" 
+	-$(RM) "motorware\SPIB.pp" "motorware\adc.pp" "motorware\clarke.pp" "motorware\clk.pp" "motorware\cpu.pp" "motorware\cpu_usage.pp" "motorware\ctrlQEP.pp" "motorware\dlog4ch.pp" "motorware\drv8301.pp" "motorware\enc.pp" "motorware\fem.pp" "motorware\filter_fo.pp" "motorware\flash.pp" "motorware\fw.pp" "motorware\gpio.pp" "motorware\hal.pp" "motorware\ipark.pp" "motorware\memCopy.pp" "motorware\offset.pp" "motorware\osc.pp" "motorware\park.pp" "motorware\pid.pp" "motorware\pie.pp" "motorware\pll.pp" "motorware\pwm.pp" "motorware\pwr.pp" "motorware\qep.pp" "motorware\slip.pp" "motorware\spi.pp" "motorware\spi_slave.pp" "motorware\svgen.pp" "motorware\svgen_current.pp" "motorware\timer.pp" "motorware\traj.pp" "motorware\user.pp" "motorware\wdog.pp" "app\main.pp" 
+	-$(RM) "motorware\CodeStartBranch.obj" "motorware\SPIB.obj" "motorware\adc.obj" "motorware\clarke.obj" "motorware\clk.obj" "motorware\cpu.obj" "motorware\cpu_usage.obj" "motorware\ctrlQEP.obj" "motorware\dlog4ch.obj" "motorware\dlog4chc.obj" "motorware\drv8301.obj" "motorware\enc.obj" "motorware\fem.obj" "motorware\filter_fo.obj" "motorware\flash.obj" "motorware\fw.obj" "motorware\gpio.obj" "motorware\hal.obj" "motorware\ipark.obj" "motorware\memCopy.obj" "motorware\offset.obj" "motorware\osc.obj" "motorware\park.obj" "motorware\pid.obj" "motorware\pie.obj" "motorware\pll.obj" "motorware\pwm.obj" "motorware\pwr.obj" "motorware\qep.obj" "motorware\slip.obj" "motorware\spi.obj" "motorware\spi_slave.obj" "motorware\svgen.obj" "motorware\svgen_current.obj" "motorware\timer.obj" "motorware\traj.obj" "motorware\usDelay.obj" "motorware\user.obj" "motorware\wdog.obj" "app\main.obj" 
+	-$(RM) "motorware\CodeStartBranch.pp" "motorware\dlog4chc.pp" "motorware\usDelay.pp" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

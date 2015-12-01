@@ -41,7 +41,7 @@
 // the includes
 
 // modules
-#include "math.h"
+#include "motorware_math.h"
 // only needed until IQmath is upgraded to 1.6
 #include "IQLog.h"
 #include "memCopy.h"

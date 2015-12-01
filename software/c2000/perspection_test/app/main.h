@@ -39,7 +39,7 @@
 // **************************************************************************
 // the includes
 // modules
-#include "math.h"
+#include "motorware_math.h"
 #include "memCopy.h"
 #include "est.h"
 #include "svgen_current.h"
