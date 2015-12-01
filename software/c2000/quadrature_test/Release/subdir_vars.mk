@@ -17,6 +17,7 @@ C:/ti/motorware/motorware_1_01_00_15/sw/drivers/cpu/src/32b/f28x/f2806x/CodeStar
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/usDelay/src/32b/f28x/usDelay.asm 
 
 C_SRCS += \
+C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/adc/src/32b/f28x/f2806x/adc.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/clarke/src/32b/clarke.c \
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/clk/src/32b/f28x/f2806x/clk.c \
@@ -51,6 +52,7 @@ C:/ti/motorware/motorware_1_01_00_15/sw/drivers/wdog/src/32b/f28x/f2806x/wdog.c
 
 OBJS += \
 ./CodeStartBranch.obj \
+./SPIAslave.obj \
 ./adc.obj \
 ./clarke.obj \
 ./clk.obj \
@@ -89,6 +91,7 @@ ASM_DEPS += \
 ./usDelay.pp 
 
 C_DEPS += \
+./SPIAslave.pp \
 ./adc.pp \
 ./clarke.pp \
 ./clk.pp \
@@ -122,6 +125,7 @@ C_DEPS += \
 ./wdog.pp 
 
 C_DEPS__QUOTED += \
+"SPIAslave.pp" \
 "adc.pp" \
 "clarke.pp" \
 "clk.pp" \
@@ -156,6 +160,7 @@ C_DEPS__QUOTED += \
 
 OBJS__QUOTED += \
 "CodeStartBranch.obj" \
+"SPIAslave.obj" \
 "adc.obj" \
 "clarke.obj" \
 "clk.obj" \
@@ -198,6 +203,7 @@ ASM_SRCS__QUOTED += \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/usDelay/src/32b/f28x/usDelay.asm" 
 
 C_SRCS__QUOTED += \
+"C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/drivers/adc/src/32b/f28x/f2806x/adc.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/clarke/src/32b/clarke.c" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/drivers/clk/src/32b/f28x/f2806x/clk.c" \

@@ -105,7 +105,7 @@ void HAL_enableSpiInt(HAL_Handle handle)//THIS IS MY FUNCTION
   
   uint16_t HAL_spiIntStatus(HAL_Handle handle);
   
-  void HAL_enableSpiInt(HAL_Handle handle)
+  void HAL_enableSpiInt(HAL_Handle handle);
   
   //In the IinitVectorTable function, between the protected register calls
   //paste this along with the other ISRS
