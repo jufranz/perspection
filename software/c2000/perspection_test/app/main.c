@@ -160,6 +160,7 @@ void main(void) {
     // enable the ADC interrupts
     HAL_enableAdcInts(halHandle);
 
+    // enable the SPI interrupts
     HAL_enableSpiInt(halHandle);
 
     // enable global interrupts
@@ -179,7 +180,7 @@ void main(void) {
 #endif
 
     // enable DC bus compensation
-    //CTRL_setFlag_enableDcBusComp(ctrlHandle, true);
+//    CTRL_setFlag_enableDcBusComp(ctrlHandle, true);
     sdata = 0;
     rdata = 0;
     for (;;) {
@@ -193,9 +194,7 @@ void main(void) {
 } // end of main() function
 
 interrupt void mainISR(void) {
-//    rdata = HAL_readSpiSlaveData(halHandle);
-//    ints++;
-//    return;
+
 } // end of mainISR() function
 
 interrupt void spiISR(void) {
