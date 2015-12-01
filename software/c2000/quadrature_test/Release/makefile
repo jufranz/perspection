@@ -16,6 +16,7 @@ ORDERED_OBJS += \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/lib/32b/SpinTAC.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmath.lib" \
 "./CodeStartBranch.obj" \
+"./SPIAslave.obj" \
 "./adc.obj" \
 "./clarke.obj" \
 "./clk.obj" \
@@ -173,8 +174,8 @@ quadrature_test.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "adc.pp" "clarke.pp" "clk.pp" "cpu.pp" "ctrlQEP.pp" "drv8301.pp" "enc.pp" "filter_fo.pp" "flash.pp" "gpio.pp" "hal.pp" "ipark.pp" "offset.pp" "osc.pp" "park.pp" "perspection_adc.pp" "perspection_pwm.pp" "pid.pp" "pie.pp" "pll.pp" "pwm.pp" "pwr.pp" "qep.pp" "quadrature_test.pp" "slip.pp" "spi.pp" "svgen.pp" "timer.pp" "traj.pp" "user.pp" "wdog.pp" 
-	-$(RM) "CodeStartBranch.obj" "adc.obj" "clarke.obj" "clk.obj" "cpu.obj" "ctrlQEP.obj" "drv8301.obj" "enc.obj" "filter_fo.obj" "flash.obj" "gpio.obj" "hal.obj" "ipark.obj" "offset.obj" "osc.obj" "park.obj" "perspection_adc.obj" "perspection_pwm.obj" "pid.obj" "pie.obj" "pll.obj" "pwm.obj" "pwr.obj" "qep.obj" "quadrature_test.obj" "slip.obj" "spi.obj" "svgen.obj" "timer.obj" "traj.obj" "usDelay.obj" "user.obj" "wdog.obj" 
+	-$(RM) "SPIAslave.pp" "adc.pp" "clarke.pp" "clk.pp" "cpu.pp" "ctrlQEP.pp" "drv8301.pp" "enc.pp" "filter_fo.pp" "flash.pp" "gpio.pp" "hal.pp" "ipark.pp" "offset.pp" "osc.pp" "park.pp" "perspection_adc.pp" "perspection_pwm.pp" "pid.pp" "pie.pp" "pll.pp" "pwm.pp" "pwr.pp" "qep.pp" "quadrature_test.pp" "slip.pp" "spi.pp" "svgen.pp" "timer.pp" "traj.pp" "user.pp" "wdog.pp" 
+	-$(RM) "CodeStartBranch.obj" "SPIAslave.obj" "adc.obj" "clarke.obj" "clk.obj" "cpu.obj" "ctrlQEP.obj" "drv8301.obj" "enc.obj" "filter_fo.obj" "flash.obj" "gpio.obj" "hal.obj" "ipark.obj" "offset.obj" "osc.obj" "park.obj" "perspection_adc.obj" "perspection_pwm.obj" "pid.obj" "pie.obj" "pll.obj" "pwm.obj" "pwr.obj" "qep.obj" "quadrature_test.obj" "slip.obj" "spi.obj" "svgen.obj" "timer.obj" "traj.obj" "usDelay.obj" "user.obj" "wdog.obj" 
 	-$(RM) "CodeStartBranch.pp" "usDelay.pp" 
 	-@echo 'Finished clean'
 	-@echo ' '

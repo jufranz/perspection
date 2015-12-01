@@ -49,6 +49,7 @@ user.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/spi/src/32b/f28x/f2806
 user.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/timer/src/32b/f28x/f2806x/timer.h
 user.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/wdog/src/32b/f28x/f2806x/wdog.h
 user.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/drv8301.h
+user.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.h
 user.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/qep/src/32b/f28x/f2806x/qep.h
 user.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/usDelay/src/32b/usDelay.h
 
@@ -101,5 +102,6 @@ C:/ti/motorware/motorware_1_01_00_15/sw/drivers/spi/src/32b/f28x/f2806x/spi.h:
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/timer/src/32b/f28x/f2806x/timer.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/wdog/src/32b/f28x/f2806x/wdog.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/drv8301.h: 
+C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/qep/src/32b/f28x/f2806x/qep.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/usDelay/src/32b/usDelay.h: 
