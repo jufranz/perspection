@@ -32,21 +32,18 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
 
-//! \file   solutions/instaspin_foc/boards/boostxldrv8301_revB/f28x/f2806xF/src/user_j5.h
+//! \file   solutions/instaspin_motion/boards/boostxldrv8301_revB/f28x/f2806xM/src/user_j5.h
 //! \brief Contains the public interface for user initialization data for the CTRL, HAL, and EST modules 
 //!
 //! (C) Copyright 2012, Texas Instruments, Inc.
 
-
 // **************************************************************************
 // the includes
-
 //!
 //!
 //! \defgroup USER USER
 //!
 //@{
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +57,11 @@ extern "C" {
 //! \brief Defines the full scale frequency for IQ variable, Hz
 //! \brief All frequencies are converted into (pu) based on the ratio to this value
 //! \brief this value MUST be larger than the maximum speed that you are expecting from the motor
+#ifndef QEP
 #define USER_IQ_FULL_SCALE_FREQ_Hz        (800.0)   // 800 Example with buffer for 8-pole 6 KRPM motor to be run to 10 KRPM with field weakening; Hz =(RPM * Poles) / 120
+#else
+#define USER_IQ_FULL_SCALE_FREQ_Hz        (USER_MOTOR_NUM_POLE_PAIRS/0.008)   // (4/0.008) = 500 Example with buffer for 8-pole 6 KRPM motor to be run to 6 KRPM; Hz = (RPM * Poles) / 120
+#endif
 
 //! \brief Defines full scale value for the IQ30 variable of Voltage inside the system
 //! \brief All voltages are converted into (pu) based on the ratio to this value
@@ -110,7 +111,6 @@ extern "C" {
 #define   V_B_offset    (0.5257175565)
 #define   V_C_offset    (0.5249399543)
 
-
 //! \brief CLOCKS & TIMERS
 // **************************************************************************
 //! \brief Defines the Pulse Width Modulation (PWM) frequency, kHz
@@ -129,7 +129,6 @@ extern "C" {
 //! \brief Set USER_MAX_VS_MAG = 2/3 = 0.6666 to create a trapezoidal voltage waveform.  Current reconstruction will be needed for this scenario (Lab10a-x).
 //! \brief For space vector over-modulation, see lab 10 for details on system requirements that will allow the SVM generator to go all the way to trapezoidal.
 #define USER_MAX_VS_MAG_PU        (2.0/3.0)    // Set to 0.5 if a current reconstruction technique is not used.  Look at the module svgen_current in lab10a-x for more info.
-
 
 //! \brief DECIMATION
 // **************************************************************************
@@ -164,7 +163,6 @@ extern "C" {
 //! \brief Typically the same as the speed rate
 #define USER_NUM_CTRL_TICKS_PER_TRAJ_TICK   (15)   // 15 Typical to match PWM, ex: 10KHz controller & current loop, 1KHz speed loop, 1 KHz Trajectory
 
-
 //! \brief LIMITS
 // **************************************************************************
 //! \brief Defines the maximum negative current to be applied in Id reference
@@ -187,16 +185,20 @@ extern "C" {
 //! \brief Can be positive or negative
 #define USER_FORCE_ANGLE_FREQ_Hz   (2.0 * USER_ZEROSPEEDLIMIT * USER_IQ_FULL_SCALE_FREQ_Hz)      // 1.0 Typical force angle start-up speed
 
-
 //! \brief POLES
 // **************************************************************************
 //! \brief Defines the analog voltage filter pole location, Hz
 //! \brief Must match the hardware filter for Vph
 #define USER_VOLTAGE_FILTER_POLE_Hz  (364.682)   // 364.682, value for boostxldrv8301_revB hardware
 
-
 //! \brief USER MOTOR & ID SETTINGS
 // **************************************************************************
+
+//! \brief Defines the default bandwidth for SpinTAC Control
+//! \brief This value should be determined by putting SpinTAC Control through a tuning process
+//! \brief If a Bandwidth Scale value has been previously identified
+//! \brief multiply it by 20 to convert into Bandwidth
+#define USER_SYSTEM_BANDWIDTH      (20.0)
 
 //! \brief Define each motor with a unique name and ID number
 // BLDC & SMPM motors
@@ -208,7 +210,6 @@ extern "C" {
 // If user provides separate Ls-d, Ls-q
 // else treat as SPM with user or identified average Ls
 #define Belt_Drive_Washer_IPM       201
-#define Anaheim_Salient             202
 
 // ACIM motors
 #define Marathon_5K33GN2A           301
@@ -221,8 +222,6 @@ extern "C" {
 //#define USER_MOTOR Teknic_M2310PLN04K
 //#define USER_MOTOR Belt_Drive_Washer_IPM
 //#define USER_MOTOR Marathon_5K33GN2A
-//#define USER_MOTOR Anaheim_Salient
-
 
 #if (USER_MOTOR == Estun_EMJ_04APB22)                  // Name must match the motor #define
 #define USER_MOTOR_TYPE                 MOTOR_Type_Pm  // Motor_Type_Pm (All Synchronous: BLDC, PMSM, SMPM, IPM) or Motor_Type_Induction (Asynchronous ACI)
@@ -237,6 +236,10 @@ extern "C" {
 #define USER_MOTOR_IND_EST_CURRENT      (-1.0)         // During Motor ID, maximum current (negative Amperes, float) used for Ls estimation, use just enough to enable rotation
 #define USER_MOTOR_MAX_CURRENT          (3.82)         // CRITICAL: Used during ID and run-time, sets a limit on the maximum current command output of the provided Speed PI Controller to the Iq controller
 #define USER_MOTOR_FLUX_EST_FREQ_Hz     (20.0)         // During Motor ID, maximum commanded speed (Hz, float), ~10% rated
+#define USER_MOTOR_ENCODER_LINES        (2500.0)       // Number of lines on the motor's quadrature encoder
+#define USER_MOTOR_MAX_SPEED_KRPM       (3.0)          // Maximum speed that the motor
+#define USER_SYSTEM_INERTIA             (0.02)         // Inertia of the motor & system, should be estimated by SpinTAC Velocity Identify
+#define USER_SYSTEM_FRICTION            (0.01)         // Friction of the motor & system, should be estimated by SpinTAC Velocity Identify
 
 #elif (USER_MOTOR == Anaheim_BLY172S)
 #define USER_MOTOR_TYPE                 MOTOR_Type_Pm
@@ -251,35 +254,10 @@ extern "C" {
 #define USER_MOTOR_IND_EST_CURRENT      (-1.0)
 #define USER_MOTOR_MAX_CURRENT          (5.0)
 #define USER_MOTOR_FLUX_EST_FREQ_Hz     (20.0)
-
-#elif (USER_MOTOR == Anaheim_Salient)                 // When using IPD_HFI, set decimation to 1 and PWM to 15.0 KHz
-#define USER_MOTOR_TYPE                 MOTOR_Type_Pm
-#define USER_MOTOR_NUM_POLE_PAIRS       (4)
-#define USER_MOTOR_Rr                   (NULL)
-#define USER_MOTOR_Rs                   (0.1215855)
-#define USER_MOTOR_Ls_d                 (0.0002298828)
-#define USER_MOTOR_Ls_q                 (0.0002298828)
-#define USER_MOTOR_RATED_FLUX           (0.04821308)
-#define USER_MOTOR_MAGNETIZING_CURRENT  (NULL)
-#define USER_MOTOR_RES_EST_CURRENT      (2.0)         // Enter amperes(float)
-#define USER_MOTOR_IND_EST_CURRENT      (-0.5)        // Enter negative amperes(float)
-#define USER_MOTOR_MAX_CURRENT          (10.0)
-#define USER_MOTOR_FLUX_EST_FREQ_Hz     (20.0)
-#define IPD_HFI_EXC_FREQ_HZ             (750.0)       // excitation frequency, Hz
-#define IPD_HFI_LP_SPD_FILT_HZ          (35.0)        // lowpass filter cutoff frequency, Hz
-#define IPD_HFI_HP_IQ_FILT_HZ           (100.0)       // highpass filter cutoff frequency, Hz
-#define IPD_HFI_KSPD                    (15.0)       // the speed gain value
-#define IPD_HFI_EXC_MAG_COARSE_PU       (0.13)         // coarse IPD excitation magnitude, pu
-#define IPD_HFI_EXC_MAG_FINE_PU         (0.12)         // fine IPD excitation magnitude, pu
-#define IPD_HFI_EXC_TIME_COARSE_S       (0.5)         // coarse wait time, sec max 0.64
-#define IPD_HFI_EXC_TIME_FINE_S         (0.5)         // fine wait time, sec max 0.4
-#define AFSEL_FREQ_HIGH_PU              (_IQ(15.0 / USER_IQ_FULL_SCALE_FREQ_Hz))
-#define AFSEL_FREQ_LOW_PU               (_IQ(10.0 / USER_IQ_FULL_SCALE_FREQ_Hz))
-#define AFSEL_IQ_SLOPE_EST              (_IQ((float)(1.0/0.1/USER_ISR_FREQ_Hz)))
-#define AFSEL_IQ_SLOPE_HFI              (_IQ((float)(1.0/10.0/USER_ISR_FREQ_Hz)))
-#define AFSEL_IQ_SLOPE_THROTTLE_DWN     (_IQ((float)(1.0/0.05/USER_ISR_FREQ_Hz)))
-#define AFSEL_MAX_IQ_REF_EST            (_IQ(0.6))
-#define AFSEL_MAX_IQ_REF_HFI            (_IQ(0.6))
+#define USER_MOTOR_ENCODER_LINES        (2000.0)
+#define USER_MOTOR_MAX_SPEED_KRPM       (4.0)
+#define USER_SYSTEM_INERTIA             (0.02)
+#define USER_SYSTEM_FRICTION            (0.01)
 
 #elif (USER_MOTOR == Teknic_M2310PLN04K)
 #define USER_MOTOR_TYPE                 MOTOR_Type_Pm
@@ -294,6 +272,10 @@ extern "C" {
 #define USER_MOTOR_IND_EST_CURRENT      (-0.5)
 #define USER_MOTOR_MAX_CURRENT          (7.0)
 #define USER_MOTOR_FLUX_EST_FREQ_Hz     (20.0)
+#define USER_MOTOR_ENCODER_LINES        (1000.0)
+#define USER_MOTOR_MAX_SPEED_KRPM       (4.0)
+#define USER_SYSTEM_INERTIA             (0.02)
+#define USER_SYSTEM_FRICTION            (0.01)
 
 #elif (USER_MOTOR == Belt_Drive_Washer_IPM)
 #define USER_MOTOR_TYPE                 MOTOR_Type_Pm
@@ -322,6 +304,10 @@ extern "C" {
 #define USER_MOTOR_IND_EST_CURRENT      (NULL)               // not used for induction
 #define USER_MOTOR_MAX_CURRENT          (2.0)                // CRITICAL: Used during ID and run-time, sets a limit on the maximum current command output of the provided Speed PI Controller to the Iq controller
 #define USER_MOTOR_FLUX_EST_FREQ_Hz     (5.0)                // During Motor ID, maximum commanded speed (Hz, float). Should always use 5 Hz for Induction.
+#define USER_MOTOR_ENCODER_LINES        (2048.0)             // Number of lines on the motor's quadrature encoder
+#define USER_MOTOR_MAX_SPEED_KRPM       (1.725)              // Maximum speed that the motor
+#define USER_SYSTEM_INERTIA             (0.02)               // Inertia of the motor & system, should be estimated by SpinTAC Velocity Identify
+#define USER_SYSTEM_FRICTION            (0.01)               // Friction of the motor & system, should be estimated by SpinTAC Velocity Identify
 
 #else
 #error No motor type specified

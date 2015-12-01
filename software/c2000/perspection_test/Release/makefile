@@ -20,7 +20,7 @@ ORDERED_OBJS += \
 "./lib/clk.obj" \
 "./lib/cpu.obj" \
 "./lib/cpu_usage.obj" \
-"./lib/ctrl.obj" \
+"./lib/ctrlQEP.obj" \
 "./lib/dlog4ch.obj" \
 "./lib/dlog4chc.obj" \
 "./lib/drv8301.obj" \
@@ -42,6 +42,7 @@ ORDERED_OBJS += \
 "./lib/pwm.obj" \
 "./lib/pwr.obj" \
 "./lib/qep.obj" \
+"./lib/slip.obj" \
 "./lib/spi.obj" \
 "./lib/spi_slave.obj" \
 "./lib/svgen.obj" \
@@ -53,6 +54,8 @@ ORDERED_OBJS += \
 "./lib/wdog.obj" \
 "./app/main.obj" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/ide/ccs/cmd/f2806x/f28069M_ram_lnk.cmd" \
+"C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmathLog.lib" \
+"C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/lib/32b/SpinTAC.lib" \
 $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init
@@ -166,6 +169,12 @@ perspection_test.out \
 EXE_OUTPUTS__QUOTED += \
 "perspection_test.out" \
 
+BIN_OUTPUTS += \
+perspection_test.hex \
+
+BIN_OUTPUTS__QUOTED += \
+"perspection_test.hex" \
+
 
 # All Target
 all: perspection_test.out
@@ -174,15 +183,21 @@ all: perspection_test.out
 perspection_test.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: C2000 Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -ml -mt -O2 -g --define=FAST_ROM_V1p6 --diag_warning=225 --display_error_number -z -m"perspection_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --disable_auto_rts --diag_suppress=16002 --xml_link_info="perspection_test_linkInfo.xml" --rom_model -o "perspection_test.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -mt -ml -O2 -g --define=FAST_ROM_V1p6 --define=QEP --diag_warning=225 --display_error_number -z -m"perspection_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --disable_auto_rts --diag_suppress=16002 --xml_link_info="perspection_test_linkInfo.xml" --rom_model -o "perspection_test.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
+	@echo ' '
+
+perspection_test.hex: $(EXE_OUTPUTS)
+	@echo 'Invoking: C2000 Hex Utility'
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/hex2000"  -o "perspection_test.hex" $(EXE_OUTPUTS__QUOTED)
+	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "lib\SPIB.pp" "lib\adc.pp" "lib\clarke.pp" "lib\clk.pp" "lib\cpu.pp" "lib\cpu_usage.pp" "lib\ctrl.pp" "lib\dlog4ch.pp" "lib\drv8301.pp" "lib\enc.pp" "lib\fem.pp" "lib\filter_fo.pp" "lib\flash.pp" "lib\fw.pp" "lib\gpio.pp" "lib\hal.pp" "lib\ipark.pp" "lib\memCopy.pp" "lib\offset.pp" "lib\osc.pp" "lib\park.pp" "lib\pid.pp" "lib\pie.pp" "lib\pll.pp" "lib\pwm.pp" "lib\pwr.pp" "lib\qep.pp" "lib\spi.pp" "lib\spi_slave.pp" "lib\svgen.pp" "lib\svgen_current.pp" "lib\timer.pp" "lib\traj.pp" "lib\user.pp" "lib\wdog.pp" "app\main.pp" 
-	-$(RM) "lib\CodeStartBranch.obj" "lib\SPIB.obj" "lib\adc.obj" "lib\clarke.obj" "lib\clk.obj" "lib\cpu.obj" "lib\cpu_usage.obj" "lib\ctrl.obj" "lib\dlog4ch.obj" "lib\dlog4chc.obj" "lib\drv8301.obj" "lib\enc.obj" "lib\fem.obj" "lib\filter_fo.obj" "lib\flash.obj" "lib\fw.obj" "lib\gpio.obj" "lib\hal.obj" "lib\ipark.obj" "lib\memCopy.obj" "lib\offset.obj" "lib\osc.obj" "lib\park.obj" "lib\pid.obj" "lib\pie.obj" "lib\pll.obj" "lib\pwm.obj" "lib\pwr.obj" "lib\qep.obj" "lib\spi.obj" "lib\spi_slave.obj" "lib\svgen.obj" "lib\svgen_current.obj" "lib\timer.obj" "lib\traj.obj" "lib\usDelay.obj" "lib\user.obj" "lib\wdog.obj" "app\main.obj" 
+	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
+	-$(RM) "lib\SPIB.pp" "lib\adc.pp" "lib\clarke.pp" "lib\clk.pp" "lib\cpu.pp" "lib\cpu_usage.pp" "lib\ctrlQEP.pp" "lib\dlog4ch.pp" "lib\drv8301.pp" "lib\enc.pp" "lib\fem.pp" "lib\filter_fo.pp" "lib\flash.pp" "lib\fw.pp" "lib\gpio.pp" "lib\hal.pp" "lib\ipark.pp" "lib\memCopy.pp" "lib\offset.pp" "lib\osc.pp" "lib\park.pp" "lib\pid.pp" "lib\pie.pp" "lib\pll.pp" "lib\pwm.pp" "lib\pwr.pp" "lib\qep.pp" "lib\slip.pp" "lib\spi.pp" "lib\spi_slave.pp" "lib\svgen.pp" "lib\svgen_current.pp" "lib\timer.pp" "lib\traj.pp" "lib\user.pp" "lib\wdog.pp" "app\main.pp" 
+	-$(RM) "lib\CodeStartBranch.obj" "lib\SPIB.obj" "lib\adc.obj" "lib\clarke.obj" "lib\clk.obj" "lib\cpu.obj" "lib\cpu_usage.obj" "lib\ctrlQEP.obj" "lib\dlog4ch.obj" "lib\dlog4chc.obj" "lib\drv8301.obj" "lib\enc.obj" "lib\fem.obj" "lib\filter_fo.obj" "lib\flash.obj" "lib\fw.obj" "lib\gpio.obj" "lib\hal.obj" "lib\ipark.obj" "lib\memCopy.obj" "lib\offset.obj" "lib\osc.obj" "lib\park.obj" "lib\pid.obj" "lib\pie.obj" "lib\pll.obj" "lib\pwm.obj" "lib\pwr.obj" "lib\qep.obj" "lib\slip.obj" "lib\spi.obj" "lib\spi_slave.obj" "lib\svgen.obj" "lib\svgen_current.obj" "lib\timer.obj" "lib\traj.obj" "lib\usDelay.obj" "lib\user.obj" "lib\wdog.obj" "app\main.obj" 
 	-$(RM) "lib\CodeStartBranch.pp" "lib\dlog4chc.pp" "lib\usDelay.pp" 
 	-@echo 'Finished clean'
 	-@echo ' '
