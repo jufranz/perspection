@@ -225,7 +225,7 @@ void main(void)
 interrupt void mainISR(void)
 {
   //sdata++;
-  rdata = HAL_readArduinoData(halHandle);
+  rdata = HAL_readSpiSlaveData(halHandle);
   ints++;
   //sdata++;
   return;

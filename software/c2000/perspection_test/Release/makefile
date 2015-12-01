@@ -13,7 +13,6 @@ ORDERED_OBJS += \
 -l"rts2800_ml.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/lib/32b/f28x/f2806x/2806xRevB_FastSpinROMSymbols.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmath.lib" \
-"./lib/Arduino.obj" \
 "./lib/CodeStartBranch.obj" \
 "./lib/SPIB.obj" \
 "./lib/adc.obj" \
@@ -44,6 +43,7 @@ ORDERED_OBJS += \
 "./lib/pwr.obj" \
 "./lib/qep.obj" \
 "./lib/spi.obj" \
+"./lib/spi_slave.obj" \
 "./lib/svgen.obj" \
 "./lib/svgen_current.obj" \
 "./lib/timer.obj" \
@@ -53,8 +53,6 @@ ORDERED_OBJS += \
 "./lib/wdog.obj" \
 "./app/main.obj" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/ide/ccs/cmd/f2806x/f28069M_ram_lnk.cmd" \
-"../lib/IQmath.lib" \
-"../lib/IQmathLog.lib" \
 $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init
@@ -183,8 +181,8 @@ perspection_test.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "lib\Arduino.pp" "lib\SPIB.pp" "lib\adc.pp" "lib\clarke.pp" "lib\clk.pp" "lib\cpu.pp" "lib\cpu_usage.pp" "lib\ctrl.pp" "lib\dlog4ch.pp" "lib\drv8301.pp" "lib\enc.pp" "lib\fem.pp" "lib\filter_fo.pp" "lib\flash.pp" "lib\fw.pp" "lib\gpio.pp" "lib\hal.pp" "lib\ipark.pp" "lib\memCopy.pp" "lib\offset.pp" "lib\osc.pp" "lib\park.pp" "lib\pid.pp" "lib\pie.pp" "lib\pll.pp" "lib\pwm.pp" "lib\pwr.pp" "lib\qep.pp" "lib\spi.pp" "lib\svgen.pp" "lib\svgen_current.pp" "lib\timer.pp" "lib\traj.pp" "lib\user.pp" "lib\wdog.pp" "app\main.pp" 
-	-$(RM) "lib\Arduino.obj" "lib\CodeStartBranch.obj" "lib\SPIB.obj" "lib\adc.obj" "lib\clarke.obj" "lib\clk.obj" "lib\cpu.obj" "lib\cpu_usage.obj" "lib\ctrl.obj" "lib\dlog4ch.obj" "lib\dlog4chc.obj" "lib\drv8301.obj" "lib\enc.obj" "lib\fem.obj" "lib\filter_fo.obj" "lib\flash.obj" "lib\fw.obj" "lib\gpio.obj" "lib\hal.obj" "lib\ipark.obj" "lib\memCopy.obj" "lib\offset.obj" "lib\osc.obj" "lib\park.obj" "lib\pid.obj" "lib\pie.obj" "lib\pll.obj" "lib\pwm.obj" "lib\pwr.obj" "lib\qep.obj" "lib\spi.obj" "lib\svgen.obj" "lib\svgen_current.obj" "lib\timer.obj" "lib\traj.obj" "lib\usDelay.obj" "lib\user.obj" "lib\wdog.obj" "app\main.obj" 
+	-$(RM) "lib\SPIB.pp" "lib\adc.pp" "lib\clarke.pp" "lib\clk.pp" "lib\cpu.pp" "lib\cpu_usage.pp" "lib\ctrl.pp" "lib\dlog4ch.pp" "lib\drv8301.pp" "lib\enc.pp" "lib\fem.pp" "lib\filter_fo.pp" "lib\flash.pp" "lib\fw.pp" "lib\gpio.pp" "lib\hal.pp" "lib\ipark.pp" "lib\memCopy.pp" "lib\offset.pp" "lib\osc.pp" "lib\park.pp" "lib\pid.pp" "lib\pie.pp" "lib\pll.pp" "lib\pwm.pp" "lib\pwr.pp" "lib\qep.pp" "lib\spi.pp" "lib\spi_slave.pp" "lib\svgen.pp" "lib\svgen_current.pp" "lib\timer.pp" "lib\traj.pp" "lib\user.pp" "lib\wdog.pp" "app\main.pp" 
+	-$(RM) "lib\CodeStartBranch.obj" "lib\SPIB.obj" "lib\adc.obj" "lib\clarke.obj" "lib\clk.obj" "lib\cpu.obj" "lib\cpu_usage.obj" "lib\ctrl.obj" "lib\dlog4ch.obj" "lib\dlog4chc.obj" "lib\drv8301.obj" "lib\enc.obj" "lib\fem.obj" "lib\filter_fo.obj" "lib\flash.obj" "lib\fw.obj" "lib\gpio.obj" "lib\hal.obj" "lib\ipark.obj" "lib\memCopy.obj" "lib\offset.obj" "lib\osc.obj" "lib\park.obj" "lib\pid.obj" "lib\pie.obj" "lib\pll.obj" "lib\pwm.obj" "lib\pwr.obj" "lib\qep.obj" "lib\spi.obj" "lib\spi_slave.obj" "lib\svgen.obj" "lib\svgen_current.obj" "lib\timer.obj" "lib\traj.obj" "lib\usDelay.obj" "lib\user.obj" "lib\wdog.obj" "app\main.obj" 
 	-$(RM) "lib\CodeStartBranch.pp" "lib\dlog4chc.pp" "lib\usDelay.pp" 
 	-@echo 'Finished clean'
 	-@echo ' '
