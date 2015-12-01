@@ -1,0 +1,33 @@
+1: Paste the files into the correct location
+	-the path for the SPIAslave files is 
+	 ti\motorware\motorware_1_01_00_15\sw\drivers\drvic\drv8301\src\32b\f28x\f2806x
+	
+	 
+2:  Copy the needed functions from the changes file into the .h and .c files 
+	-Then the SPI and PIE driver files will be located at
+	 ti\motorware\motorware_1_01_00_15\sw\
+	 and they must be placed under DRIVERTYPE\drv8301\src\32b\f28x\f2806x
+	-copy and paste according to the CHANGES files
+	
+3: Copy the needed changes into the HAL and HAL_obj files
+	-The path for these files is
+	 ti\motorware\motorware_1_01_00_15\sw\modules\hal\boards\boostxldrv8301_revB\f28x\f2806x\src
+	-copy functions and declarations according to the CHANGES files
+	
+	
+================// USAGE //=================================
+1: You can use the motorware example labs as a template, however to use SPIA as a slave,
+	you will need to call HAL_enableSpiInt(halHandle); in the main function before 
+	the main loop. Everything else should be initialized for you in the existing motorware stuff
+
+2: In the main loop, you will have to make your own spiISR with prototype
+	interrupt void spiISR(void)
+	for the test example I simply had the function below.
+interrupt void spiISR(void)
+{
+  // toggle status LED
+  HAL_toggleLed(halHandle,(GPIO_Number_e)HAL_Gpio_LED2);
+  rdata = HAL_readArduinoData(halHandle);
+  ints++;
+  return;
+}

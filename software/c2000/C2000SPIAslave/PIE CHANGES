@@ -1,0 +1,12 @@
+//copy this into pie.c
+void PIE_enableSpiInt(PIE_Handle pieHandle){
+
+	PIE_Obj *pie = (PIE_Obj *)pieHandle;
+	uint16_t index = 5;
+	uint16_t setValue = 1;
+
+	pie->PIEIER_PIEIFR[index].IER |= setValue;
+}
+
+//copy this into pie.h
+void PIE_enableSpiInt(PIE_Handle pieHandle);
