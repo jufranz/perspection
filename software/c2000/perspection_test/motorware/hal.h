@@ -1147,8 +1147,14 @@ void HAL_setupDrvSpi(HAL_Handle handle, DRV_SPI_8301_Vars_t *Spi_8301_Vars);
 
 //! \brief     Reads the SPI A receive buffer
 //! \param[in] handle    The hardware abstraction layer (HAL) handle
-//! \return    The data in the SPI A receive buffer
-extern uint16_t HAL_readSpiSlaveData(HAL_Handle handle);
+//! \param[in] buf       A buffer to hold the data in
+//! \return    The number of words actually read
+extern uint16_t HAL_readSpiSlaveData(HAL_Handle handle, uint16_t* buf);
+
+//! \brief     Writes to the SPI A send buffer
+//! \param[in] handle    The hardware abstraction layer (HAL) handle
+//! \param[in] data      The data to write
+extern void HAL_writeSpiSlaveData(HAL_Handle handle, uint16_t data);
 
 //! \brief     Sets up the spiA peripheral as a slave
 //! \param[in] handle  The hardware abstraction layer (HAL) handle

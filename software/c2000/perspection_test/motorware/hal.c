@@ -1551,19 +1551,26 @@ void HAL_setupDrvSpi(HAL_Handle handle, DRV_SPI_8301_Vars_t *Spi_8301_Vars) {
 // =========- PERSPECTION STUFF -========= //
 // =========---------------------========= //
 
-uint16_t HAL_readSpiSlaveData(HAL_Handle handle) {
+uint16_t HAL_readSpiSlaveData(HAL_Handle handle, uint16_t* buf) {
     HAL_Obj *obj = (HAL_Obj *) handle;
-    uint16_t dat = 0;
+    uint16_t wordsRead = 0;
 
-    dat = SPI_Slave_readSpi(obj->SpiSlaveHandle);
+    wordsRead = SPI_Slave_readSpi(obj->SpiSlaveHandle, buf);
     PIE_clearInt(obj->pieHandle, PIE_GroupNumber_6);
 
-    return dat;
+    return wordsRead;
 }  // end of HAL_readSpiSlaveData() function
+
+void HAL_writeSpiSlaveData(HAL_Handle handle, uint16_t data) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+
+    SPI_Slave_writeSpi(obj->SpiSlaveHandle, data);
+}  // end of HAL_writeSpiSlaveData() function
 
 void HAL_setupSpiAslave(HAL_Handle handle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
 
+    // RX stuff
     SPI_reset(obj->spiAHandle);
     SPI_setClkPhase(obj->spiAHandle, SPI_ClkPhase_Normal);
     SPI_setClkPolarity(obj->spiAHandle, SPI_ClkPolarity_OutputFallingEdge_InputRisingEdge);
@@ -1572,9 +1579,16 @@ void HAL_setupSpiAslave(HAL_Handle handle) {
     SPI_setCharLength(obj->spiAHandle, SPI_CharLength_16_Bits);
     SPI_enableRxFifo(obj->spiAHandle);
 
+    // TX Stuff
+    SPI_enableTx(obj->spiAHandle);
+    SPI_enableTxFifoEnh(obj->spiAHandle);
+    SPI_enableTxFifo(obj->spiAHandle);
+    SPI_setTxDelay(obj->spiAHandle, 0);
+    SPI_clearTxFifoInt(obj->spiAHandle);
+
     //INTERRUPT STUFF
     SPI_enableRxFifoInt(obj->spiAHandle);
-    SPI_setRxFifoIntLevel(obj->spiAHandle, SPI_FifoLevel_4_Words);
+    SPI_setRxFifoIntLevel(obj->spiAHandle, SPI_FifoLevel_1_Word);
 
     SPI_setSuspend(obj->spiAHandle, SPI_TxSuspend_free);
     SPI_enable(obj->spiAHandle);

@@ -71,9 +71,9 @@ static inline void SPI_Slave_resetRxTimeout(SPI_Slave_Handle handle) {
 
 //! \brief     Reads data from the SPI_Slave register
 //! \param[in] handle   The SPI_Slave handle
-//! \param[in] regName  The register name
-//! \return    The data value
-extern uint16_t SPI_Slave_readSpi(SPI_Slave_Handle handle);
+//! \param[in] buf      A buffer to store the data in
+//! \return    The number of bytes actually read
+extern uint16_t SPI_Slave_readSpi(SPI_Slave_Handle handle, uint16_t* buf);
 
 //! \brief     Sets the GPIO handle in the SPI_Slave
 //! \param[in] handle     The SPI_Slave handle

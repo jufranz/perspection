@@ -191,6 +191,7 @@ void main(void) {
 
     // enable the SPI interrupts
     HAL_enableSpiInt(halHandle);
+    HAL_writeSpiSlaveData(halHandle, 30);
 
     // enable global interrupts
     HAL_enableGlobalInts(halHandle);
@@ -415,13 +416,30 @@ void main(void) {
 } // end of main() function
 
 interrupt void spiISR(void) {
-    rdata = HAL_readSpiSlaveData(halHandle);
+    uint16_t buf[4];
+
+    HAL_turnLedOn(halHandle, GPIO_Number_39);
+
+    uint16_t wordsRead = HAL_readSpiSlaveData(halHandle, buf);
+    int i;
+    for (i = 0; i < wordsRead; i++) {
+        uint16_t word = buf[i];
+        if (word == 42) {
+            HAL_writeSpiSlaveData(halHandle, 30);
+        } else {
+            rdata = word;
+            sdata = rdata * 2;
+            HAL_writeSpiSlaveData(halHandle, sdata);
+        }
+    }
+
     ints++;
+    HAL_turnLedOff(halHandle, GPIO_Number_39);
+
     return;
 }
 
 interrupt void mainISR(void) {
-
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
 

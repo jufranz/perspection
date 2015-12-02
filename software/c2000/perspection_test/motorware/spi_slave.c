@@ -50,21 +50,24 @@ void SPI_Slave_setSpiHandle(SPI_Slave_Handle handle, SPI_Handle spiHandle) {
     return;
 } // end of SPI_Slave_setSpiHandle() function
 
-uint16_t SPI_Slave_readSpi(SPI_Slave_Handle handle) {
+uint16_t SPI_Slave_readSpi(SPI_Slave_Handle handle, uint16_t* buf) {
     SPI_Slave_Obj *obj = (SPI_Slave_Obj *) handle;
-    volatile uint16_t readWord;
-    readWord = SPI_read(obj->spiHandle);
+    uint16_t wordsRead = 0;
+
+    while(SPI_getRxFifoStatus(obj->spiHandle) != SPI_FifoStatus_Empty) {
+        buf[wordsRead] = SPI_read(obj->spiHandle);
+        wordsRead++;
+    }
 
     // reset the Rx fifo pointer to zero NOT SURE IF I NEED THIS
-    SPI_clearRxFifoInt(obj->spiHandle);
-    SPI_resetRxFifo(obj->spiHandle);
-    SPI_enableRxFifo(obj->spiHandle);
-    SPI_enableInt(obj->spiHandle);
+//    SPI_clearRxFifoInt(obj->spiHandle);
+//    SPI_resetRxFifo(obj->spiHandle);
+//    SPI_enableRxFifo(obj->spiHandle);
+//    SPI_enableInt(obj->spiHandle);
 
-    return (readWord);
+    return wordsRead;
 } // end of SPI_Slave_readSpi() function
 
-// likely won't use this
 void SPI_Slave_writeSpi(SPI_Slave_Handle handle, const uint16_t data) {
     SPI_Slave_Obj *obj = (SPI_Slave_Obj *) handle;
 
