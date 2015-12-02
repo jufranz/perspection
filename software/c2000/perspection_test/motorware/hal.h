@@ -1068,11 +1068,7 @@ static inline void HAL_setTrigger(HAL_Handle handle, const SVGENCURRENT_IgnoreSh
 static inline uint32_t HAL_getQepPosnCounts(HAL_Handle handle)
 {
     HAL_Obj *obj = (HAL_Obj *)handle;
-#ifdef J5
     QEP_Obj *qep = (QEP_Obj *)obj->qepHandle[1];
-#else
-    QEP_Obj *qep = (QEP_Obj *)obj->qepHandle[0];
-#endif
 
     return qep->QPOSCNT;
 }
@@ -1083,11 +1079,7 @@ static inline uint32_t HAL_getQepPosnCounts(HAL_Handle handle)
 static inline uint32_t HAL_getQepPosnMaximum(HAL_Handle handle)
 {
     HAL_Obj *obj = (HAL_Obj *)handle;
-#ifdef J5
     QEP_Obj *qep = (QEP_Obj *)obj->qepHandle[1];
-#else
-    QEP_Obj *qep = (QEP_Obj *)obj->qepHandle[0];
-#endif
 
     return qep->QPOSMAX;
 }

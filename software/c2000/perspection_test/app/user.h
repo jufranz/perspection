@@ -50,7 +50,7 @@
 #include "ctrl_obj.h"
 
 // select whether to use the inverter on connector J1 or J5 of the LaunchPad
-#define J1
+#define J5
 
 // platforms
 #include "fast_userParams.h"

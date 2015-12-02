@@ -474,11 +474,7 @@ void HAL_enableGlobalInts(HAL_Handle handle) {
 void HAL_enablePwmInt(HAL_Handle handle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
 
-#ifdef J5
     PIE_enablePwmInt(obj->pieHandle, PWM_Number_4);
-#else
-    PIE_enablePwmInt(obj->pieHandle, PWM_Number_1);
-#endif
 
     // enable the interrupt
     PWM_enableInt(obj->pwmHandle[0]);
@@ -588,15 +584,9 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
     obj->spiBHandle = SPI_init((void *) SPIB_BASE_ADDR, sizeof(SPI_Obj));
 
     // initialize PWM handles
-#ifdef J5
     obj->pwmHandle[0] = PWM_init((void *) PWM_ePWM4_BASE_ADDR, sizeof(PWM_Obj));
     obj->pwmHandle[1] = PWM_init((void *) PWM_ePWM5_BASE_ADDR, sizeof(PWM_Obj));
     obj->pwmHandle[2] = PWM_init((void *) PWM_ePWM6_BASE_ADDR, sizeof(PWM_Obj));
-#else
-    obj->pwmHandle[0] = PWM_init((void *) PWM_ePWM1_BASE_ADDR, sizeof(PWM_Obj));
-    obj->pwmHandle[1] = PWM_init((void *) PWM_ePWM2_BASE_ADDR, sizeof(PWM_Obj));
-    obj->pwmHandle[2] = PWM_init((void *) PWM_ePWM3_BASE_ADDR, sizeof(PWM_Obj));
-#endif
 
     // initialize PWM DAC handles
     obj->pwmDacHandle[0] = PWMDAC_init((void *) PWM_ePWM7_BASE_ADDR, sizeof(PWM_Obj));
@@ -778,7 +768,6 @@ void HAL_setupAdcs(HAL_Handle handle) {
     ADC_setIntMode(obj->adcHandle, ADC_IntNumber_1, ADC_IntMode_ClearFlag);
     ADC_setIntSrc(obj->adcHandle, ADC_IntNumber_1, ADC_IntSrc_EOC7);
 
-#ifdef J5
     //configure the SOCs for boostxldrv8301_revB on J5 Connection
     // EXT IA-FB
     ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_0, ADC_SocChanNumber_A3);
@@ -820,49 +809,6 @@ void HAL_setupAdcs(HAL_Handle handle) {
     ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_7, ADC_SocChanNumber_B7);
     ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_7, ADC_SocTrigSrc_EPWM4_ADCSOCA);
     ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_7, ADC_SocSampleDelay_9_cycles);
-#else
-    //configure the SOCs for boostxldrv8301_revB on J1 Connection
-    // EXT IA-FB
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_0, ADC_SocChanNumber_A0);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_0, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_0, ADC_SocSampleDelay_9_cycles);
-
-    // EXT IA-FB
-    // Duplicate conversion due to ADC Initial Conversion bug (SPRZ342)
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_1, ADC_SocChanNumber_A0);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_1, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_1, ADC_SocSampleDelay_9_cycles);
-
-    // EXT IB-FB
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_2, ADC_SocChanNumber_B0);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_2, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_2, ADC_SocSampleDelay_9_cycles);
-
-    // EXT IC-FB
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_3, ADC_SocChanNumber_A1);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_3, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_3, ADC_SocSampleDelay_9_cycles);
-
-    // ADC-Vhb1
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_4, ADC_SocChanNumber_B1);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_4, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_4, ADC_SocSampleDelay_9_cycles);
-
-    // ADC-Vhb2
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_5, ADC_SocChanNumber_A2);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_5, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_5, ADC_SocSampleDelay_9_cycles);
-
-    // ADC-Vhb3
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_6, ADC_SocChanNumber_B2);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_6, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_6, ADC_SocSampleDelay_9_cycles);
-
-    // VDCBUS
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_7, ADC_SocChanNumber_A7);
-    ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_7, ADC_SocTrigSrc_EPWM1_ADCSOCA);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_7, ADC_SocSampleDelay_9_cycles);
-#endif
     return;
 } // end of HAL_setupAdcs() function
 
@@ -915,13 +861,8 @@ void HAL_setupGates(HAL_Handle handle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
 
     DRV8301_setGpioHandle(obj->drv8301Handle, obj->gpioHandle);
-#ifdef J5
     DRV8301_setSpiHandle(obj->drv8301Handle, obj->spiBHandle);
     DRV8301_setGpioNumber(obj->drv8301Handle, GPIO_Number_52);
-#else
-    DRV8301_setSpiHandle(obj->drv8301Handle, obj->spiAHandle);
-    DRV8301_setGpioNumber(obj->drv8301Handle, GPIO_Number_50);
-#endif
 
     SPI_Slave_setGpioHandle(obj->SpiSlaveHandle, obj->gpioHandle);
     SPI_Slave_setSpiHandle(obj->SpiSlaveHandle, obj->spiAHandle);
