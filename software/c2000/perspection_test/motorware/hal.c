@@ -1102,17 +1102,17 @@ void HAL_setupGpios(HAL_Handle handle) {
 
     // h-bridge 1 phase
     GPIO_setMode(obj->gpioHandle, GPIO_Number_51, GPIO_51_Mode_GeneralPurpose);
-    GPIO_setLow(obj->gpioHandle, GPIO_Number_51);
+    GPIO_setHigh(obj->gpioHandle, GPIO_Number_51);
     GPIO_setDirection(obj->gpioHandle, GPIO_Number_51, GPIO_Direction_Output);
 
     // h-bridge 2 phase
     GPIO_setMode(obj->gpioHandle, GPIO_Number_50, GPIO_50_Mode_GeneralPurpose);
-    GPIO_setLow(obj->gpioHandle, GPIO_Number_50);
+    GPIO_setHigh(obj->gpioHandle, GPIO_Number_50);
     GPIO_setDirection(obj->gpioHandle, GPIO_Number_50, GPIO_Direction_Output);
 
     // h-bridge 3 phase
     GPIO_setMode(obj->gpioHandle, GPIO_Number_31, GPIO_31_Mode_GeneralPurpose);
-    GPIO_setLow(obj->gpioHandle, GPIO_Number_31);
+    GPIO_setHigh(obj->gpioHandle, GPIO_Number_31);
     GPIO_setDirection(obj->gpioHandle, GPIO_Number_31, GPIO_Direction_Output);
 
     return;
