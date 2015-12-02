@@ -60,10 +60,10 @@ uint16_t SPI_Slave_readSpi(SPI_Slave_Handle handle, uint16_t* buf) {
     }
 
     // reset the Rx fifo pointer to zero NOT SURE IF I NEED THIS
-//    SPI_clearRxFifoInt(obj->spiHandle);
-//    SPI_resetRxFifo(obj->spiHandle);
-//    SPI_enableRxFifo(obj->spiHandle);
-//    SPI_enableInt(obj->spiHandle);
+    SPI_clearRxFifoInt(obj->spiHandle);
+    SPI_resetRxFifo(obj->spiHandle);
+    SPI_enableRxFifo(obj->spiHandle);
+    SPI_enableInt(obj->spiHandle);
 
     return wordsRead;
 } // end of SPI_Slave_readSpi() function
