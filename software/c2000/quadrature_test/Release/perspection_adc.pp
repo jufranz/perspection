@@ -27,6 +27,7 @@ perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/spi/src/32b
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/timer/src/32b/f28x/f2806x/timer.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/wdog/src/32b/f28x/f2806x/wdog.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/drv8301.h
+perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/drivers/qep/src/32b/f28x/f2806x/qep.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/math/src/32b/math.h
 perspection_adc.obj: C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/src/32b/IQmathLib.h
@@ -80,6 +81,7 @@ C:/ti/motorware/motorware_1_01_00_15/sw/drivers/spi/src/32b/f28x/f2806x/spi.h:
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/timer/src/32b/f28x/f2806x/timer.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/wdog/src/32b/f28x/f2806x/wdog.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/drv8301.h: 
+C:/ti/motorware/motorware_1_01_00_15/sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/SPIAslave.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/drivers/qep/src/32b/f28x/f2806x/qep.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/math/src/32b/math.h: 
 C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/src/32b/IQmathLib.h: 

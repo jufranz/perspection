@@ -32,6 +32,9 @@ double duty_cycle_filter[DUTY_CYCLE_FILTER_LENGTH];
 uint16_t duty_cycle_filter_index;
 double torque_zero;
 
+uint16_t rdata = 0;
+uint16_t ints = 0;
+
 // Functions
 
 void adjust_duty_cycle(double desired_torque);
@@ -105,6 +108,10 @@ void main(void) {
 	// enable debug interrupts
 	HAL_enableDebugInt(halHandle);
 
+	// enable SPI A slave and SPI interrupts
+//	HAL_setupSpiAslave(halHandle);
+	HAL_enableSpiInt(halHandle);
+
 	// get dis pwm rippin shit up yo
 	perspection_pwm_1a_init(halHandle, 40.0);
 	perspection_pwm_1b_init(halHandle, 40.0);
@@ -122,20 +129,31 @@ void main(void) {
 	for (;;) {
 //		HAL_turnLedOn(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
 
-		uint32_t rawPosition = HAL_getQepPosnCounts(halHandle);
-		double position = (double) (360 * rawPosition) / (double) HAL_getQepPosnMaximum(halHandle);
-
-		double desired_torque = torque_from_position(position);
-		if(desired_torque < -1.0) {
-			desired_torque = -1.0;
-		} else if(desired_torque > 1.0) {
-			desired_torque = 1.0;
-		}
-
-		adjust_duty_cycle(desired_torque);
+//		uint32_t rawPosition = HAL_getQepPosnCounts(halHandle);
+//		double position = (double) (360 * rawPosition) / (double) HAL_getQepPosnMaximum(halHandle);
+//
+//		double desired_torque = torque_from_position(position);
+//		if(desired_torque < -1.0) {
+//			desired_torque = -1.0;
+//		} else if(desired_torque > 1.0) {
+//			desired_torque = 1.0;
+//		}
+//
+//		adjust_duty_cycle(desired_torque);
 
 //		HAL_turnLedOff(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
 	}
+}
+
+// SPI A slave ISR
+
+interrupt void spiISR(void)
+{
+  // toggle status LED
+//  HAL_toggleLed(halHandle,(GPIO_Number_e)HAL_Gpio_LED2);
+  rdata = HAL_readSPIAslaveData(halHandle);
+  ints++;
+  return;
 }
 
 // Helpful function definitions
