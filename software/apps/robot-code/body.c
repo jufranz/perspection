@@ -44,8 +44,9 @@
 #include "clock.h"
 
 #include "dev/comms.h"
-
 #include "dev/leds.h"
+#include "spi-arch.h"
+#include "dev/spi.h"
 
 #include <stdio.h>
 /*---------------------------------------------------------------------------*/
@@ -63,7 +64,27 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
   leds_on(LEDS_RED);
   unpackMoveData(&recvData);
 
-  //BEN YOUR SHIT GOES HERE
+  SPIX_FLUSH(SPI_DEFAULT_INSTANCE);
+
+  // Send the speed
+  SPIX_WAITFORTxREADY(SPI_DEFAULT_INSTANCE);
+  SPI_CS_CLR(GPIO_C_NUM, 2);
+  SPIX_BUF(SPI_DEFAULT_INSTANCE) = (uint16_t)recvData.tSpeed;
+  SPIX_WAITFOREOTx(SPI_DEFAULT_INSTANCE);
+  SPI_CS_SET(GPIO_C_NUM, 2);
+
+  // Delay to make sure the slave is ready
+  clock_delay_usec(10);
+
+  // Send the dir
+  SPIX_WAITFORTxREADY(SPI_DEFAULT_INSTANCE);
+  SPI_CS_CLR(GPIO_C_NUM, 2);
+  SPIX_BUF(SPI_DEFAULT_INSTANCE) = recvData.tDir;
+  SPIX_WAITFOREOTx(SPI_DEFAULT_INSTANCE);
+  SPI_CS_SET(GPIO_C_NUM, 2);
+
+  // Delay to make sure the slave is ready
+  clock_delay_usec(10);
 
   leds_off(LEDS_RED);
 }
@@ -100,6 +121,10 @@ static struct broadcast_conn broadcast;
 PROCESS_THREAD(init_linkaddr_process, ev, data)
 {
   PROCESS_BEGIN();
+
+  spix_init(SPI_DEFAULT_INSTANCE);
+  spix_set_mode(SPI_DEFAULT_INSTANCE, SSI_CR0_FRF_MOTOROLA, 0, 0, 16);
+  spix_cs_init(GPIO_C_NUM, 2);
 
   static linkaddr_t nodeAddr;
   nodeAddr.u8[0] = BODY_ADDR_A;
