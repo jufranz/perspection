@@ -122,7 +122,7 @@ unsigned int ints = 0;
 // **************************************************************************
 // the functions
 
-void robotBodyMotorControl(halHandle);
+void robotBodyMotorControl(HAL_Handle halHandle);
 
 void main(void) {
     uint_least8_t estNumber = 0;
@@ -239,14 +239,17 @@ void main(void) {
     gTorque_Ls_Id_Iq_pu_to_Nm_sf = USER_computeTorque_Ls_Id_Iq_pu_to_Nm_sf();
     gTorque_Flux_Iq_pu_to_Nm_sf = USER_computeTorque_Flux_Iq_pu_to_Nm_sf();
 
-    // set up some h-bridge PWMS
-    HAL_setHbridge1PwmDutyCycle(halHandle, 0.25);
-    HAL_setHbridge2PwmDutyCycle(halHandle, 0.5);
-    HAL_setHbridge3PwmDutyCycle(halHandle, 0.75);
-
-    for (;;) {
+    // just for testing
+    while(1) {
         // Calling the routine for robot body motor control
         robotBodyMotorControl(halHandle);
+        uint32_t delay = 0;
+        for(delay = 0; delay < 5000000; delay++) {
+
+        }
+    }
+
+    for (;;) {
 
         // Waiting for enable system flag to be set
         while (!(gMotorVars.Flag_enableSys))
@@ -425,9 +428,33 @@ void main(void) {
 
 } // end of main() function
 
-void robotBodyMotorControl(halHandle) {
-    double desiredDir = 60.0; // Degrees
-    double desiredSpeed = 0.5; // 0.0 to 1.0
+#define PI 3.1415926
+double desiredDir = 60.0; // Degrees
+double desiredSpeed = 0.75; // 0.0 to 1.0
+
+void robotBodyMotorControl(HAL_Handle halHandle) {
+    desiredDir += 5.0;
+    if(desiredDir > 360.0) desiredDir = 0.0;
+
+    double dirInRads = (desiredDir * PI) / 180.0;
+    double dutyCycle1 = (desiredSpeed * cos(((150.0 * PI) / 180.0) - dirInRads));
+    double dutyCycle2 = (desiredSpeed * cos((( 30.0 * PI) / 180.0) - dirInRads));
+    double dutyCycle3 = (desiredSpeed * cos(((270.0 * PI) / 180.0) - dirInRads));
+
+    uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
+    uint16_t direction2 = (dutyCycle2 > 0.0) ? 1 : 0;
+    uint16_t direction3 = (dutyCycle3 > 0.0) ? 1 : 0;
+
+    dutyCycle1 = (dutyCycle1 < 0.0) ? (dutyCycle1 * -1.0) : dutyCycle1;
+    dutyCycle2 = (dutyCycle2 < 0.0) ? (dutyCycle2 * -1.0) : dutyCycle2;
+    dutyCycle3 = (dutyCycle3 < 0.0) ? (dutyCycle3 * -1.0) : dutyCycle3;
+
+    HAL_setHbridge1Direction(halHandle, direction1);
+    HAL_setHbridge1PwmDutyCycle(halHandle, dutyCycle1);
+    HAL_setHbridge2Direction(halHandle, direction2);
+    HAL_setHbridge2PwmDutyCycle(halHandle, dutyCycle2);
+    HAL_setHbridge3Direction(halHandle, direction3);
+    HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
 }
 
 interrupt void spiISR(void) {
