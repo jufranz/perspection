@@ -588,6 +588,10 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
     obj->pwmHandle[1] = PWM_init((void *) PWM_ePWM5_BASE_ADDR, sizeof(PWM_Obj));
     obj->pwmHandle[2] = PWM_init((void *) PWM_ePWM6_BASE_ADDR, sizeof(PWM_Obj));
 
+    // initialize h-bridge PWM handles
+    obj->hbridgePwm1 = PWM_init((void *) PWM_ePWM1_BASE_ADDR, sizeof(PWM_Obj));
+    obj->hbridgePwm2 = PWM_init((void *) PWM_ePWM2_BASE_ADDR, sizeof(PWM_Obj));
+
     // initialize PWM DAC handles
     obj->pwmDacHandle[0] = PWMDAC_init((void *) PWM_ePWM7_BASE_ADDR, sizeof(PWM_Obj));
     obj->pwmDacHandle[1] = PWMDAC_init((void *) PWM_ePWM8_BASE_ADDR, sizeof(PWM_Obj));
@@ -671,6 +675,9 @@ void HAL_setParams(HAL_Handle handle, const USER_Params *pUserParams) {
 
     // setup the PWMs
     HAL_setupPwms(handle, (float_t) pUserParams->systemFreq_MHz, pUserParams->pwmPeriod_usec, USER_NUM_PWM_TICKS_PER_ISR_TICK);
+
+    // setup the h-bridge PWMs
+    HAL_setupHbridgePwms(handle);
 
 #ifdef QEP
     // setup the QEP
@@ -866,7 +873,7 @@ void HAL_setupGates(HAL_Handle handle) {
 
     SPI_Slave_setGpioHandle(obj->SpiSlaveHandle, obj->gpioHandle);
     SPI_Slave_setSpiHandle(obj->SpiSlaveHandle, obj->spiAHandle);
-    SPI_Slave_setGpioNumber(obj->SpiSlaveHandle, GPIO_Number_50);
+    SPI_Slave_setGpioNumber(obj->SpiSlaveHandle, GPIO_Number_40); // 40 because it's unused
 
     return;
 } // HAL_setupGates() function
@@ -1015,28 +1022,25 @@ void HAL_setupGpios(HAL_Handle handle) {
     GPIO_setLow(obj->gpioHandle, GPIO_Number_39);
     GPIO_setDirection(obj->gpioHandle, GPIO_Number_39, GPIO_Direction_Output);
 
-    // DAC1
-    GPIO_setMode(obj->gpioHandle, GPIO_Number_40, GPIO_40_Mode_EPWM7A);
+    // PERSPECTION: DON'T NEED THESE
 
-    // DAC2
-    GPIO_setMode(obj->gpioHandle, GPIO_Number_41, GPIO_41_Mode_EPWM7B);
-
-    // DAC3
-    GPIO_setMode(obj->gpioHandle, GPIO_Number_42, GPIO_42_Mode_EPWM8A);
-
-    // DAC4
-    GPIO_setMode(obj->gpioHandle, GPIO_Number_43, GPIO_43_Mode_EPWM8B);
+//    // DAC1
+//    GPIO_setMode(obj->gpioHandle, GPIO_Number_40, GPIO_40_Mode_EPWM7A);
+//
+//    // DAC2
+//    GPIO_setMode(obj->gpioHandle, GPIO_Number_41, GPIO_41_Mode_EPWM7B);
+//
+//    // DAC3
+//    GPIO_setMode(obj->gpioHandle, GPIO_Number_42, GPIO_42_Mode_EPWM8A);
+//
+//    // DAC4
+//    GPIO_setMode(obj->gpioHandle, GPIO_Number_43, GPIO_43_Mode_EPWM8B);
 
     // GPIO
     GPIO_setMode(obj->gpioHandle, GPIO_Number_44, GPIO_44_Mode_GeneralPurpose);
 
     // Set Qualification Period for GPIO50-55, 22*2*(1/90MHz) = 0.48us
     GPIO_setQualificationPeriod(obj->gpioHandle, GPIO_Number_50, 22);
-
-    // DRV8301 Enable Gate
-    GPIO_setMode(obj->gpioHandle, GPIO_Number_50, GPIO_50_Mode_GeneralPurpose);
-    GPIO_setLow(obj->gpioHandle, GPIO_Number_50);
-    GPIO_setDirection(obj->gpioHandle, GPIO_Number_50, GPIO_Direction_Output);
 
     // DRV8301 DC Calibration
     GPIO_setMode(obj->gpioHandle, GPIO_Number_51, GPIO_51_Mode_GeneralPurpose);
@@ -1087,6 +1091,29 @@ void HAL_setupGpios(HAL_Handle handle) {
 
     // UARTB TX
     GPIO_setMode(obj->gpioHandle, GPIO_Number_58, GPIO_58_Mode_SCITXDB);
+
+    // PERSPECTION: h-bridge phase gpios
+
+    // aux h-bridge phase
+    // not actually a thing right now because josh and jason suck
+//    GPIO_setMode(obj->gpioHandle, GPIO_Number_50, GPIO_50_Mode_GeneralPurpose);
+//    GPIO_setLow(obj->gpioHandle, GPIO_Number_50);
+//    GPIO_setDirection(obj->gpioHandle, GPIO_Number_50, GPIO_Direction_Output);
+
+    // h-bridge 1 phase
+    GPIO_setMode(obj->gpioHandle, GPIO_Number_51, GPIO_51_Mode_GeneralPurpose);
+    GPIO_setLow(obj->gpioHandle, GPIO_Number_51);
+    GPIO_setDirection(obj->gpioHandle, GPIO_Number_51, GPIO_Direction_Output);
+
+    // h-bridge 2 phase
+    GPIO_setMode(obj->gpioHandle, GPIO_Number_50, GPIO_50_Mode_GeneralPurpose);
+    GPIO_setLow(obj->gpioHandle, GPIO_Number_50);
+    GPIO_setDirection(obj->gpioHandle, GPIO_Number_50, GPIO_Direction_Output);
+
+    // h-bridge 3 phase
+    GPIO_setMode(obj->gpioHandle, GPIO_Number_31, GPIO_31_Mode_GeneralPurpose);
+    GPIO_setLow(obj->gpioHandle, GPIO_Number_31);
+    GPIO_setDirection(obj->gpioHandle, GPIO_Number_31, GPIO_Direction_Output);
 
     return;
 }  // end of HAL_setupGpios() function
@@ -1560,5 +1587,126 @@ void HAL_enableSpiInt(HAL_Handle handle) {
 
     return;
 } // end of HAL_enableSpiInt() function
+
+extern void HAL_setupHbridgePwms(HAL_Handle handle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    uint16_t periodVal = (uint16_t) (90.075 * 25); // 25us period = 40 KHz PWM
+
+    PWM_Handle pwmHandles[2];
+    pwmHandles[0] = obj->hbridgePwm1;
+    pwmHandles[1] = obj->hbridgePwm2;
+
+    int i;
+    for (i = 0; i < 2; i++) {
+        PWM_Handle pwmHandle = pwmHandles[i];
+
+        CLK_disableTbClockSync(obj->clkHandle);
+
+        PWM_setCounterMode(pwmHandle, PWM_CounterMode_Up);
+        PWM_setPeriod(pwmHandle, periodVal);
+        PWM_enableCounterLoad(pwmHandle);
+        PWM_setPhase(pwmHandle, 0);
+        PWM_setCount(pwmHandle, 0);
+        PWM_setHighSpeedClkDiv(pwmHandle, PWM_HspClkDiv_by_1);
+        PWM_setClkDiv(pwmHandle, PWM_ClkDiv_by_1);
+
+        PWM_write_CmpA(pwmHandle, 0);
+        PWM_setShadowMode_CmpA(pwmHandle, PWM_ShadowMode_Shadow);
+        PWM_setLoadMode_CmpA(pwmHandle, PWM_LoadMode_Zero);
+        PWM_setActionQual_Zero_PwmA(pwmHandle, PWM_ActionQual_Set);
+        PWM_setActionQual_CntUp_CmpA_PwmA(pwmHandle, PWM_ActionQual_Clear);
+
+        PWM_write_CmpB(pwmHandle, 0);
+        PWM_setShadowMode_CmpB(pwmHandle, PWM_ShadowMode_Shadow);
+        PWM_setLoadMode_CmpB(pwmHandle, PWM_LoadMode_Zero);
+        PWM_setActionQual_Zero_PwmB(pwmHandle, PWM_ActionQual_Set);
+        PWM_setActionQual_CntUp_CmpB_PwmB(pwmHandle, PWM_ActionQual_Clear);
+
+        PWM_setSyncMode(pwmHandle, PWM_SyncMode_EPWMxSYNC);
+        PWM_setPhaseDir(pwmHandle, PWM_PhaseDir_CountUp);
+        PWM_setRunMode(pwmHandle, PWM_RunMode_FreeRun);
+
+        CLK_enableTbClockSync(obj->clkHandle);
+    }
+} // end of HAL_setupHbridgePwms() function
+
+extern void HAL_setPwmDutyCycle(PWM_Handle pwmHandle, bool a_or_b, double dutyCycle) {
+    uint16_t period = PWM_getPeriod(pwmHandle);
+    uint16_t duty_cycle_val = (uint16_t)((double)period * dutyCycle);
+
+    if(a_or_b) {
+        PWM_write_CmpA(pwmHandle, duty_cycle_val);
+    } else {
+        PWM_write_CmpB(pwmHandle, duty_cycle_val);
+    }
+} // end of HAL_setPwmDutyCycle() function
+
+extern void HAL_setAuxHbridgePwmDutyCycle(HAL_Handle handle, double dutyCycle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    HAL_setPwmDutyCycle(obj->hbridgePwm1, true, dutyCycle);
+} // end of HAL_setAuxHbridgePwmDutyCycle() function
+
+extern void HAL_setHbridge1PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    HAL_setPwmDutyCycle(obj->hbridgePwm1, false, dutyCycle);
+} // end of HAL_setHbridge1PwmDutyCycle() function
+
+extern void HAL_setHbridge2PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    HAL_setPwmDutyCycle(obj->hbridgePwm2, true, dutyCycle);
+} // end of HAL_setHbridge2PwmDutyCycle() function
+
+extern void HAL_setHbridge3PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    HAL_setPwmDutyCycle(obj->hbridgePwm2, false, dutyCycle);
+} // end of HAL_setHbridge3PwmDutyCycle() function
+
+extern void HAL_setAuxHbridgeDirection(HAL_Handle handle, uint16_t direction) {
+    // not a thing right now because josh and jason suck
+} // end of HAL_setAuxHbridgeDirection() function
+
+extern void HAL_setHbridge1Direction(HAL_Handle handle, uint16_t direction) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    if(direction == 0) {
+        GPIO_setLow(obj->gpioHandle, GPIO_Number_51);
+    } else {
+        GPIO_setHigh(obj->gpioHandle, GPIO_Number_51);
+    }
+} // end of HAL_setHbridge1Direction() function
+
+extern void HAL_setHbridge2Direction(HAL_Handle handle, uint16_t direction) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    if(direction == 0) {
+        GPIO_setLow(obj->gpioHandle, GPIO_Number_50);
+    } else {
+        GPIO_setHigh(obj->gpioHandle, GPIO_Number_50);
+    }
+} // end of HAL_setHbridge2Direction() function
+
+extern void HAL_setHbridge3Direction(HAL_Handle handle, uint16_t direction) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    if(direction == 0) {
+        GPIO_setLow(obj->gpioHandle, GPIO_Number_31);
+    } else {
+        GPIO_setHigh(obj->gpioHandle, GPIO_Number_31);
+    }
+} // end of HAL_setHbridge3Direction() function
+
+// TODO
+extern uint16_t HAL_getAuxHbridgeTorque(HAL_Handle handle) {
+    return 0;
+} // end of HAL_getAuxHbridgeTorque() function
+
+extern uint16_t HAL_getHbridge1Torque(HAL_Handle handle) {
+    return 0;
+} // end of HAL_getHbridge1Torque() function
+
+extern uint16_t HAL_getHbridge2Torque(HAL_Handle handle) {
+    return 0;
+} // end of HAL_getHbridge2Torque() function
+
+extern uint16_t HAL_getHbridge3Torque(HAL_Handle handle) {
+    return 0;
+} // end of HAL_getHbridge3Torque() function
 
 // end of file

@@ -1161,6 +1161,72 @@ extern uint16_t HAL_spiIntStatus(HAL_Handle handle);
 //! \param[in] handle  The hardware abstraction layer (HAL) handle
 extern void HAL_enableSpiInt(HAL_Handle handle);
 
+//! \brief     Sets up the h-bridge PWMs
+//! \param[in] handle  The hardware abstraction layer (HAL) handle
+extern void HAL_setupHbridgePwms(HAL_Handle handle);
+
+//! \brief     Sets the duty cycle for a generic PWM
+//! \param[in] pwmHandle  The hardware abstraction layer (HAL) handle
+//! \param[in] a_or_b     Whether to set the duty cycle for timer A or B (true for A)
+//! \param[in] dutyCycle  The desired duty cycle
+extern void HAL_setPwmDutyCycle(PWM_Handle pwmHandle, bool a_or_b, double dutyCycle);
+
+//! \brief     Sets the duty cycle for the aux h-bridge
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] dutyCycle  The desired duty cycle
+extern void HAL_setAuxHbridgePwmDutyCycle(HAL_Handle handle, double dutyCycle);
+
+//! \brief     Sets the duty cycle for h-bridge 1
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] dutyCycle  The desired duty cycle
+extern void HAL_setHbridge1PwmDutyCycle(HAL_Handle handle, double dutyCycle);
+
+//! \brief     Sets the duty cycle for h-bridge 2
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] dutyCycle  The desired duty cycle
+extern void HAL_setHbridge2PwmDutyCycle(HAL_Handle handle, double dutyCycle);
+
+//! \brief     Sets the duty cycle for h-bridge 3
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] dutyCycle  The desired duty cycle
+extern void HAL_setHbridge3PwmDutyCycle(HAL_Handle handle, double dutyCycle);
+
+//! \brief     Sets the direction of the aux h-bridge
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] direction  The desired direction (0 is backwards, 1 is forward)
+extern void HAL_setAuxHbridgeDirection(HAL_Handle handle, uint16_t direction);
+
+//! \brief     Sets the direction of h-bridge 1
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] direction  The desired direction (0 is backwards, 1 is forward)
+extern void HAL_setHbridge1Direction(HAL_Handle handle, uint16_t direction);
+
+//! \brief     Sets the direction of h-bridge 2
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] direction  The desired direction (0 is backwards, 1 is forward)
+extern void HAL_setHbridge2Direction(HAL_Handle handle, uint16_t direction);
+
+//! \brief     Sets the direction of h-bridge 3
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+//! \param[in] direction  The desired direction (0 is backwards, 1 is forward)
+extern void HAL_setHbridge3Direction(HAL_Handle handle, uint16_t direction);
+
+//! \brief     Gets the torque feedback of the aux h-bridge
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+extern uint16_t HAL_getAuxHbridgeTorque(HAL_Handle handle);
+
+//! \brief     Gets the torque feedback of h-bridge 1
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+extern uint16_t HAL_getHbridge1Torque(HAL_Handle handle);
+
+//! \brief     Gets the torque feedback of h-bridge 2
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+extern uint16_t HAL_getHbridge2Torque(HAL_Handle handle);
+
+//! \brief     Gets the torque feedback of h-bridge 3
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+extern uint16_t HAL_getHbridge3Torque(HAL_Handle handle);
+
 #ifdef __cplusplus
 }
 #endif // extern "C"

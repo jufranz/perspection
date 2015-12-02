@@ -140,6 +140,9 @@ typedef struct _HAL_Obj_ {
 
     PWM_Handle pwmHandle[3];     //<! the PWM handles
 
+    PWM_Handle hbridgePwm1;      //<! the PWM handle for the AUX h-bridge and h-bridge 1
+    PWM_Handle hbridgePwm2;      //<! the PWM handle for h-bridges 2 and 3
+
     PWMDAC_Handle pwmDacHandle[3];  //<! the PWMDAC handles
 
     PWR_Handle pwrHandle;        //<! the power handle

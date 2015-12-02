@@ -122,6 +122,8 @@ unsigned int ints = 0;
 // **************************************************************************
 // the functions
 
+void robotBodyMotorControl(halHandle);
+
 void main(void) {
     uint_least8_t estNumber = 0;
 
@@ -237,7 +239,15 @@ void main(void) {
     gTorque_Ls_Id_Iq_pu_to_Nm_sf = USER_computeTorque_Ls_Id_Iq_pu_to_Nm_sf();
     gTorque_Flux_Iq_pu_to_Nm_sf = USER_computeTorque_Flux_Iq_pu_to_Nm_sf();
 
+    // set up some h-bridge PWMS
+    HAL_setHbridge1PwmDutyCycle(halHandle, 0.25);
+    HAL_setHbridge2PwmDutyCycle(halHandle, 0.5);
+    HAL_setHbridge3PwmDutyCycle(halHandle, 0.75);
+
     for (;;) {
+        // Calling the routine for robot body motor control
+        robotBodyMotorControl(halHandle);
+
         // Waiting for enable system flag to be set
         while (!(gMotorVars.Flag_enableSys))
             ;
@@ -414,6 +424,11 @@ void main(void) {
     } // end of for(;;) loop
 
 } // end of main() function
+
+void robotBodyMotorControl(halHandle) {
+    double desiredDir = 60.0; // Degrees
+    double desiredSpeed = 0.5; // 0.0 to 1.0
+}
 
 interrupt void spiISR(void) {
     uint16_t buf[4];
