@@ -72,14 +72,21 @@ void SPI_Slave_writeSpi(SPI_Slave_Handle handle, const uint16_t data) {
     SPI_Slave_Obj *obj = (SPI_Slave_Obj *) handle;
 
     // reset the Rx fifo pointer to zero
-    SPI_resetRxFifo(obj->spiHandle);
-    SPI_enableRxFifo(obj->spiHandle);
+//    SPI_resetRxFifo(obj->spiHandle);
+//    SPI_enableRxFifo(obj->spiHandle);
 
     // write the command (time N)
     SPI_write(obj->spiHandle, data);
 
     return;
 } // end of SPI_Slave_writeSpi() function
+
+
+void SPI_Slave_clearTxFifo(SPI_Slave_Handle handle) {
+    SPI_Slave_Obj *obj = (SPI_Slave_Obj *) handle;
+
+    SPI_resetTxFifo(obj->spiHandle);
+} // end of SPI_Slave_clearTxFifo() function
 
 // end of file
 
