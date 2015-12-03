@@ -96,6 +96,10 @@ void SPI_Slave_setSpiHandle(SPI_Slave_Handle handle, SPI_Handle spiHandle);
 //! \param[in] data     The data value
 extern void SPI_Slave_writeSpi(SPI_Slave_Handle handle, const uint16_t data);
 
+//! \brief     Clears the SPI_Slave TX FIFO
+//! \param[in] handle   The SPI_Slave handle
+extern void SPI_Slave_clearTxFifo(SPI_Slave_Handle handle);
+
 //@}  // ingroup
 
 #endif /* SPI_SLAVE_H_ */

@@ -444,6 +444,7 @@ void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed)
 bool readingSpeedOrDir = true; // Horrible, but true for speed, false for dir
 double nextSpeed = 0.0;
 double nextDir = 0.0;
+uint16_t theWord = 0;
 interrupt void spiISR(void) {
     uint16_t buf[4];
 
@@ -451,13 +452,25 @@ interrupt void spiISR(void) {
     int i;
     for (i = 0; i < wordsRead; i++) {
         uint16_t word = buf[i];
-        if(readingSpeedOrDir) {
-            nextSpeed = ((double)word / 127.0);
+        theWord = word;
+
+        // For SPI test
+        if(word == 0xFFFF) {
+            // End of two-word transaction, send garbage
+            HAL_writeSpiSlaveData(halHandle, 42);
         } else {
-            nextDir = (double)word;
-            robotBodyMotorControl(halHandle, nextDir, nextSpeed);
+            // Otherwise, send the word + 1
+            HAL_writeSpiSlaveData(halHandle, word + 1);
         }
-        readingSpeedOrDir = !readingSpeedOrDir;
+
+        // For robot body control
+//        if(readingSpeedOrDir) {
+//            nextSpeed = ((double)word / 127.0);
+//        } else {
+//            nextDir = (double)word;
+//            robotBodyMotorControl(halHandle, nextDir, nextSpeed);
+//        }
+//        readingSpeedOrDir = !readingSpeedOrDir;
     }
 
     return;
