@@ -1,35 +1,35 @@
 /*
- * Arduino.c
+ * SPIAslave.c
  *
  *  Created on: Nov 20, 2015
  *      Author: john
  */
-#include "Arduino.h"
+#include "SPIAslave.h"
 #include <math.h>
 #include "sw/drivers/drvic/drv8301/src/32b/f28x/f2806x/drv8301.h"
 
-Arduino_Handle Arduino_init(void *pMemory,const size_t numBytes)
+SPIAslave_Handle SPIAslave_init(void *pMemory,const size_t numBytes)
 {
-  Arduino_Handle handle;
+  SPIAslave_Handle handle;
 
 
-  if(numBytes < sizeof(Arduino_Obj))
-    return((Arduino_Handle)NULL);
+  if(numBytes < sizeof(SPIAslave_Obj))
+    return((SPIAslave_Handle)NULL);
 
 
   // assign the handle
-  handle = (Arduino_Handle)pMemory;
+  handle = (SPIAslave_Handle)pMemory;
 
-  Arduino_resetRxTimeout(handle);
-  Arduino_resetEnableTimeout(handle);
+  SPIAslave_resetRxTimeout(handle);
+  SPIAslave_resetEnableTimeout(handle);
 
 
   return(handle);
 } // end of DRV8301_init() function
 
-void Arduino_setGpioHandle(Arduino_Handle handle,GPIO_Handle gpioHandle)
+void SPIAslave_setGpioHandle(SPIAslave_Handle handle,GPIO_Handle gpioHandle)
 {
-  Arduino_Obj *obj = (Arduino_Obj *)handle;
+  SPIAslave_Obj *obj = (SPIAslave_Obj *)handle;
 
   // initialize the gpio interface object
   obj->gpioHandle = gpioHandle;
@@ -38,9 +38,9 @@ void Arduino_setGpioHandle(Arduino_Handle handle,GPIO_Handle gpioHandle)
 } // end of DRV8301_setGpioHandle() function
 
 
-void Arduino_setGpioNumber(Arduino_Handle handle,GPIO_Number_e gpioNumber)
+void SPIAslave_setGpioNumber(SPIAslave_Handle handle,GPIO_Number_e gpioNumber)
 {
- Arduino_Obj *obj = (Arduino_Obj *)handle;
+ SPIAslave_Obj *obj = (SPIAslave_Obj *)handle;
 
   // initialize the gpio interface object
   obj->gpioNumber = gpioNumber;
@@ -49,9 +49,9 @@ void Arduino_setGpioNumber(Arduino_Handle handle,GPIO_Number_e gpioNumber)
 } // end of DRV8301_setGpioNumber() function
 
 
-void Arduino_setSpiHandle(Arduino_Handle handle,SPI_Handle spiHandle)
+void SPIAslave_setSpiHandle(SPIAslave_Handle handle,SPI_Handle spiHandle)
 {
-  Arduino_Obj *obj = (Arduino_Obj *)handle;
+  SPIAslave_Obj *obj = (SPIAslave_Obj *)handle;
 
   // initialize the serial peripheral interface object
   obj->spiHandle = spiHandle;
@@ -60,9 +60,9 @@ void Arduino_setSpiHandle(Arduino_Handle handle,SPI_Handle spiHandle)
 } // end of DRV8301_setSpiHandle() function
 
 
-uint16_t Arduino_readSpi(Arduino_Handle handle)
+uint16_t SPIAslave_readSpi(SPIAslave_Handle handle)
 {
-  Arduino_Obj *obj = (Arduino_Obj *)handle;
+  SPIAslave_Obj *obj = (SPIAslave_Obj *)handle;
   uint16_t ctrlWord;
   const uint16_t data = 0;
   volatile uint16_t readWord;
@@ -100,9 +100,9 @@ uint16_t Arduino_readSpi(Arduino_Handle handle)
 }
 
 
-void Arduino_writeSpi(Arduino_Handle handle, const uint16_t data)
+void SPIAslave_writeSpi(SPIAslave_Handle handle, const uint16_t data)
 {
-  Arduino_Obj *obj = (Arduino_Obj *)handle;
+  SPIAslave_Obj *obj = (SPIAslave_Obj *)handle;
 
   // reset the Rx fifo pointer to zero
   SPI_resetRxFifo(obj->spiHandle);
