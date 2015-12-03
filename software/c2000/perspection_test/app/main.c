@@ -122,7 +122,7 @@ unsigned int ints = 0;
 // **************************************************************************
 // the functions
 
-void robotBodyMotorControl(HAL_Handle halHandle);
+void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed);
 
 void main(void) {
     uint_least8_t estNumber = 0;
@@ -239,18 +239,7 @@ void main(void) {
     gTorque_Ls_Id_Iq_pu_to_Nm_sf = USER_computeTorque_Ls_Id_Iq_pu_to_Nm_sf();
     gTorque_Flux_Iq_pu_to_Nm_sf = USER_computeTorque_Flux_Iq_pu_to_Nm_sf();
 
-    // just for testing
-    while(1) {
-        // Calling the routine for robot body motor control
-        robotBodyMotorControl(halHandle);
-        uint32_t delay = 0;
-        for(delay = 0; delay < 5000000; delay++) {
-
-        }
-    }
-
     for (;;) {
-
         // Waiting for enable system flag to be set
         while (!(gMotorVars.Flag_enableSys))
             ;
@@ -429,17 +418,12 @@ void main(void) {
 } // end of main() function
 
 #define PI 3.1415926
-double desiredDir = 60.0; // Degrees
-double desiredSpeed = 0.75; // 0.0 to 1.0
 
-void robotBodyMotorControl(HAL_Handle halHandle) {
-    desiredDir += 5.0;
-    if(desiredDir > 360.0) desiredDir = 0.0;
-
-    double dirInRads = (desiredDir * PI) / 180.0;
-    double dutyCycle1 = (desiredSpeed * cos(((150.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle2 = (desiredSpeed * cos((( 30.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle3 = (desiredSpeed * cos(((270.0 * PI) / 180.0) - dirInRads));
+void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed) {
+    double dirInRads = (direction * PI) / 180.0;
+    double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
+    double dutyCycle2 = (speed * cos((( 30.0 * PI) / 180.0) - dirInRads));
+    double dutyCycle3 = (speed * cos(((270.0 * PI) / 180.0) - dirInRads));
 
     uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
     uint16_t direction2 = (dutyCycle2 > 0.0) ? 1 : 0;
@@ -457,26 +441,24 @@ void robotBodyMotorControl(HAL_Handle halHandle) {
     HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
 }
 
+bool readingSpeedOrDir = true; // Horrible, but true for speed, false for dir
+double nextSpeed = 0.0;
+double nextDir = 0.0;
 interrupt void spiISR(void) {
     uint16_t buf[4];
-
-    HAL_turnLedOn(halHandle, GPIO_Number_39);
 
     uint16_t wordsRead = HAL_readSpiSlaveData(halHandle, buf);
     int i;
     for (i = 0; i < wordsRead; i++) {
         uint16_t word = buf[i];
-        if (word == 42) {
-            HAL_writeSpiSlaveData(halHandle, 30);
+        if(readingSpeedOrDir) {
+            nextSpeed = ((double)word / 127.0);
         } else {
-            rdata = word;
-            sdata = rdata * 2;
-            HAL_writeSpiSlaveData(halHandle, sdata);
+            nextDir = (double)word;
+            robotBodyMotorControl(halHandle, nextDir, nextSpeed);
         }
+        readingSpeedOrDir = !readingSpeedOrDir;
     }
-
-    ints++;
-    HAL_turnLedOff(halHandle, GPIO_Number_39);
 
     return;
 }
