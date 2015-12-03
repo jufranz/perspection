@@ -64,6 +64,8 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
   leds_on(LEDS_RED);
   unpackMoveData(&recvData);
 
+  printf("dir: %d, speed %d\n", recvData.tDir, recvData.tSpeed);
+
   SPIX_FLUSH(SPI_DEFAULT_INSTANCE);
 
   // Send the speed

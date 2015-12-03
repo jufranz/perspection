@@ -40,14 +40,22 @@
 #include "contiki.h"
 #include "net/rime/rime.h"
 #include "random.h"
-#include "dev/boards.h"
 #include "clock.h"
+#include <math.h>
 #include "dev/adc.h"
 #include "dev/comms.h"
+#include "dev/gpio.h"
+#include "adc.h"
 
 #include "dev/leds.h"
 
 #include <stdio.h>
+
+#define ADC_PIN_NUM 3
+#define ADC_PORT_NUM GPIO_A_NUM
+#define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN3
+#define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN4
+
 /*---------------------------------------------------------------------------*/
 PROCESS(example_broadcast_process, "Broadcast example");
 AUTOSTART_PROCESSES(&example_broadcast_process);
@@ -64,6 +72,15 @@ broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
 static struct broadcast_conn broadcast;
 /*---------------------------------------------------------------------------*/
+
+
+static int16_t isCloseToCenter(int16_t i){
+  if(i > -150 && i < 150) return 0;
+  else return i;
+}
+
+
+/*---------------------------------------------------------------------------*/
 PROCESS_THREAD(example_broadcast_process, ev, data)
 {
   static struct etimer et;
@@ -71,6 +88,9 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
   PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
 
   PROCESS_BEGIN();
+
+  //initializing ADC
+  adc_init();
 
   linkaddr_t nodeAddr;
   nodeAddr.u8[0] = CTRL_ADDR_A;
@@ -81,9 +101,12 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
   static struct moveData_t testData;
   testData.tDir = 0;
-  testData.tSpeed = 0;
+  testData.tSpeed = 100;
   testData.rAngle = 0;
   testData.rSpeed = 0;
+
+  static int16_t ctrlX;
+  static int16_t ctrlY;
 
   while(1) {
 
@@ -91,17 +114,28 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
     etimer_set(&et, CLOCK_SECOND/200);
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+   
+    //it says AVDD5 but actually use 3V3 input.
+    //32300 - 80, midpoint 17142
+    ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 17142);
+    //32764 - 800, midpoint 16872
+    ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
+
+    printf("X: %d, Y: %d ", ctrlX, ctrlY);
+
+    if(ctrlX == 0 && ctrlY == 0) {
+      testData.tDir = 0;
+      testData.tSpeed = 0;
+    }
+    else testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)ctrlX) * 180 / M_PI) + 180);
+
+
     
-    broadcastMoveData(&testData, &broadcast);
+    printf("degrees: %d, speed: %d\n", testData.tDir, testData.tSpeed);
+
     leds_on(LEDS_GREEN);    
-    printf("sent data from controller %d.%d -- tDir: %d tSpeed: %d rAngle: %d rSpeed: %d\n",
-            linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
-            testData.tDir, testData.tSpeed, testData.rAngle, testData.rSpeed);
+    broadcastMoveData(&testData, &broadcast);
     leds_off(LEDS_GREEN);
-    testData.tDir++;
-    testData.tSpeed++;
-    testData.rAngle++;
-    testData.rSpeed++;
   }
 
   PROCESS_END();

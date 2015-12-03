@@ -28,9 +28,9 @@ void unpackMoveData(struct moveData_t *d){
   }
 
   d->tSpeed = (uint8_t)((data.u32 & 0xFE000000) >> 25);
-  d->tDir = (uint8_t)((data.u32 & 0x01FF0000) >> 16);
+  d->tDir = (uint16_t)((data.u32 & 0x01FF0000) >> 16);
   d->rSpeed = (uint8_t)((data.u32 & 0x0000FE00) >> 9);
-  d->rAngle = (uint8_t)(data.u32 & 0x000001FF);
+  d->rAngle = (uint16_t)(data.u32 & 0x000001FF);
 }
 
 void broadcastGimbalData(struct broadcast_conn *bcc){
