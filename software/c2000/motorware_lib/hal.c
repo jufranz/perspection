@@ -816,6 +816,22 @@ void HAL_setupAdcs(HAL_Handle handle) {
     ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_7, ADC_SocChanNumber_B7);
     ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_7, ADC_SocTrigSrc_EPWM4_ADCSOCA);
     ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_7, ADC_SocSampleDelay_9_cycles);
+
+    // VPROPI1
+    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_8, ADC_SocChanNumber_B0);
+    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_8, ADC_Int1TriggersSOC);
+    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_8, ADC_SocSampleDelay_9_cycles);
+
+    // VPROPI2
+    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_9, ADC_SocChanNumber_B1);
+    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_9, ADC_Int1TriggersSOC);
+    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_9, ADC_SocSampleDelay_9_cycles);
+
+    // VPROPI3
+    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_10, ADC_SocChanNumber_B2);
+    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_10, ADC_Int1TriggersSOC);
+    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_10, ADC_SocSampleDelay_9_cycles);
+
     return;
 } // end of HAL_setupAdcs() function
 
@@ -1632,19 +1648,14 @@ extern void HAL_setupHbridgePwms(HAL_Handle handle) {
 
 extern void HAL_setPwmDutyCycle(PWM_Handle pwmHandle, bool a_or_b, double dutyCycle) {
     uint16_t period = PWM_getPeriod(pwmHandle);
-    uint16_t duty_cycle_val = (uint16_t)((double)period * dutyCycle);
+    uint16_t duty_cycle_val = (uint16_t) ((double) period * dutyCycle);
 
-    if(a_or_b) {
+    if (a_or_b) {
         PWM_write_CmpA(pwmHandle, duty_cycle_val);
     } else {
         PWM_write_CmpB(pwmHandle, duty_cycle_val);
     }
 } // end of HAL_setPwmDutyCycle() function
-
-extern void HAL_setAuxHbridgePwmDutyCycle(HAL_Handle handle, double dutyCycle) {
-    HAL_Obj *obj = (HAL_Obj *) handle;
-    HAL_setPwmDutyCycle(obj->hbridgePwm1, true, dutyCycle);
-} // end of HAL_setAuxHbridgePwmDutyCycle() function
 
 extern void HAL_setHbridge1PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
@@ -1661,13 +1672,9 @@ extern void HAL_setHbridge3PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
     HAL_setPwmDutyCycle(obj->hbridgePwm2, false, dutyCycle);
 } // end of HAL_setHbridge3PwmDutyCycle() function
 
-extern void HAL_setAuxHbridgeDirection(HAL_Handle handle, uint16_t direction) {
-    // not a thing right now because josh and jason suck
-} // end of HAL_setAuxHbridgeDirection() function
-
 extern void HAL_setHbridge1Direction(HAL_Handle handle, uint16_t direction) {
     HAL_Obj *obj = (HAL_Obj *) handle;
-    if(direction == 0) {
+    if (direction == 0) {
         GPIO_setLow(obj->gpioHandle, GPIO_Number_51);
     } else {
         GPIO_setHigh(obj->gpioHandle, GPIO_Number_51);
@@ -1676,7 +1683,7 @@ extern void HAL_setHbridge1Direction(HAL_Handle handle, uint16_t direction) {
 
 extern void HAL_setHbridge2Direction(HAL_Handle handle, uint16_t direction) {
     HAL_Obj *obj = (HAL_Obj *) handle;
-    if(direction == 0) {
+    if (direction == 0) {
         GPIO_setLow(obj->gpioHandle, GPIO_Number_50);
     } else {
         GPIO_setHigh(obj->gpioHandle, GPIO_Number_50);
@@ -1685,28 +1692,23 @@ extern void HAL_setHbridge2Direction(HAL_Handle handle, uint16_t direction) {
 
 extern void HAL_setHbridge3Direction(HAL_Handle handle, uint16_t direction) {
     HAL_Obj *obj = (HAL_Obj *) handle;
-    if(direction == 0) {
+    if (direction == 0) {
         GPIO_setLow(obj->gpioHandle, GPIO_Number_31);
     } else {
         GPIO_setHigh(obj->gpioHandle, GPIO_Number_31);
     }
 } // end of HAL_setHbridge3Direction() function
 
-// TODO
-extern uint16_t HAL_getAuxHbridgeTorque(HAL_Handle handle) {
-    return 0;
-} // end of HAL_getAuxHbridgeTorque() function
-
 extern uint16_t HAL_getHbridge1Torque(HAL_Handle handle) {
-    return 0;
+    return ADC_readResult(obj->adcHandle, ADC_ResultNumber_8);
 } // end of HAL_getHbridge1Torque() function
 
 extern uint16_t HAL_getHbridge2Torque(HAL_Handle handle) {
-    return 0;
+    return ADC_readResult(obj->adcHandle, ADC_ResultNumber_9);
 } // end of HAL_getHbridge2Torque() function
 
 extern uint16_t HAL_getHbridge3Torque(HAL_Handle handle) {
-    return 0;
+    return ADC_readResult(obj->adcHandle, ADC_ResultNumber_10);
 } // end of HAL_getHbridge3Torque() function
 
 // end of file

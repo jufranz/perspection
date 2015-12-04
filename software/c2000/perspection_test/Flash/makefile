@@ -53,9 +53,9 @@ ORDERED_OBJS += \
 "./motorware/user.obj" \
 "./motorware/wdog.obj" \
 "./app/main.obj" \
-"C:/ti/motorware/motorware_1_01_00_15/sw/ide/ccs/cmd/f2806x/F28069F.cmd" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmathLog.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/lib/32b/SpinTAC.lib" \
+"C:/ti/motorware/motorware_1_01_00_15/sw/ide/ccs/cmd/f2806x/F28069F.cmd" \
 $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init

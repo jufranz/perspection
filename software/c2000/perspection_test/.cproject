@@ -123,8 +123,8 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.UNIFIED_MEMORY.699633196" name="Unified memory (--unified_memory, -mt)" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.UNIFIED_MEMORY" value="true" valueType="boolean"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.OPT_LEVEL.1622944915" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.OPT_LEVEL.2" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.INCLUDE_PATH.276446657" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.INCLUDE_PATH" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/../motorware_lib.&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/motorware}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.DEBUGGING_MODEL.1362050485" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>
