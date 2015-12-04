@@ -1,19 +1,17 @@
 #include "contiki.h"
 #include "random.h"
-#include "spi-arch.h"
-#include "dev/spi.h"
 #include "dev/ioc.h"
 #include "dev/leds.h"
+#include "dev/spi_wrapper.h"
 #include "sys/etimer.h"
 #include "sys/clock.h"
 #include "gpio.h"
 
-/*#define SPI0_CPRS_CPSDVSR 8*/
 #define NUM_TRANSACTIONS 100000
 
 #include <stdio.h>
 
-static struct etimer periodic_timer;
+/*static struct etimer periodic_timer;*/
 
 /*---------------------------------------------------------------------------*/
 PROCESS(spi_test_process, "spi example");
@@ -23,12 +21,9 @@ PROCESS_THREAD(spi_test_process, ev, data)
 {
   PROCESS_BEGIN();
 
-  etimer_set(&periodic_timer, CLOCK_SECOND / 10);
+  /*etimer_set(&periodic_timer, CLOCK_SECOND / 10);*/
 
-  // SPI init
-  spix_init(SPI_DEFAULT_INSTANCE);
-  spix_set_mode(SPI_DEFAULT_INSTANCE, SSI_CR0_FRF_MOTOROLA, 0, 0, 16);
-  spix_cs_init(GPIO_C_NUM, 2);
+  spi_wrapper_init();
 
   static uint16_t send = 0;
   static uint16_t recv = 0;
@@ -40,30 +35,9 @@ PROCESS_THREAD(spi_test_process, ev, data)
 
     /*if (etimer_expired(&periodic_timer)) {*/
         // Write some real data, read some dummy data
-        SPIX_WAITFORTxREADY(SPI_DEFAULT_INSTANCE);
-        SPI_CS_CLR(GPIO_C_NUM, 2);
-        SPIX_BUF(SPI_DEFAULT_INSTANCE) = send;
-        SPIX_WAITFOREOTx(SPI_DEFAULT_INSTANCE);
-        SPI_CS_SET(GPIO_C_NUM, 2);
-
-        // Delay to make sure the slave is ready
-        clock_delay_usec(10);
-
-        // Flush the receive buffer
-        SPIX_FLUSH(SPI_DEFAULT_INSTANCE);
-
-        // Write a dummy packet, receive data
-        SPIX_WAITFORTxREADY(SPI_DEFAULT_INSTANCE);
-        SPI_CS_CLR(GPIO_C_NUM, 2);
-        SPIX_BUF(SPI_DEFAULT_INSTANCE) = 0xFFFF;
-        SPIX_WAITFOREOTx(SPI_DEFAULT_INSTANCE);
-        SPI_CS_SET(GPIO_C_NUM, 2);
-
-        // Delay to make sure the slave is ready
-        clock_delay_usec(10);
-
+        spi_wrapper_txrx_word(send);
         // Read the data from the C2000 and check it
-        recv = SPIX_BUF(SPI_DEFAULT_INSTANCE);
+        recv = spi_wrapper_txrx_word(0xffff);
 
         /*printf("Sent %d, Got %d\r\n", send, recv);*/
 
@@ -89,7 +63,7 @@ PROCESS_THREAD(spi_test_process, ev, data)
         // Increment the number of transactions and check if we need to report anything
         totalTransactions++;
         if(totalTransactions == NUM_TRANSACTIONS) {
-            printf("%d transactions with %d errors\r\n", totalTransactions, totalFailures);
+            printf("%d transactions with %d errors\r\n", (int)totalTransactions, (int)totalFailures);
             totalTransactions = 0;
             totalFailures = 0;
         }
