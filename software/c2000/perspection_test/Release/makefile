@@ -53,8 +53,8 @@ ORDERED_OBJS += \
 "./motorware/user.obj" \
 "./motorware/wdog.obj" \
 "./app/main.obj" \
+"C:/ti/motorware/motorware_1_01_00_15/sw/modules/fast/lib/32b/f28x/f2806x/2806xRevB_IQmath_BootROMSymbols.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/ide/ccs/cmd/f2806x/f28069M_ram_lnk.cmd" \
-"C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmathLog.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/lib/32b/SpinTAC.lib" \
 $(GEN_CMDS__FLAG) \
 
@@ -183,7 +183,7 @@ all: perspection_test.out
 perspection_test.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: C2000 Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -mt -ml -O2 -g --define=FAST_ROM_V1p6 --define=QEP --diag_warning=225 --display_error_number -z -m"perspection_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --disable_auto_rts --diag_suppress=16002 --xml_link_info="perspection_test_linkInfo.xml" --rom_model -o "perspection_test.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -ml -mt --float_support=softlib -O2 --advice:performance=all -g --define=FAST_ROM_V1p6 --define=QEP --diag_warning=225 --display_error_number -z -m"perspection_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --diag_suppress=16002 --xml_link_info="perspection_test_linkInfo.xml" --rom_model -o "perspection_test.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
