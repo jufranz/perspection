@@ -110,6 +110,13 @@ typedef struct _HAL_PwmData_t_ {
 
 } HAL_PwmData_t;
 
+//! \brief      Defines the robot body control data
+//!
+typedef struct {
+    uint16_t direction;
+    uint16_t speed;
+} HAL_RobotBodyControlData_t;
+
 //! \brief      Defines the hardware abstraction layer (HAL) data
 //! \details    The HAL object contains all handles to peripherals.  When accessing a
 //!             peripheral on a processor, use a HAL function along with the HAL handle
@@ -169,6 +176,15 @@ typedef struct _HAL_Obj_ {
     // PERSPECTION
     SPI_Slave_Handle SpiSlaveHandle;   //!< the SPI slave interface handle
     SPI_Slave_Obj SpiSlave;         //!< the SPI slave interface object
+
+    HAL_RobotBodyControlData_t robotBodyControlData;
+    bool hasNewRobotBodyControlData;
+
+    uint16_t gimbalPositionControlData;
+    bool hasNewGimbalPositionControlData;
+
+    uint16_t hapticTorqueControlData;
+    bool hasNewHapticTorqueControlData;
 
 #ifdef QEP
     QEP_Handle qepHandle[2];        //!< the QEP handles

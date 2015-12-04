@@ -1213,6 +1213,10 @@ extern uint16_t HAL_getHbridge2Torque(HAL_Handle handle);
 //! \param[in] handle     The hardware abstraction layer (HAL) handle
 extern uint16_t HAL_getHbridge3Torque(HAL_Handle handle);
 
+//! \brief     Gets the current quadrature encoder position
+//! \param[in] handle     The hardware abstraction layer (HAL) handle
+extern uint16_t HAL_getEncoderPosition(HAL_Handle handle);
+
 #ifdef __cplusplus
 }
 #endif // extern "C"

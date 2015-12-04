@@ -58,6 +58,7 @@
 // the defines
 
 #define LED_BLINK_FREQ_Hz   5
+#define PI 3.1415926
 
 // **************************************************************************
 // the globals
@@ -99,7 +100,8 @@ volatile MOTOR_Vars_t gMotorVars = MOTOR_Vars_INIT;
 
 #ifdef FLASH
 // Used for running BackGround in flash, and ISR in RAM
-        extern uint16_t *RamfuncsLoadStart, *RamfuncsLoadEnd, *RamfuncsRunStart;
+        extern uint16_t *RamfuncsLoadStart,
+*RamfuncsLoadEnd, *RamfuncsRunStart;
 #endif
 
 #ifdef DRV8301_SPI
@@ -122,6 +124,7 @@ unsigned int ints = 0;
 // **************************************************************************
 // the functions
 
+void processSpiMessages();
 void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed);
 
 void main(void) {
@@ -137,7 +140,7 @@ void main(void) {
     // Copy time critical code and Flash setup code to RAM
     // The RamfuncsLoadStart, RamfuncsLoadEnd, and RamfuncsRunStart
     // symbols are created by the linker. Refer to the linker files.
-    memCopy((uint16_t *)&RamfuncsLoadStart,(uint16_t *)&RamfuncsLoadEnd,(uint16_t *)&RamfuncsRunStart);
+    memCopy((uint16_t *) &RamfuncsLoadStart, (uint16_t *) &RamfuncsLoadEnd, (uint16_t *) &RamfuncsRunStart);
 #endif
 
     // initialize the hardware abstraction layer
@@ -240,9 +243,12 @@ void main(void) {
     gTorque_Flux_Iq_pu_to_Nm_sf = USER_computeTorque_Flux_Iq_pu_to_Nm_sf();
 
     for (;;) {
+        processSpiMessages();
+
         // Waiting for enable system flag to be set
-        while (!(gMotorVars.Flag_enableSys))
-            ;
+        if (!(gMotorVars.Flag_enableSys)) {
+            continue;
+        }
 
         // Dis-able the Library internal PI.  Iq has no reference now
         CTRL_setFlag_enableSpeedCtrl(ctrlHandle, false);
@@ -417,12 +423,16 @@ void main(void) {
 
 } // end of main() function
 
-#define PI 3.1415926
+void processSpiMessages() {
+    // TODODODODODODODO
+    // Check if there's new data
+    // Act on it
+}
 
 void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed) {
     double dirInRads = (direction * PI) / 180.0;
     double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle2 = (speed * cos((( 30.0 * PI) / 180.0) - dirInRads));
+    double dutyCycle2 = (speed * cos(((30.0 * PI) / 180.0) - dirInRads));
     double dutyCycle3 = (speed * cos(((270.0 * PI) / 180.0) - dirInRads));
 
     uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
@@ -439,53 +449,6 @@ void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed)
     HAL_setHbridge2PwmDutyCycle(halHandle, dutyCycle2);
     HAL_setHbridge3Direction(halHandle, direction3);
     HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
-}
-
-uint16_t cmdBuf[4];
-uint16_t cmdLength;
-uint16_t cmdIndex = 0;
-
-interrupt void spiISR(void) {
-    uint16_t buf[4];
-    uint16_t wordsRead = HAL_readSpiSlaveData(halHandle, buf);
-    int i;
-    for (i = 0; i < wordsRead; i++) {
-        uint16_t word = buf[i];
-
-        if(cmdIndex == 0) {
-            // We're at the beginning of a new command
-            if(word == 0x0001) {
-                // For a robot body control command
-                cmdLength = 3;
-            }
-        }
-
-        // Load the word into the command buffer
-        cmdBuf[cmdIndex] = word;
-        cmdIndex++;
-
-        // Check if we got the whole command, process it if we did
-        if(cmdIndex == cmdLength) {
-            if(cmdBuf[0] == 0x0001) {
-                // Robot body control command
-                double dir = (double)cmdBuf[1];
-                double speed = (double)(cmdBuf[2] / 127.0);
-                robotBodyMotorControl(halHandle, dir, speed);
-            }
-            cmdIndex = 0;
-        }
-
-        // For SPI test
-//        if(word == 0xFFFF) {
-//            // End of two-word transaction, send garbage
-//            HAL_writeSpiSlaveData(halHandle, 42);
-//        } else {
-//            // Otherwise, send the word + 1
-//            HAL_writeSpiSlaveData(halHandle, word + 1);
-//        }
-    }
-
-    return;
 }
 
 interrupt void mainISR(void) {
