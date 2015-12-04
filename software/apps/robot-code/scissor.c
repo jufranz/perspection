@@ -8,8 +8,14 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#define PWM_FREQUENCY 20000.0
+#define PWM_PERIOD_MS (1000.0 / PWM_FREQUENCY)
+
 //DIR(PHASE pin of DRV8801) connected to Atum B4
 //PWM(ENABLE pin of DRV8801) connected to Atum B3
+
+//Define SCISSOR_ADDR_A
+//Define SCISSOR_ADDR_B
 
 void set_up_single_driver_gpio(uint32_t gpio_port_base, uint32_t gpio_pin_num);
 void set_up_pwm();
@@ -68,12 +74,12 @@ PROCESS_THREAD(init_network_process, ev, data)
 
 void set_up_pwm() {
     pwm_gpt2_pwm1_init();
-    pwm_gpt2_pwm1_config_gpio(B, 4);
+    pwm_gpt2_pwm1_config_gpio(GPIO_B_NUM, 4);
     pwm_gpt2_pwm1_set_timing(PWM_PERIOD_MS, 0.0);
     pwm_gpt2_pwm1_start();
 
     pwm_gpt2_pwm2_init();
-    pwm_gpt2_pwm2_config_gpio(B, 4);
+    pwm_gpt2_pwm2_config_gpio(GPIO_B_NUM, 4);
     pwm_gpt2_pwm2_set_timing(PWM_PERIOD_MS, 0.0);
     pwm_gpt2_pwm2_start();
 
