@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>perspection_test</name>
+	<name>robot_camera</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -656,6 +656,10 @@
 		<variable>
 			<name>MW_INSTALL_DIR</name>
 			<value>file:/C:/ti/motorware/motorware_1_01_00_15</value>
+		</variable>
+		<variable>
+			<name>copy_PARENT</name>
+			<value>$%7BPARENT-2-PROJECT_LOC%7D/Documents/GitHub/perspection/software/c2000</value>
 		</variable>
 	</variableList>
 </projectDescription>
