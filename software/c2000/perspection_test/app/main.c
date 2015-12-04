@@ -441,36 +441,48 @@ void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed)
     HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
 }
 
-bool readingSpeedOrDir = true; // Horrible, but true for speed, false for dir
-double nextSpeed = 0.0;
-double nextDir = 0.0;
-uint16_t theWord = 0;
+uint16_t cmdBuf[4];
+uint16_t cmdLength;
+uint16_t cmdIndex = 0;
+
 interrupt void spiISR(void) {
     uint16_t buf[4];
-
     uint16_t wordsRead = HAL_readSpiSlaveData(halHandle, buf);
     int i;
     for (i = 0; i < wordsRead; i++) {
         uint16_t word = buf[i];
-        theWord = word;
 
-        // For SPI test
-        if(word == 0xFFFF) {
-            // End of two-word transaction, send garbage
-            HAL_writeSpiSlaveData(halHandle, 42);
-        } else {
-            // Otherwise, send the word + 1
-            HAL_writeSpiSlaveData(halHandle, word + 1);
+        if(cmdIndex == 0) {
+            // We're at the beginning of a new command
+            if(word == 0x0001) {
+                // For a robot body control command
+                cmdLength = 3;
+            }
         }
 
-        // For robot body control
-//        if(readingSpeedOrDir) {
-//            nextSpeed = ((double)word / 127.0);
+        // Load the word into the command buffer
+        cmdBuf[cmdIndex] = word;
+        cmdIndex++;
+
+        // Check if we got the whole command, process it if we did
+        if(cmdIndex == cmdLength) {
+            if(cmdBuf[0] == 0x0001) {
+                // Robot body control command
+                double dir = (double)cmdBuf[1];
+                double speed = (double)(cmdBuf[2] / 127.0);
+                robotBodyMotorControl(halHandle, dir, speed);
+            }
+            cmdIndex = 0;
+        }
+
+        // For SPI test
+//        if(word == 0xFFFF) {
+//            // End of two-word transaction, send garbage
+//            HAL_writeSpiSlaveData(halHandle, 42);
 //        } else {
-//            nextDir = (double)word;
-//            robotBodyMotorControl(halHandle, nextDir, nextSpeed);
+//            // Otherwise, send the word + 1
+//            HAL_writeSpiSlaveData(halHandle, word + 1);
 //        }
-//        readingSpeedOrDir = !readingSpeedOrDir;
     }
 
     return;
