@@ -71,12 +71,12 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
 static void
 gimbal_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
-  leds_on(LEDS_BLUE);
+  leds_on(LEDS_GREEN);
   /*
   printf("%d.%d: received gimbal broadcast from %d,%d: %s\n", linkaddr_node_addr.u8[0],
         linkaddr_node_addr.u8[1], from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
   */
-  leds_off(LEDS_BLUE);
+  leds_off(LEDS_GREEN);
 }
 /*---------------------------------------------------------------------------*/
 static void

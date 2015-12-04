@@ -53,8 +53,10 @@
 
 #define ADC_PIN_NUM 3
 #define ADC_PORT_NUM GPIO_A_NUM
-#define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN3
-#define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN4
+//GREEN WIRE
+#define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN3
+//BLUE WIRE
+#define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4
 
 /*---------------------------------------------------------------------------*/
 PROCESS(example_broadcast_process, "Broadcast example");
@@ -104,6 +106,8 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
   testData.tSpeed = 100;
   testData.rAngle = 0;
   testData.rSpeed = 0;
+  testData.sDir = 1;
+  testData.sSpeed = 125;
 
   static int16_t ctrlX;
   static int16_t ctrlY;
@@ -121,21 +125,25 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
     //32764 - 800, midpoint 16872
     ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
 
-    printf("X: %d, Y: %d ", ctrlX, ctrlY);
+    //printf("X: %d, Y: %d ", ctrlX, ctrlY);
 
     if(ctrlX == 0 && ctrlY == 0) {
-      testData.tDir = 0;
+      //all 9 bits are 1's. indicates no direction
+      testData.tDir = 511;
       testData.tSpeed = 0;
     }
-    else testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)ctrlX) * 180 / M_PI) + 180);
-
+    else {
+      testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)ctrlX) * 180 / M_PI) + 180) % 360;
+      testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)133);
+      if(testData.tSpeed > 127) testData.tSpeed = 127;
+    }
 
     
-    printf("degrees: %d, speed: %d\n", testData.tDir, testData.tSpeed);
+    //printf("degrees: %d, speed: %d\n", testData.tDir, testData.tSpeed);
 
-    leds_on(LEDS_GREEN);    
+    leds_on(LEDS_BLUE);    
     broadcastMoveData(&testData, &broadcast);
-    leds_off(LEDS_GREEN);
+    leds_off(LEDS_BLUE);
   }
 
   PROCESS_END();

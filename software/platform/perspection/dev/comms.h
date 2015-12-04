@@ -22,7 +22,7 @@
 #define CTRL_ADDR_A 101
 #define CTRL_ADDR_B 202
 
-#define MOVEDATA_LEN 4
+#define MOVEDATA_LEN 5
 struct moveData_t {
   //translational speed
   uint8_t tSpeed;
@@ -32,18 +32,31 @@ struct moveData_t {
   uint8_t rSpeed;
   //rotational angle
   uint16_t rAngle;
+  //scissor direction
+  uint8_t sDir;
+  //scissor speed
+  uint8_t sSpeed;
 };
 
 //ADD contiki/core/lib/crc16.h if need checksum
 
 //packet structure:
-//  0-6: tSpeed
-//  7-15: tDir
-//  16-22: rSpeed
-//  23-31: rAngle
+//  33-39: tSpeed
+//  24-32: tDir
+//  17-23: rSpeed
+//  8-16: rAngle
+//  7: sDir
+//  0-6: sSpeed
+#define TSPEED_OFFSET 33
+#define TDIR_OFFSET 24
+#define RSPEED_OFFSET 17
+#define RANGLE_OFFSET 8
+#define SDIR_OFFSET 7
+#define SSPEED_OFFSET 0
+
 typedef union {
   char c[MOVEDATA_LEN];
-  uint32_t u32;
+  uint64_t u64;
 } movePacket_t;
 
 void initGimbalNetwork(struct broadcast_conn *bcc, 
