@@ -64,7 +64,7 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
   leds_on(LEDS_RED);
   unpackMoveData(&recvData);
 
-  printf("dir: %d, speed %d\n", recvData.tDir, recvData.tSpeed);
+  printf("dir: %d, speed: %d, scissorDir: %d, scissorSpeed: %d\n", recvData.tDir, recvData.tSpeed, recvData.sDir, recvData.sSpeed);
 
   SPIX_FLUSH(SPI_DEFAULT_INSTANCE);
 
@@ -94,12 +94,12 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
 static void
 gimbal_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
-  leds_on(LEDS_BLUE);
+  leds_on(LEDS_GREEN);
   /*
   printf("%d.%d: received gimbal broadcast from %d,%d: %s\n", linkaddr_node_addr.u8[0],
         linkaddr_node_addr.u8[1], from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
   */
-  leds_off(LEDS_BLUE);
+  leds_off(LEDS_GREEN);
 }
 /*---------------------------------------------------------------------------*/
 static void
