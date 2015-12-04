@@ -49,10 +49,29 @@
 // **************************************************************************
 // the defines
 
+#define BODY_CONTROL_OP  0x0001
+#define GIMBAL_POS_OP    0x0002
+#define HAPTIC_TORQUE_OP 0x0003
+#define ENCODER_POS_OP   0x0004
+#define BODY_MOTORS_OP   0x0005
+
+#define BODY_CONTROL_CMD_LEN  3
+#define GIMBAL_POS_CMD_LEN    2
+#define HAPTIC_TORQUE_CMD_LEN 2
+#define ENCODER_POS_TX_LEN    1
+#define BODY_MOTORS_TX_LEN    3
+
 // **************************************************************************
 // the globals
 
 HAL_Obj hal;
+
+static uint16_t spiSlaveCmdBuf[8];
+static uint16_t spiSlaveCmdLength = 0;
+static uint16_t spiSlaveCmdIndex = 0;
+static uint16_t spiSlaveTxBuf[8];
+static uint16_t spiSlaveTxLength = 0;
+static uint16_t spiSlaveTxIndex = 0;
 
 // **************************************************************************
 // the functions
@@ -617,6 +636,16 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
     obj->qepHandle[1] = QEP_init((void*) QEP2_BASE_ADDR, sizeof(QEP_Obj));
 #endif
 
+    obj->robotBodyControlData.direction = 0;
+    obj->robotBodyControlData.speed = 0;
+    obj->hasNewRobotBodyControlData = false;
+
+    obj->gimbalPositionControlData = 0;
+    obj->hasNewGimbalPositionControlData = false;
+
+    obj->hapticTorqueControlData = 0;
+    obj->hasNewHapticTorqueControlData = false;
+
     return (handle);
 } // end of HAL_init() function
 
@@ -816,6 +845,22 @@ void HAL_setupAdcs(HAL_Handle handle) {
     ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_7, ADC_SocChanNumber_B7);
     ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_7, ADC_SocTrigSrc_EPWM4_ADCSOCA);
     ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_7, ADC_SocSampleDelay_9_cycles);
+
+    // VPROPI1
+    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_8, ADC_SocChanNumber_B0);
+    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_8, ADC_Int1TriggersSOC);
+    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_8, ADC_SocSampleDelay_9_cycles);
+
+    // VPROPI2
+    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_9, ADC_SocChanNumber_B1);
+    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_9, ADC_Int1TriggersSOC);
+    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_9, ADC_SocSampleDelay_9_cycles);
+
+    // VPROPI3
+    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_10, ADC_SocChanNumber_B2);
+    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_10, ADC_Int1TriggersSOC);
+    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_10, ADC_SocSampleDelay_9_cycles);
+
     return;
 } // end of HAL_setupAdcs() function
 
@@ -1632,19 +1677,14 @@ extern void HAL_setupHbridgePwms(HAL_Handle handle) {
 
 extern void HAL_setPwmDutyCycle(PWM_Handle pwmHandle, bool a_or_b, double dutyCycle) {
     uint16_t period = PWM_getPeriod(pwmHandle);
-    uint16_t duty_cycle_val = (uint16_t)((double)period * dutyCycle);
+    uint16_t duty_cycle_val = (uint16_t) ((double) period * dutyCycle);
 
-    if(a_or_b) {
+    if (a_or_b) {
         PWM_write_CmpA(pwmHandle, duty_cycle_val);
     } else {
         PWM_write_CmpB(pwmHandle, duty_cycle_val);
     }
 } // end of HAL_setPwmDutyCycle() function
-
-extern void HAL_setAuxHbridgePwmDutyCycle(HAL_Handle handle, double dutyCycle) {
-    HAL_Obj *obj = (HAL_Obj *) handle;
-    HAL_setPwmDutyCycle(obj->hbridgePwm1, true, dutyCycle);
-} // end of HAL_setAuxHbridgePwmDutyCycle() function
 
 extern void HAL_setHbridge1PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
@@ -1661,13 +1701,9 @@ extern void HAL_setHbridge3PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
     HAL_setPwmDutyCycle(obj->hbridgePwm2, false, dutyCycle);
 } // end of HAL_setHbridge3PwmDutyCycle() function
 
-extern void HAL_setAuxHbridgeDirection(HAL_Handle handle, uint16_t direction) {
-    // not a thing right now because josh and jason suck
-} // end of HAL_setAuxHbridgeDirection() function
-
 extern void HAL_setHbridge1Direction(HAL_Handle handle, uint16_t direction) {
     HAL_Obj *obj = (HAL_Obj *) handle;
-    if(direction == 0) {
+    if (direction == 0) {
         GPIO_setLow(obj->gpioHandle, GPIO_Number_51);
     } else {
         GPIO_setHigh(obj->gpioHandle, GPIO_Number_51);
@@ -1676,7 +1712,7 @@ extern void HAL_setHbridge1Direction(HAL_Handle handle, uint16_t direction) {
 
 extern void HAL_setHbridge2Direction(HAL_Handle handle, uint16_t direction) {
     HAL_Obj *obj = (HAL_Obj *) handle;
-    if(direction == 0) {
+    if (direction == 0) {
         GPIO_setLow(obj->gpioHandle, GPIO_Number_50);
     } else {
         GPIO_setHigh(obj->gpioHandle, GPIO_Number_50);
@@ -1685,28 +1721,108 @@ extern void HAL_setHbridge2Direction(HAL_Handle handle, uint16_t direction) {
 
 extern void HAL_setHbridge3Direction(HAL_Handle handle, uint16_t direction) {
     HAL_Obj *obj = (HAL_Obj *) handle;
-    if(direction == 0) {
+    if (direction == 0) {
         GPIO_setLow(obj->gpioHandle, GPIO_Number_31);
     } else {
         GPIO_setHigh(obj->gpioHandle, GPIO_Number_31);
     }
 } // end of HAL_setHbridge3Direction() function
 
-// TODO
-extern uint16_t HAL_getAuxHbridgeTorque(HAL_Handle handle) {
-    return 0;
-} // end of HAL_getAuxHbridgeTorque() function
-
 extern uint16_t HAL_getHbridge1Torque(HAL_Handle handle) {
-    return 0;
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    return ADC_readResult(obj->adcHandle, ADC_ResultNumber_8);
 } // end of HAL_getHbridge1Torque() function
 
 extern uint16_t HAL_getHbridge2Torque(HAL_Handle handle) {
-    return 0;
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    return ADC_readResult(obj->adcHandle, ADC_ResultNumber_9);
 } // end of HAL_getHbridge2Torque() function
 
 extern uint16_t HAL_getHbridge3Torque(HAL_Handle handle) {
-    return 0;
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    return ADC_readResult(obj->adcHandle, ADC_ResultNumber_10);
 } // end of HAL_getHbridge3Torque() function
+
+extern uint16_t HAL_getEncoderPosition(HAL_Handle handle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    return ((HAL_getQepPosnCounts(halHandle) * 0x0000FFFF) / HAL_getQepPosnMaximum(halHandle));
+} // end of HAL_getHbridge3Torque() function
+
+interrupt void spiISR(void) {
+    uint16_t buf[4];
+    uint16_t wordsRead = HAL_readSpiSlaveData(&hal, buf);
+    int i;
+
+    for (i = 0; i < wordsRead; i++) {
+        uint16_t word = buf[i];
+
+        // If we're at the beginning of a new command
+        if (spiSlaveCmdIndex == 0) {
+            // Then see which command the Atum is sending and set
+            // the command and tx lengths appropriately
+            if (word == BODY_CONTROL_OP) {
+                spiSlaveCmdLength = BODY_CONTROL_CMD_LEN;
+                spiSlaveTxLength = 0;
+            } else if (word == GIMBAL_POS_OP) {
+                spiSlaveCmdLength = GIMBAL_POS_CMD_LEN;
+                spiSlaveTxLength = 0;
+            } else if (word == HAPTIC_TORQUE_OP) {
+                spiSlaveCmdLength = HAPTIC_TORQUE_CMD_LEN;
+                spiSlaveTxLength = 0;
+            } else if (word == ENCODER_POS_OP) {
+                spiSlaveCmdLength = 0;
+                spiSlaveTxLength = ENCODER_POS_TX_LEN;
+            } else if (word == BODY_MOTORS_OP) {
+                spiSlaveCmdLength = 0;
+                spiSlaveTxLength = BODY_MOTORS_TX_LEN;
+            }
+
+            // If we need to send data, load up the tx buffer
+            if (word == ENCODER_POS_OP) {
+                spiSlaveTxBuf[0] = HAL_getEncoderPosition(&hal);
+            } else if (word == BODY_MOTORS_OP) {
+                spiSlaveTxBuf[0] = HAL_getHbridge1Torque(&hal);
+                spiSlaveTxBuf[1] = HAL_getHbridge2Torque(&hal);
+                spiSlaveTxBuf[2] = HAL_getHbridge3Torque(&hal);
+            }
+        }
+
+        // Load the word into the command buffer
+        cmdBuf[cmdIndex] = word;
+        cmdIndex++;
+
+        // If we have stuff to send, send it
+        if (spiSlaveTxLength > 0) {
+            HAL_writeSpiSlaveData(&hal, spiSlaveTxBuf[spiSlaveTxIndex]);
+            spiSlaveTxIndex++;
+        }
+
+        // Check if we got the whole command and sent all the data we needed to send,
+        // once we have the whole command, put its data in the right place and flag it as new
+        if (spiSlaveCmdIndex == spiSlaveCmdLength && spiSlaveTxIndex == spiSlaveTxLength) {
+            if (spiSlaveCmdBuf[0] == BODY_CONTROL_OP) {
+                // Store the robot body control data
+                hal.robotBodyControlData.direction = cmd[1];
+                hal.robotBodyControlData.speed = cmd[2];
+                hal.hasNewRobotBodyControlData = true;
+            } else if (spiSlaveCmdBuf[0] == GIMBAL_POS_OP) {
+                // Store the gimbal position control data
+                hal.gimbalPositionControlData = cmd[1];
+                hal.hasNewGimbalPositionControlData = true;
+            } else if (spiSlaveCmdBuf[0] == HAPTIC_TORQUE_OP) {
+                // Store the haptic torque control data
+                hal.hapticTorqueControlData = cmd[1];
+                hal.hasNewHapticTorqueControlData = true;
+            }
+
+            spiSlaveCmdIndex = 0;
+            spiSlaveCmdLength = 0;
+            spiSlaveTxIndex = 0;
+            spiSlaveTxLength = 0;
+        }
+    }
+
+    return;
+}
 
 // end of file
