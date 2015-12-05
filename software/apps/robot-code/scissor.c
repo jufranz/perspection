@@ -14,9 +14,6 @@
 //DIR(PHASE pin of DRV8801) connected to Atum B4
 //PWM(ENABLE pin of DRV8801) connected to Atum B3
 
-//Define SCISSOR_ADDR_A
-//Define SCISSOR_ADDR_B
-
 void set_up_single_driver_gpio(uint32_t gpio_port_base, uint32_t gpio_pin_num);
 void set_up_pwm();
 void set_duty_cycle(double new_duty_cycle);
@@ -34,38 +31,23 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
 static void
 broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
-	if(from->u8[0] == SCISSOR_ADDR_A && from->u8[1] == SCISSOR_ADDR_B)
-	{
 		movement_recv(c, from);
 		return;
-	}
 }
 static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
 static struct broadcast_conn broadcast;
-
-PROCESS_THREAD(init_linkaddr_process, ev, data)
-{
-  PROCESS_BEGIN();
-
-  set_up_single_driver_gpio(B, 3);
-  set_up_single_driver_gpio(B,4);
-
-  static linkaddr_t nodeAddr;
-  nodeAddr.u8[0] = SCISSOR_ADDR_A;
-  nodeAddr.u8[1] = SCISSOR_ADDR_B;
-  linkaddr_set_node_addr(&nodeAddr);
-
-  process_start(&init_network_process, NULL);
-
-  PROCESS_END();
-}
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(init_network_process, ev, data)
 {
   PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
 
   PROCESS_BEGIN();
-
+  
+  set_up_single_driver_gpio(B, 3);
+  set_up_single_driver_gpio(B, 4);
+  
+  set_up_pwm();
+  
   initMoveNetwork(&broadcast, &broadcast_call);
 
   PROCESS_END();
@@ -94,8 +76,8 @@ void scissorMotorControl(HAL_Handle halHandle, double direction, double speed) {
 
     dutyCycle1 = (dutyCycle1 < 0.0) ? (dutyCycle1 * -1.0) : dutyCycle1;
 
-    HAL_setHbridge1Direction(halHandle, direction1);
-    HAL_setHbridge1PwmDutyCycle(halHandle, dutyCycle1);
+	set_duty_cycle(dutyCycle1);
+    
 }
 
 
