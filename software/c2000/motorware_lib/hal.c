@@ -995,10 +995,12 @@ void HAL_setupGpios(HAL_Handle handle) {
 #ifdef QEP
     // EQEP1A
     GPIO_setMode(obj->gpioHandle, GPIO_Number_20, GPIO_20_Mode_EQEP1A);
+    GPIO_setPullup(obj->gpioHandle, GPIO_Number_20, GPIO_Pullup_Disable);
     GPIO_setQualification(obj->gpioHandle, GPIO_Number_20, GPIO_Qual_Sample_3);
 
     // EQEP1B
     GPIO_setMode(obj->gpioHandle, GPIO_Number_21, GPIO_21_Mode_EQEP1B);
+    GPIO_setPullup(obj->gpioHandle, GPIO_Number_21, GPIO_Pullup_Disable);
     GPIO_setQualification(obj->gpioHandle, GPIO_Number_21, GPIO_Qual_Sample_3);
 
     // GPIO
@@ -1006,6 +1008,7 @@ void HAL_setupGpios(HAL_Handle handle) {
 
     // EQEP1I
     GPIO_setMode(obj->gpioHandle, GPIO_Number_23, GPIO_23_Mode_EQEP1I);
+    GPIO_setPullup(obj->gpioHandle, GPIO_Number_23, GPIO_Pullup_Disable);
     GPIO_setQualification(obj->gpioHandle, GPIO_Number_23, GPIO_Qual_Sample_3);
 #else
     // GPIO
@@ -1774,6 +1777,9 @@ interrupt void spiISR(void) {
             } else if (word == BODY_MOTORS_OP) {
                 spiSlaveCmdLength = 0;
                 spiSlaveTxLength = BODY_MOTORS_TX_LEN;
+            } else {
+                // This isn't a valid start word, so skip to the next word
+                continue;
             }
 
             // If we need to send data, load up the tx buffer

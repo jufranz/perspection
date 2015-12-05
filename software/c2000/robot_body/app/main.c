@@ -59,6 +59,8 @@
 
 #define LED_BLINK_FREQ_Hz   5
 #define PI 3.1415926
+#define GIMBAL_ZERO 255
+#define GIMBAL_LIMIT 0.375
 
 // **************************************************************************
 // the globals
@@ -125,7 +127,8 @@ unsigned int ints = 0;
 // the functions
 
 void processSpiMessages();
-void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed);
+void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData);
+void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData);
 
 void main(void) {
     uint_least8_t estNumber = 0;
@@ -243,18 +246,16 @@ void main(void) {
     gTorque_Flux_Iq_pu_to_Nm_sf = USER_computeTorque_Flux_Iq_pu_to_Nm_sf();
 
     for (;;) {
-        processSpiMessages();
-
         // Waiting for enable system flag to be set
-        if (!(gMotorVars.Flag_enableSys)) {
-            continue;
-        }
+        while (!(gMotorVars.Flag_enableSys)) {}
 
         // Dis-able the Library internal PI.  Iq has no reference now
         CTRL_setFlag_enableSpeedCtrl(ctrlHandle, false);
 
         // loop while the enable system flag is true
         while (gMotorVars.Flag_enableSys) {
+            processSpiMessages();
+
             CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
             ST_Obj *stObj = (ST_Obj *) stHandle;
 
@@ -424,12 +425,21 @@ void main(void) {
 } // end of main() function
 
 void processSpiMessages() {
-    // TODODODODODODODO
-    // Check if there's new data
-    // Act on it
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
+
+    if (obj->hasNewRobotBodyControlData) {
+        robotBodyMotorControl(halHandle, obj->robotBodyControlData);
+        obj->hasNewRobotBodyControlData = false;
+    } else if (obj->hasNewGimbalPositionControlData) {
+        gimbalPositionControl(halHandle, obj->gimbalPositionControlData);
+        obj->hasNewGimbalPositionControlData = false;
+    }
 }
 
-void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed) {
+void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData) {
+    double direction = (double) robotBodyControlData.direction;
+    double speed = (double) robotBodyControlData.speed / 127.0;
+
     double dirInRads = (direction * PI) / 180.0;
     double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
     double dutyCycle2 = (speed * cos(((30.0 * PI) / 180.0) - dirInRads));
@@ -449,6 +459,20 @@ void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed)
     HAL_setHbridge2PwmDutyCycle(halHandle, dutyCycle2);
     HAL_setHbridge3Direction(halHandle, direction3);
     HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
+}
+
+void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
+
+    double position = 0.0;
+    if (gimbalPositionData > GIMBAL_ZERO) {
+        position = (((double)(gimbalPositionData - GIMBAL_ZERO)) / ((double) GIMBAL_ZERO));
+    } else {
+        position = -(((double)(GIMBAL_ZERO - gimbalPositionData)) / ((double) GIMBAL_ZERO));
+    }
+
+    position = position * GIMBAL_LIMIT;
+    obj->desiredGimbalPos = _IQ(position);
 }
 
 interrupt void mainISR(void) {
@@ -608,9 +632,10 @@ void ST_runPosConv(ST_Handle handle, ENC_Handle encHandle, CTRL_Handle ctrlHandl
 
 void ST_runPosCtl(ST_Handle handle, CTRL_Handle ctrlHandle) {
     ST_Obj *stObj = (ST_Obj *) handle;
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
 
     // provide the updated references to the SpinTAC Position Control
-    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, 0);
+    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, obj->desiredGimbalPos);
     STPOSCTL_setVelocityReference(stObj->posCtlHandle, 0);
     STPOSCTL_setAccelerationReference(stObj->posCtlHandle, 0);
     // provide the feedback to the SpinTAC Position Control
