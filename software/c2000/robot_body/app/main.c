@@ -199,7 +199,7 @@ void main(void) {
 
     // enable the SPI interrupts
     HAL_enableSpiInt(halHandle);
-    HAL_writeSpiSlaveData(halHandle, 30);
+    HAL_writeSpiSlaveData(halHandle, 30); // Just some junk for the TX buffer, probably don't need
 
     // enable global interrupts
     HAL_enableGlobalInts(halHandle);
@@ -247,7 +247,8 @@ void main(void) {
 
     for (;;) {
         // Waiting for enable system flag to be set
-        while (!(gMotorVars.Flag_enableSys)) {}
+        while (!(gMotorVars.Flag_enableSys)) {
+        }
 
         // Dis-able the Library internal PI.  Iq has no reference now
         CTRL_setFlag_enableSpeedCtrl(ctrlHandle, false);
@@ -466,18 +467,27 @@ void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
 
     double position = 0.0;
     if (gimbalPositionData > GIMBAL_ZERO) {
-        position = (((double)(gimbalPositionData - GIMBAL_ZERO)) / ((double) GIMBAL_ZERO));
+        position = (((double) (gimbalPositionData - GIMBAL_ZERO)) / ((double) GIMBAL_ZERO));
     } else {
-        position = -(((double)(GIMBAL_ZERO - gimbalPositionData)) / ((double) GIMBAL_ZERO));
+        position = -(((double) (GIMBAL_ZERO - gimbalPositionData)) / ((double) GIMBAL_ZERO));
     }
 
     position = position * GIMBAL_LIMIT;
+    if(position > GIMBAL_LIMIT) {
+        position = GIMBAL_LIMIT;
+    } else if(position < -GIMBAL_LIMIT) {
+        position = -GIMBAL_LIMIT;
+    }
+
     obj->desiredGimbalPos = _IQ(position);
 }
 
 interrupt void mainISR(void) {
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
+    HAL_Obj *halObj = (HAL_Obj*) halHandle;
+
+    CPU_disableGlobalInts(halObj->cpuHandle);
 
     // toggle status LED
     if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
@@ -524,6 +534,8 @@ interrupt void mainISR(void) {
     if ((EST_getState(obj->estHandle) == EST_State_Rs) && (USER_MOTOR_TYPE == MOTOR_Type_Pm)) {
         ENC_setZeroOffset(encHandle, (uint32_t) (HAL_getQepPosnMaximum(halHandle) - HAL_getQepPosnCounts(halHandle)));
     }
+
+    CPU_enableGlobalInts(halObj->cpuHandle);
 
     return;
 } // end of mainISR() function

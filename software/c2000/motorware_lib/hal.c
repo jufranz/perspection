@@ -642,6 +642,7 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
 
     obj->gimbalPositionControlData = 0;
     obj->hasNewGimbalPositionControlData = false;
+    obj->desiredGimbalPos = _IQ(0.0);
 
     obj->hapticTorqueControlData = 0;
     obj->hasNewHapticTorqueControlData = false;
@@ -1752,6 +1753,9 @@ extern uint16_t HAL_getEncoderPosition(HAL_Handle handle) {
 
 interrupt void spiISR(void) {
     uint16_t buf[4];
+
+    CPU_disableGlobalInts(hal.cpuHandle);
+
     uint16_t wordsRead = HAL_readSpiSlaveData(&hal, buf);
     int i;
 
@@ -1826,6 +1830,8 @@ interrupt void spiISR(void) {
             spiSlaveTxLength = 0;
         }
     }
+
+    CPU_enableGlobalInts(hal.cpuHandle);
 
     return;
 }
