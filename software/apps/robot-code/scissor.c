@@ -68,7 +68,7 @@ void set_up_pwm() {
     set_duty_cycle(0.0);
 }
 
-void scissorMotorControl(HAL_Handle halHandle, double direction, double speed) {
+void scissorMotorControl(double direction, double speed) {
     double dirInRads = (direction * PI) / 180.0;
     double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
 
