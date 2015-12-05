@@ -642,6 +642,7 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
 
     obj->gimbalPositionControlData = 0;
     obj->hasNewGimbalPositionControlData = false;
+    obj->desiredGimbalPos = _IQ(0.0);
 
     obj->hapticTorqueControlData = 0;
     obj->hasNewHapticTorqueControlData = false;
@@ -995,10 +996,12 @@ void HAL_setupGpios(HAL_Handle handle) {
 #ifdef QEP
     // EQEP1A
     GPIO_setMode(obj->gpioHandle, GPIO_Number_20, GPIO_20_Mode_EQEP1A);
+    GPIO_setPullup(obj->gpioHandle, GPIO_Number_20, GPIO_Pullup_Disable);
     GPIO_setQualification(obj->gpioHandle, GPIO_Number_20, GPIO_Qual_Sample_3);
 
     // EQEP1B
     GPIO_setMode(obj->gpioHandle, GPIO_Number_21, GPIO_21_Mode_EQEP1B);
+    GPIO_setPullup(obj->gpioHandle, GPIO_Number_21, GPIO_Pullup_Disable);
     GPIO_setQualification(obj->gpioHandle, GPIO_Number_21, GPIO_Qual_Sample_3);
 
     // GPIO
@@ -1006,6 +1009,7 @@ void HAL_setupGpios(HAL_Handle handle) {
 
     // EQEP1I
     GPIO_setMode(obj->gpioHandle, GPIO_Number_23, GPIO_23_Mode_EQEP1I);
+    GPIO_setPullup(obj->gpioHandle, GPIO_Number_23, GPIO_Pullup_Disable);
     GPIO_setQualification(obj->gpioHandle, GPIO_Number_23, GPIO_Qual_Sample_3);
 #else
     // GPIO
@@ -1744,12 +1748,14 @@ extern uint16_t HAL_getHbridge3Torque(HAL_Handle handle) {
 } // end of HAL_getHbridge3Torque() function
 
 extern uint16_t HAL_getEncoderPosition(HAL_Handle handle) {
-    HAL_Obj *obj = (HAL_Obj *) handle;
-    return ((HAL_getQepPosnCounts(halHandle) * 0x0000FFFF) / HAL_getQepPosnMaximum(halHandle));
+    return ((HAL_getQepPosnCounts(handle) * 0x0000FFFF) / HAL_getQepPosnMaximum(handle));
 } // end of HAL_getHbridge3Torque() function
 
 interrupt void spiISR(void) {
     uint16_t buf[4];
+
+    CPU_disableGlobalInts(hal.cpuHandle);
+
     uint16_t wordsRead = HAL_readSpiSlaveData(&hal, buf);
     int i;
 
@@ -1775,6 +1781,9 @@ interrupt void spiISR(void) {
             } else if (word == BODY_MOTORS_OP) {
                 spiSlaveCmdLength = 0;
                 spiSlaveTxLength = BODY_MOTORS_TX_LEN;
+            } else {
+                // This isn't a valid start word, so skip to the next word
+                continue;
             }
 
             // If we need to send data, load up the tx buffer
@@ -1788,8 +1797,8 @@ interrupt void spiISR(void) {
         }
 
         // Load the word into the command buffer
-        cmdBuf[cmdIndex] = word;
-        cmdIndex++;
+        spiSlaveCmdBuf[spiSlaveCmdIndex] = word;
+        spiSlaveCmdIndex++;
 
         // If we have stuff to send, send it
         if (spiSlaveTxLength > 0) {
@@ -1802,16 +1811,16 @@ interrupt void spiISR(void) {
         if (spiSlaveCmdIndex == spiSlaveCmdLength && spiSlaveTxIndex == spiSlaveTxLength) {
             if (spiSlaveCmdBuf[0] == BODY_CONTROL_OP) {
                 // Store the robot body control data
-                hal.robotBodyControlData.direction = cmd[1];
-                hal.robotBodyControlData.speed = cmd[2];
+                hal.robotBodyControlData.direction = spiSlaveCmdBuf[1];
+                hal.robotBodyControlData.speed = spiSlaveCmdBuf[2];
                 hal.hasNewRobotBodyControlData = true;
             } else if (spiSlaveCmdBuf[0] == GIMBAL_POS_OP) {
                 // Store the gimbal position control data
-                hal.gimbalPositionControlData = cmd[1];
+                hal.gimbalPositionControlData = spiSlaveCmdBuf[1];
                 hal.hasNewGimbalPositionControlData = true;
             } else if (spiSlaveCmdBuf[0] == HAPTIC_TORQUE_OP) {
                 // Store the haptic torque control data
-                hal.hapticTorqueControlData = cmd[1];
+                hal.hapticTorqueControlData = spiSlaveCmdBuf[1];
                 hal.hasNewHapticTorqueControlData = true;
             }
 
@@ -1821,6 +1830,8 @@ interrupt void spiISR(void) {
             spiSlaveTxLength = 0;
         }
     }
+
+    CPU_enableGlobalInts(hal.cpuHandle);
 
     return;
 }

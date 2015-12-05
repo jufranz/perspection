@@ -53,10 +53,12 @@
 
 #define ADC_PIN_NUM 3
 #define ADC_PORT_NUM GPIO_A_NUM
-//GREEN WIRE
+// GREEN WIRE
 #define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN3
-//BLUE WIRE
+// BLUE WIRE
 #define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4
+// YELLOW WIRE
+#define ADC_CHANNEL_POS SOC_ADC_ADCCON_CH_AIN5
 
 #define ADC_CHANNEL_SCISSOR SOC_ADC_ADCCON_CH_AIN5
 
@@ -122,7 +124,7 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
   static int16_t ctrlX;
   static int16_t ctrlY;
-  static int16_t ctrlScissor;
+  static int16_t pos;
 
   while(1) {
 
@@ -130,12 +132,13 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
     etimer_set(&et, CLOCK_SECOND/150);
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-   
+
     //it says AVDD5 but actually use 3V3 input.
     //32300 - 80, midpoint 17142
     ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 17142);
     //32764 - 800, midpoint 16872
     ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
+    pos = adc_get(ADC_CHANNEL_POS, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512);
 
     ctrlScissor = isOutOfBounds(adc_get(ADC_CHANNEL_SCISSOR, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512)) / 128;
 
@@ -156,6 +159,7 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
       if(testData.tSpeed > 127) testData.tSpeed = 127;
     }
 
+<<<<<<< HEAD
     //Scissor control
     if(ctrlScissor <= 127){
       testData.sDir = 0;
@@ -168,10 +172,20 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
     #if DEBUG
     printf("degrees: %d, speed: %d\n", testData.tDir, testData.tSpeed);
     #endif
+=======
+    if(pos < 0) pos = 0;
+    testData.rAngle = (uint16_t)((((int32_t)pos) * 0x1FF) / 0x7FFF);
 
-    leds_on(LEDS_BLUE);    
+    printf("degrees: %d, speed: %d pos: %d\r\n", testData.tDir, testData.tSpeed, testData.rAngle);
+>>>>>>> 153ea2e02772123d9876f5b3008b304fd45c6b93
+
+    leds_on(LEDS_BLUE);
     broadcastMoveData(&testData, &broadcast);
     leds_off(LEDS_BLUE);
+
+    unpackMoveData(&testData);
+    printf("degrees: %d, speed: %d pos: %d\r\n", testData.tDir, testData.tSpeed, testData.rAngle);
+    printf("\r\n");
   }
 
   PROCESS_END();

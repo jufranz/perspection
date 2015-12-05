@@ -182,6 +182,7 @@ typedef struct _HAL_Obj_ {
 
     uint16_t gimbalPositionControlData;
     bool hasNewGimbalPositionControlData;
+    _iq desiredGimbalPos;
 
     uint16_t hapticTorqueControlData;
     bool hasNewHapticTorqueControlData;
