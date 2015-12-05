@@ -63,7 +63,9 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
   leds_on(LEDS_RED);
   unpackMoveData(&recvData);
 
+  /*printf("Dir: %d, Speed: %d, Pos: %d\r\n", recvData.tDir, recvData.tSpeed, recvData.rAngle);*/
   spi_wrapper_send_body_control(recvData.tDir, recvData.tSpeed);
+  spi_wrapper_send_gimbal_pos(recvData.rAngle);
 
   leds_off(LEDS_RED);
 }
