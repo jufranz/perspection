@@ -42,12 +42,22 @@
 #include "random.h"
 
 #include "clock.h"
+#include "dev/bno055.h"
+#include "sys/clock.h"
 
 #include "dev/comms.h"
 
 #include "dev/leds.h"
 
 #include <stdio.h>
+
+void delay(uint16_t msec){
+  int i;
+  for(i = 0; i < msec; i++){
+    clock_delay_usec(1000);
+  };
+}
+
 /*---------------------------------------------------------------------------*/
 PROCESS(example_broadcast_process, "Broadcast example");
 AUTOSTART_PROCESSES(&example_broadcast_process);
@@ -72,23 +82,29 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
   PROCESS_BEGIN();
 
+  delay(50);
+
+  if(!bno055_init()){
+    PROCESS_END();
+  }
+
   static linkaddr_t nodeAddr;
   nodeAddr.u8[0] = HEADSET_ADDR_A;
   nodeAddr.u8[1] = HEADSET_ADDR_B;
   linkaddr_set_node_addr(&nodeAddr);
 
-  initGimbalNetwork(&broadcast, &broadcast_call);
+  //initGimbalNetwork(&broadcast, &broadcast_call);
 
   while(1) {
 
     /* Delay 1 second */
-    etimer_set(&et, CLOCK_SECOND/200);
+    etimer_set(&et, CLOCK_SECOND/75);
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
    
     leds_on(LEDS_GREEN);
-    broadcastGimbalData(&broadcast);
-    clock_delay_usec(5000);
+    bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
+    //broadcastGimbalData(&broadcast);
     leds_off(LEDS_GREEN);
   }
 
