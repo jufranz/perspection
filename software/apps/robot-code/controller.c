@@ -62,7 +62,7 @@
 
 #define ADC_CHANNEL_SCISSOR SOC_ADC_ADCCON_CH_AIN5
 
-#define DEBUG 0
+#define CONTROLLER_MAIN_DEBUG 0
 
 /*---------------------------------------------------------------------------*/
 PROCESS(example_broadcast_process, "Broadcast example");
@@ -71,7 +71,7 @@ AUTOSTART_PROCESSES(&example_broadcast_process);
 static void
 broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
-  #if DEBUG
+  #if CONTROLLER_MAIN_DEBUG
   leds_on(LEDS_RED);
   printf("broadcast message received from %d.%d: '%s'\n",
          from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
@@ -129,7 +129,7 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
   while(1) {
 
     /*sample 150 times per second*/
-    etimer_set(&et, CLOCK_SECOND/150);
+    etimer_set(&et, CLOCK_SECOND/100);
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 

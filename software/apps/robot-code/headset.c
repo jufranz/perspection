@@ -42,11 +42,10 @@
 #include "random.h"
 
 #include "clock.h"
-#include "dev/bno055.h"
 #include "sys/clock.h"
 
+#include "dev/bno055.h"
 #include "dev/comms.h"
-
 #include "dev/leds.h"
 
 #include <stdio.h>
@@ -58,19 +57,26 @@ void delay(uint16_t msec){
   };
 }
 
+#define HEADSET_MAIN_DEBUG 1
+
 /*---------------------------------------------------------------------------*/
 PROCESS(init_wireless_process, "Start wireless comms");
 PROCESS(init_imu_process, "Start IMU and initialization settings");
 PROCESS(obtain_orientation_process, "Loop for obtaining orientation data");
 AUTOSTART_PROCESSES(&init_wireless_process);
 /*---------------------------------------------------------------------------*/
-/*static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
-{
-  return;
-}*/
-static const struct broadcast_callbacks broadcast_call = {NULL};//broadcast_recv};
+
+
+
+/*---------------------------------------------------------------------------*/
+//no need for a receive function because this device does not need to listen
+//for packets
+static const struct broadcast_callbacks broadcast_call = {NULL};
 static struct broadcast_conn broadcast;
+/*---------------------------------------------------------------------------*/
+
+
+
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(init_wireless_process, ev, data){
   PROCESS_BEGIN();
@@ -88,8 +94,11 @@ PROCESS_THREAD(init_wireless_process, ev, data){
   PROCESS_END();
 }
 
+
+
 PROCESS_THREAD(init_imu_process, ev, data) {
   PROCESS_BEGIN();
+  leds_off(LEDS_RED);
 
   delay(500);
 
@@ -107,24 +116,25 @@ PROCESS_THREAD(init_imu_process, ev, data) {
   PROCESS_END();
 }
 
+
+
 PROCESS_THREAD(obtain_orientation_process, ev, data) {
   PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
+  static struct etimer et;
 
   PROCESS_BEGIN();
 
-  static struct etimer et;
   static struct gimbalData_t headData;
 
   while(1) {
-
-    /* Delay 1 second */
-    etimer_set(&et, CLOCK_SECOND/75);
+    etimer_set(&et, CLOCK_SECOND/100);
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
    
     leds_on(LEDS_GREEN);
+    
     bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
-
+    
     headData.gYaw = scaleForEncoder(euler_data.z);
     #if BOARD_MOUNTED_ON_HEADSET_NORMALLY
     headData.gPitch = scaleForEncoder(euler_data.x);
@@ -132,9 +142,15 @@ PROCESS_THREAD(obtain_orientation_process, ev, data) {
     headData.gPitch = scaleForEncoder(euler_data.y);
     #endif
 
-    printf("sentYaw: %d, sentPitch: %d, x(pitch): %d, y(roll): %d, z(yaw): %d, x: %d, y: %d, z: %d\n", headData.gYaw, headData.gPitch, euler_data.x/16, euler_data.y/16, euler_data.z/16, euler_data.x, euler_data.y, euler_data.z);
+    #if HEADSET_MAIN_DEBUG
+    printf("Yaw: %d, Pitch: %d, xD: %d, yD: %d, zD: %d, x: %d, y: %d, z: %d\n", 
+          headData.gYaw, headData.gPitch, 
+          euler_data.x/16, euler_data.y/16, euler_data.z/16, 
+          euler_data.x, euler_data.y, euler_data.z);
+    #endif
 
     broadcastGimbalData(&headData, &broadcast);
+    
     leds_off(LEDS_GREEN);
   }
 

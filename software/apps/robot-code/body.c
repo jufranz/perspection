@@ -49,6 +49,9 @@
 #include "dev/spi_wrapper.h"
 
 #include <stdio.h>
+
+#define BODY_MAIN_DEBUG 0
+
 /*---------------------------------------------------------------------------*/
 PROCESS(init_linkaddr_process, "Initialize linkaddr Address");
 PROCESS(init_network_process, "Initialize Broadcast Channel");
@@ -57,28 +60,42 @@ AUTOSTART_PROCESSES(&init_linkaddr_process);
 
 
 /*---------------------------------------------------------------------------*/
-static struct moveData_t recvData;
+static struct moveData_t recvMoveData;
 static void
 movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
   leds_on(LEDS_RED);
-  unpackMoveData(&recvData);
-  //scissorMotorControl(recvData.sDir, recvData.sSpeed);
-  /*printf("Dir: %d, Speed: %d, Pos: %d\r\n", recvData.tDir, recvData.tSpeed, recvData.rAngle);*/
-  spi_wrapper_send_body_control(recvData.tDir, recvData.tSpeed);
-  spi_wrapper_send_gimbal_pos(recvData.rAngle);
+
+  unpackMoveData(&recvMoveData);
+  //scissorMotorControl(recvMoveData.sDir, recvMoveData.sSpeed);
+  
+  #if BODY_MAIN_DEBUG
+  printf("Dir: %d, Speed: %d, Pos: %d\r\n", 
+        recvMoveData.tDir, recvMoveData.tSpeed, recvMoveData.rAngle);
+  #endif
+  
+  //sending the data off to the C2000 to do further processing
+  spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);
+  spi_wrapper_send_gimbal_pos(recvMoveData.rAngle);
 
   leds_off(LEDS_RED);
 }
 /*---------------------------------------------------------------------------*/
+static struct gimbalData_t recvGimbalData;
 static void
 gimbal_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
   leds_on(LEDS_GREEN);
-  /*
-  printf("%d.%d: received gimbal broadcast from %d,%d: %s\n", linkaddr_node_addr.u8[0],
-        linkaddr_node_addr.u8[1], from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
-  */
+
+  unpackGimbalData(&recvGimbalData);
+
+  #if BODY_MAIN_DEBUG
+  printf("360 scaled to 5760 -- Yaw: %d, Pitch: %d\n", 
+        recvGimbalData.gYaw, recvGimbalData.gPitch);  
+  #endif
+
+  //do magic shit
+
   leds_off(LEDS_GREEN);
 }
 /*---------------------------------------------------------------------------*/
