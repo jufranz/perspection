@@ -38,6 +38,7 @@ bool bno055_init(void) {
   //intialize i2c (ports/pins usually found in board.h for platform)
   i2c_init(I2C_SDA_PORT, I2C_SDA_PIN, I2C_SCL_PORT, I2C_SCL_PIN, I2C_SCL_FAST_BUS_SPEED);
   /* Make sure we have the right device */
+  bno055_write8(BNO055_PAGE_ID_ADDR, 0);
   uint8_t id = bno055_read8(BNO055_CHIP_ID_ADDR);
   if(id != BNO055_ID)
   {
