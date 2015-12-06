@@ -6,10 +6,11 @@
 
 #include "contiki.h"
 #include "random.h"
-#include "dev/bno055.h"
 #include "sys/clock.h"
 
 #include "dev/leds.h"
+#include "dev/bno055.h"
+#include "dev/clock_wrapper.h"
 
 #include <stdio.h>
 
@@ -33,7 +34,7 @@ PROCESS_THREAD(bno055_test_process, ev, data)
   PROCESS_BEGIN();
   leds_set(LEDS_BLUE);
  
-  delay(500);
+  clock_wrapper_delay_msec(500);
 
   if(!bno055_init()) {
     while(1){
@@ -52,7 +53,7 @@ PROCESS_THREAD(bno055_test_process, ev, data)
     if(cal.gyro_cal) leds_on(LEDS_RED);
     if(cal.accel_cal) leds_on(LEDS_GREEN);
     if(cal.mag_cal) leds_on(LEDS_BLUE);
-    delay(10);
+    clock_wrapper_delay_msec(10);
   }
 
   PROCESS_END();

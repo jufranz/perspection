@@ -47,21 +47,17 @@
 #include "dev/bno055.h"
 #include "dev/comms.h"
 #include "dev/leds.h"
+#include "dev/clock_wrapper.h"
 
 #include <stdio.h>
 
-void delay(uint16_t msec){
-  int i;
-  for(i = 0; i < msec; i++){
-    clock_delay_usec(1000);
-  };
-}
-
-#define HEADSET_MAIN_DEBUG 1
+#define HEADSET_MAIN_DEBUG 0
+#define SEPARATE_CALIBRATION_STEP 1
 
 /*---------------------------------------------------------------------------*/
 PROCESS(init_wireless_process, "Start wireless comms");
 PROCESS(init_imu_process, "Start IMU and initialization settings");
+PROCESS(calibrate_imu_process, "Calibrate sensors before running");
 PROCESS(obtain_orientation_process, "Loop for obtaining orientation data");
 AUTOSTART_PROCESSES(&init_wireless_process);
 /*---------------------------------------------------------------------------*/
@@ -98,21 +94,68 @@ PROCESS_THREAD(init_wireless_process, ev, data){
 
 PROCESS_THREAD(init_imu_process, ev, data) {
   PROCESS_BEGIN();
-  leds_off(LEDS_RED);
+  leds_off(LEDS_ALL);
 
-  delay(500);
+  clock_wrapper_delay_msec(500);
 
   if(!bno055_init()){
-    leds_on(LEDS_RED);
+    while(1){
+      leds_on(LEDS_RED);
+
+      #if HEADSET_MAIN_DEBUG
+      printf("failure to initialize. restart device.\n");
+      #endif
+      
+      clock_wrapper_delay_msec(400);
+      leds_off(LEDS_RED);
+      clock_wrapper_delay_msec(400);
+    }
+  }else{
+    //if shit is gucci, we turn on our desired IMU settings
+    //and run our main processes
+
+    bno055_set_mode(BNO055_OPERATION_MODE_NDOF_FMC_OFF);
+
+    //once everything is set up, start IMU process
+    //or start IMU calibration check process
+    //or start both simultaneously
+    #if SEPARATE_CALIBRATION_STEP
+    process_start(&calibrate_imu_process, NULL);
+    #else
+    process_start(&obtain_orientation_process, NULL);
+    #endif
+  }
+
+  PROCESS_END();
+}
+
+
+
+PROCESS_THREAD(calibrate_imu_process, ev, data) {
+  PROCESS_BEGIN();
+
+  leds_off(LEDS_ALL);
+
+  while(1) { 
+    bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
+    
+    #if HEADSET_MAIN_DEBUG
+    printf("x: %d\ty: %d\tz: %d\n", euler_data.x/16, euler_data.y/16, euler_data.z/16);
+    #endif
+    
+    bno055_calibration_t cal = bno055_get_calibration();
+    if(cal.gyro_cal) leds_on(LEDS_RED);
+    if(cal.accel_cal) leds_on(LEDS_GREEN);
+    if(cal.mag_cal) leds_on(LEDS_BLUE);
+
+    if(cal.gyro_cal && cal.accel_cal && cal.mag_cal) break;
+    clock_wrapper_delay_msec(10);
   }
   
-  bno055_set_mode(BNO055_OPERATION_MODE_NDOF_FMC_OFF);
+  clock_wrapper_delay_msec(500);
 
-  //once everything is set up, start IMU process
-  //or start IMU calibration check process
-  //or start both simultaneously
   process_start(&obtain_orientation_process, NULL);
-
+  
   PROCESS_END();
 }
 
@@ -126,12 +169,14 @@ PROCESS_THREAD(obtain_orientation_process, ev, data) {
 
   static struct gimbalData_t headData;
 
+  leds_off(LEDS_ALL);
+
   while(1) {
     etimer_set(&et, CLOCK_SECOND/100);
 
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
    
-    leds_on(LEDS_GREEN);
+    leds_on(LEDS_BLUE | LEDS_GREEN);
     
     bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
     
@@ -151,7 +196,7 @@ PROCESS_THREAD(obtain_orientation_process, ev, data) {
 
     broadcastGimbalData(&headData, &broadcast);
     
-    leds_off(LEDS_GREEN);
+    leds_off(LEDS_BLUE | LEDS_GREEN);
   }
 
   PROCESS_END();
