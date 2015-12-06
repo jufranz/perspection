@@ -48,7 +48,7 @@ PROCESS_THREAD(bno055_test_process, ev, data)
     leds_on(LEDS_RED);
     #endif
     bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
-    printf("x: %d\ty: %d\tz: %d\n", euler_data.x, euler_data.y, euler_data.z);
+    printf("x: %d\ty: %d\tz: %d\n", euler_data.x/16, euler_data.y/16, euler_data.z/16);
     #if DEBUG
     leds_off(LEDS_RED);
     #endif

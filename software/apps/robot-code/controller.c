@@ -140,7 +140,6 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
     ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
     pos = adc_get(ADC_CHANNEL_POS, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512);
 
-    ctrlScissor = isOutOfBounds(adc_get(ADC_CHANNEL_SCISSOR, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512)) / 128;
 
     #if DEBUG
     printf("scissor: %d\n", ctrlScissor);
@@ -159,25 +158,10 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
       if(testData.tSpeed > 127) testData.tSpeed = 127;
     }
 
-<<<<<<< HEAD
-    //Scissor control
-    if(ctrlScissor <= 127){
-      testData.sDir = 0;
-      testData.sSpeed = 127 - ctrlScissor;
-    } else {
-      testData.sDir = 1;
-      testData.sSpeed = ctrlScissor - 128;
-    }
-
-    #if DEBUG
-    printf("degrees: %d, speed: %d\n", testData.tDir, testData.tSpeed);
-    #endif
-=======
     if(pos < 0) pos = 0;
     testData.rAngle = (uint16_t)((((int32_t)pos) * 0x1FF) / 0x7FFF);
 
     printf("degrees: %d, speed: %d pos: %d\r\n", testData.tDir, testData.tSpeed, testData.rAngle);
->>>>>>> 153ea2e02772123d9876f5b3008b304fd45c6b93
 
     leds_on(LEDS_BLUE);
     broadcastMoveData(&testData, &broadcast);

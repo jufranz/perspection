@@ -141,9 +141,9 @@ bno055_vector_t bno055_get_vector(bno055_vector_type_t type) {
   /* Read vector data (6 bytes) */
   read_len(type, buffer, 6);
 
-  result.x = ((int16_t)buffer[0]) | (((int16_t)buffer[1]) << 8);
-  result.y = ((int16_t)buffer[2]) | (((int16_t)buffer[3]) << 8);
-  result.z = ((int16_t)buffer[4]) | (((int16_t)buffer[5]) << 8);
+  result.z = ((int16_t)buffer[0]) | (((int16_t)buffer[1]) << 8);
+  result.x = ((int16_t)buffer[2]) | (((int16_t)buffer[3]) << 8);
+  result.y = ((int16_t)buffer[4]) | (((int16_t)buffer[5]) << 8);
   return result;
 }
 
@@ -192,3 +192,20 @@ void bno055_set_sensor_offsets(bno055_offsets_t offsets) {
   //XXX TODO
 }
 
+void bno055_set_axis_map_config(uint8_t x, uint8_t y, uint8_t z){
+  uint8_t val = 0;
+  val |= (z & 0x03) << 4;
+  val |= (y & 0x03) << 2;
+  val |= (x & 0x03);
+
+  bno055_write8(BNO055_AXIS_MAP_CONFIG_ADDR, val);
+}
+
+void bno055_set_axis_map_sign(bool x, bool y, bool z){
+  uint8_t val = 0;
+  val |= (uint8_t)x << 2;
+  val |= (uint8_t)y << 1;
+  val |= (uint8_t)z;
+  
+  bno055_write8(BNO055_AXIS_MAP_SIGN_ADDR, val);
+}

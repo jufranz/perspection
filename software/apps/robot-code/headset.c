@@ -82,17 +82,25 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
   PROCESS_BEGIN();
 
-  delay(50);
+  delay(100);
 
   if(!bno055_init()){
-    PROCESS_END();
+    leds_on(LEDS_RED);
   }
 
+  bno055_set_mode(BNO055_OPERATION_MODE_NDOF_FMC_OFF);
+  delay(1);
+  bno055_set_axis_map_config(BNO055_ZAXIS, BNO055_YAXIS, BNO055_XAXIS);
+  delay(1);
+  bno055_set_axis_map_sign(BNO055_POSITIVE, BNO055_POSITIVE, BNO055_NEGATIVE);
+  static struct moveData_t testData;
+
   static linkaddr_t nodeAddr;
-  nodeAddr.u8[0] = HEADSET_ADDR_A;
-  nodeAddr.u8[1] = HEADSET_ADDR_B;
+  nodeAddr.u8[0] = CTRL_ADDR_A;//HEADSET_ADDR_A;
+  nodeAddr.u8[1] = CTRL_ADDR_B;//HEADSET_ADDR_B;
   linkaddr_set_node_addr(&nodeAddr);
 
+  initMoveNetwork(&broadcast, &broadcast_call);
   //initGimbalNetwork(&broadcast, &broadcast_call);
 
   while(1) {
@@ -104,6 +112,10 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
    
     leds_on(LEDS_GREEN);
     bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
+    //testData.rAngle = euler_data.y/16;
+    //testData.rAngle = (uint16_t)(((double)(((int16_t)euler_data.y/16)+180)*511.0)/360.0);
+    printf("penis: %d , x(pitch): %d, y(roll): %d, z(yaw): %d\n", euler_data.y/16/*testData.rAngle & 0x1FF*/, euler_data.x/16, euler_data.y/16, euler_data.z/16);
+    broadcastMoveData(&testData, &broadcast);
     //broadcastGimbalData(&broadcast);
     leds_off(LEDS_GREEN);
   }
