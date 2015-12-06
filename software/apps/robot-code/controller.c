@@ -109,12 +109,12 @@ PROCESS_THREAD(example_broadcast_process, ev, data) {
         }
         
         if(ctrlScissor <= 127){
-    +      testData.sDir = 0;
-    +      testData.sSpeed = 127 - ctrlScissor;
-    +    } else {
-    +      testData.sDir = 1;
-    +      testData.sSpeed = ctrlScissor - 128;
-    +    }
+       testData.sDir = 0;
+       testData.sSpeed = 127 - ctrlScissor;
+     } else {
+       testData.sDir = 1;
+       testData.sSpeed = ctrlScissor - 128;
+     }
 
 #if CONTROLLER_MAIN_DEBUG
         printf("degrees: %d, speed: %d\r\n", testData.tDir, testData.tSpeed);
