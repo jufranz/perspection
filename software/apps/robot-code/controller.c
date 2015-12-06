@@ -18,6 +18,8 @@
 #define SAMPLES_PER_SEC 100
 #define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4 // BLUE WIRE
 #define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN3 // GREEN WIRE
+#define ADC_CHANNEL_SCISSOR SOC_ADC_ADCCON_CH_AIN5 
+
 #define CONTROLLER_MAIN_DEBUG 0
 
 // Contiki process declarations
@@ -88,7 +90,8 @@ PROCESS_THREAD(example_broadcast_process, ev, data) {
         ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 17142);
         // 32764 - 800, midpoint 16872
         ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
-
+        ctrlScissor = isOutOfBounds(adc_get(ADC_CHANNEL_SCISSOR, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512)) / 128;
+        
 #if CONTROLLER_MAIN_DEBUG
         printf("scissor: %d\n", ctrlScissor);
         printf("X: %d, Y: %d ", ctrlX, ctrlY);
@@ -104,6 +107,14 @@ PROCESS_THREAD(example_broadcast_process, ev, data) {
             testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)133);
             if(testData.tSpeed > 127) testData.tSpeed = 127;
         }
+        
+        if(ctrlScissor <= 127){
+    +      testData.sDir = 0;
+    +      testData.sSpeed = 127 - ctrlScissor;
+    +    } else {
+    +      testData.sDir = 1;
+    +      testData.sSpeed = ctrlScissor - 128;
+    +    }
 
 #if CONTROLLER_MAIN_DEBUG
         printf("degrees: %d, speed: %d\r\n", testData.tDir, testData.tSpeed);
