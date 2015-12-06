@@ -52,6 +52,7 @@
 #include <stdio.h>
 
 #define HEADSET_MAIN_DEBUG 0
+#define WAIT_FOR_IMU_POWERED 0
 #define SEPARATE_CALIBRATION_STEP 1
 
 void blink_for(uint8_t led, uint8_t j, uint16_t len){
@@ -108,7 +109,10 @@ PROCESS_THREAD(init_imu_process, ev, data) {
   PROCESS_BEGIN();
   leds_off(LEDS_ALL);
 
-  //clock_wrapper_delay_msec(500);
+  #if WAIT_FOR_IMU_POWERED
+  //turn on this flag if experiencing issues initialising imu...
+  clock_wrapper_delay_msec(500);
+  #endif
 
   if(!bno055_init()){
     while(1){
