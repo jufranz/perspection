@@ -207,9 +207,9 @@ typedef enum {
 } bno055_vector_type_t;
 
 #define BNO055_SYSTEM_CAL_MASK (0x3 << 6)
-#define BNO055_GYRO_CAL_MASK (0x3 << 6)
-#define BNO055_ACCEL_CAL_MASK (0x3 << 6)
-#define BNO055_MAG_CAL_MASK (0x3 << 6)
+#define BNO055_GYRO_CAL_MASK (0x3 << 4)
+#define BNO055_ACCEL_CAL_MASK (0x3 << 2)
+#define BNO055_MAG_CAL_MASK (0x3 << 0)
 
 typedef struct {
   bool system_cal;

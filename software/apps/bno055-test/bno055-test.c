@@ -31,8 +31,9 @@ PROCESS_THREAD(bno055_test_process, ev, data)
   //static struct etimer et;
 
   PROCESS_BEGIN();
+  leds_set(LEDS_BLUE);
  
-  delay(50);
+  delay(500);
 
   if(!bno055_init()) {
     while(1){
@@ -40,18 +41,18 @@ PROCESS_THREAD(bno055_test_process, ev, data)
     }
   }
   bno055_set_mode(BNO055_OPERATION_MODE_NDOF);
+  leds_set(0);
   while(1) { 
     /* Delay 1 second */
     //etimer_set(&et, CLOCK_SECOND * 1);
     //PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-    #if DEBUG
-    leds_on(LEDS_RED);
-    #endif
     bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
     printf("x: %d\ty: %d\tz: %d\n", euler_data.x/16, euler_data.y/16, euler_data.z/16);
-    #if DEBUG
-    leds_off(LEDS_RED);
-    #endif
+    bno055_calibration_t cal = bno055_get_calibration();
+    if(cal.gyro_cal) leds_on(LEDS_RED);
+    if(cal.accel_cal) leds_on(LEDS_GREEN);
+    if(cal.mag_cal) leds_on(LEDS_BLUE);
+    delay(10);
   }
 
   PROCESS_END();
