@@ -54,6 +54,16 @@
 #define HEADSET_MAIN_DEBUG 0
 #define SEPARATE_CALIBRATION_STEP 1
 
+void blink_for(uint8_t led, uint8_t j, uint16_t len){
+  uint8_t i;
+  for(i = 0; i < j; i++){
+    leds_on(led);
+    clock_wrapper_delay_msec(len);
+    leds_off(led);
+    clock_wrapper_delay_msec(len);
+  }
+}
+
 /*---------------------------------------------------------------------------*/
 PROCESS(init_wireless_process, "Start wireless comms");
 PROCESS(init_imu_process, "Start IMU and initialization settings");
@@ -76,6 +86,8 @@ static struct broadcast_conn broadcast;
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(init_wireless_process, ev, data){
   PROCESS_BEGIN();
+
+  blink_for(LEDS_BLUE, 3, 100);
   
   static linkaddr_t nodeAddr;
   nodeAddr.u8[0] = HEADSET_ADDR_A;
@@ -96,19 +108,15 @@ PROCESS_THREAD(init_imu_process, ev, data) {
   PROCESS_BEGIN();
   leds_off(LEDS_ALL);
 
-  clock_wrapper_delay_msec(500);
+  //clock_wrapper_delay_msec(500);
 
   if(!bno055_init()){
     while(1){
-      leds_on(LEDS_RED);
-
       #if HEADSET_MAIN_DEBUG
       printf("failure to initialize. restart device.\n");
       #endif
       
-      clock_wrapper_delay_msec(400);
-      leds_off(LEDS_RED);
-      clock_wrapper_delay_msec(400);
+      blink_for(LEDS_RED, 1, 100);
     }
   }else{
     //if shit is gucci, we turn on our desired IMU settings
@@ -152,7 +160,7 @@ PROCESS_THREAD(calibrate_imu_process, ev, data) {
     clock_wrapper_delay_msec(10);
   }
   
-  clock_wrapper_delay_msec(1000);
+  blink_for(LEDS_ALL, 8, 60);
 
   process_start(&obtain_orientation_process, NULL);
   
