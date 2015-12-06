@@ -8,10 +8,13 @@
 #include <stdbool.h>
 
 // CHANNEL IDs
+
 #define GIMBAL_CHANNEL 110
 #define MOVE_CHANNEL 110
+#define STARTUP_CHANNEL 110
 
 // ATUM NODE IDs
+
 #define HEADSET_ADDR_A 123
 #define HEADSET_ADDR_B 211
 
@@ -25,10 +28,50 @@
 #define CTRL_ADDR_B 202
 
 /*------------------------------------------------------------*/
+/*--------- STARTUP DATA STRUCTURES AND FUNCTIONS -------*/
+/*------------------------------------------------------------*/
+
+// STARTUP_DATA_LEN specifies number of bytes being
+// sent over broadcast for the following struct
+
+#define STARTUP_DATA_LEN 1
+
+struct startupData_t {
+    uint8_t shouldBeOn;
+}
+
+// packet structure:
+//   7-0:  whether or not the system should be on, 0 or 1
+
+typedef union {
+    char c[STARTUP_DATA_LEN];
+    uint8_t u8;
+} startupPacket_t;
+
+// Function to set up channel and the callback struct.
+// channel number is defined in the header file
+void initStartupNetwork(struct broadcast_conn* bcc, const struct broadcast_callbacks* bcb);
+
+// Function for CTRL to broadcast movement data
+// to the robot boards. just pass in the struct
+// pointer and it will package the data
+void broadcastStartupData(struct startupData_t* d, struct broadcast_conn* bcc);
+
+// Function for robot boards to parse and unpack
+// movement data from CTRL to robot boards. pass
+// in a pointer to the desired struct variable
+// into which to unpack
+void unpackStartupData(struct startupData_t* d);
+
+/*------------------------------------------------------------*/
 /*--------- ROBOT GIMBAL DATA STRUCTURES AND FUNCTIONS -------*/
 /*------------------------------------------------------------*/
 
 #define BOARD_MOUNTED_ON_HEADSET_NORMALLY 0
+
+// GIMBALDATA_LEN specifies number of bytes being
+// sent over broadcast for the following struct
+#define GIMBALDATA_LEN 4
 
 // Sent over broadcast for the following struct
 struct gimbalData_t {
@@ -67,10 +110,6 @@ struct gimbalData_t {
 // packet structure:
 //   23-12: Yaw/Heading, signed
 //   11-0:  Pitch, signed
-
-// GIMBALDATA specifies number of bytes being
-// sent over broadcast for the following struct
-#define GIMBALDATA_LEN 4
 
 #define GYAW_OFFSET 16
 #define GPITCH_OFFSET 0
@@ -111,6 +150,7 @@ void unpackGimbalData(struct gimbalData_t* d);
 // MOVEDATA specifies number of bytes being
 // sent over broadcast for the following struct
 #define MOVEDATA_LEN 5
+
 struct moveData_t {
     // translational speed
     // 0-127
