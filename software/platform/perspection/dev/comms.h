@@ -22,21 +22,38 @@
 #define CTRL_ADDR_A 101
 #define CTRL_ADDR_B 202
 
+//MOVEDATA specifies number of bytes being
+//sent over broadcast for the following struct
 #define MOVEDATA_LEN 5
 struct moveData_t {
   //translational speed
+  //0-127
   uint8_t tSpeed;
   //translational direction
+  //0-360 degrees
   uint16_t tDir;
   //rotational speed
+  //0-127
   uint8_t rSpeed;
   //rotational angle
+  //0-360, or 0-511 decoded to 0-360 range
   uint16_t rAngle;
   //scissor direction
+  //0 or 1, up or down
   uint8_t sDir;
   //scissor speed
+  //0-127
   uint8_t sSpeed;
 };
+
+//GIMBALDATA specifies number of bytes being
+//sent over broadcast for the following struct
+//#define GIMBALDATA_LEN 3
+//struct gimbalData_t {
+  //yaw angle (heading)
+  //-90 - +90 degrees, scaled
+  //to 0-
+//};
 
 //ADD contiki/core/lib/crc16.h if need checksum
 

@@ -65,10 +65,6 @@ AUTOSTART_PROCESSES(&example_broadcast_process);
 static void
 broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
-  /*leds_on(LEDS_RED);
-  printf("broadcast message received from %d.%d: '%s'\n",
-         from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
-  leds_off(LEDS_RED);*/
   return;
 }
 static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
@@ -82,7 +78,7 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
   PROCESS_BEGIN();
 
-  delay(100);
+  delay(500);
 
   if(!bno055_init()){
     leds_on(LEDS_RED);
@@ -114,7 +110,8 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
     bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
     //testData.rAngle = euler_data.y/16;
     //testData.rAngle = (uint16_t)(((double)(((int16_t)euler_data.y/16)+180)*511.0)/360.0);
-    printf("penis: %d , x(pitch): %d, y(roll): %d, z(yaw): %d\n", euler_data.y/16/*testData.rAngle & 0x1FF*/, euler_data.x/16, euler_data.y/16, euler_data.z/16);
+    testData.rAngle = (uint16_t)(((double)(euler_data.z/16)*511.0)/360.0);
+    printf("sent: %d , x(pitch): %d, y(roll): %d, z(yaw): %d\n", testData.rAngle & 0x1FF, euler_data.x/16, euler_data.y/16, euler_data.z/16);
     broadcastMoveData(&testData, &broadcast);
     //broadcastGimbalData(&broadcast);
     leds_off(LEDS_GREEN);

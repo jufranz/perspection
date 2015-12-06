@@ -6,6 +6,7 @@
 #include "dev/leds.h"
 #include "dev/scissor.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 
@@ -27,8 +28,8 @@ void set_up_pwm() {
 void scissorMotorControl(double direction, double speed) {
 
     set_up_pwm();
-    double dirInRads = (direction * PI) / 180.0;
-    double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
+    double dirInRads = (direction * M_PI) / 180.0;
+    double dutyCycle1 = (speed * cos(((150.0 * M_PI) / 180.0) - dirInRads));
 
     uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
 

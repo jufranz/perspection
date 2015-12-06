@@ -1,5 +1,5 @@
 CONTIKI = ../../contiki
-CONTIKI_PROJECT = controller body headset
+CONTIKI_PROJECT = controller headset
 
 TARGETDIRS += ../../platform
 

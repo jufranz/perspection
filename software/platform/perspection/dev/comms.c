@@ -10,12 +10,12 @@ void initMoveNetwork(struct broadcast_conn *bcc, const struct broadcast_callback
 
 void broadcastMoveData(struct moveData_t *d, struct broadcast_conn *bcc){
   movePacket_t data;
-  data.u64 = ((uint64_t)d->tSpeed & 0x0000007F) << TSPEED_OFFSET;
-  data.u64 |= ((uint64_t)d->tDir & 0x000001FF) << TDIR_OFFSET;
-  data.u64 |= ((uint64_t)d->rSpeed & 0x0000007F) << RSPEED_OFFSET;
-  data.u64 |= ((uint64_t)d->rAngle & 0x000001FF) << RANGLE_OFFSET;
-  data.u64 |= ((uint64_t)d->sDir & 0x00000001) << SDIR_OFFSET;
-  data.u64 |= ((uint64_t)d->sSpeed & 0x0000007F) << SSPEED_OFFSET;
+  data.u64 = ((uint64_t)d->tSpeed   & 0x0000007F) << TSPEED_OFFSET;
+  data.u64 |= ((uint64_t)d->tDir    & 0x000001FF) << TDIR_OFFSET;
+  data.u64 |= ((uint64_t)d->rSpeed  & 0x0000007F) << RSPEED_OFFSET;
+  data.u64 |= ((uint64_t)d->rAngle  & 0x000001FF) << RANGLE_OFFSET;
+  data.u64 |= ((uint64_t)d->sDir    & 0x00000001) << SDIR_OFFSET;
+  data.u64 |= ((uint64_t)d->sSpeed  & 0x0000007F) << SSPEED_OFFSET;
 
   packetbuf_copyfrom(&data.c, MOVEDATA_LEN);
   broadcast_send(bcc);

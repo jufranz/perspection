@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#ifndef SCISSOR_H_
+#define SCISSOR_H_
+
 #define PWM_FREQUENCY 20000.0
 #define PWM_PERIOD_MS (1000.0 / PWM_FREQUENCY)
 
@@ -18,3 +21,4 @@ void set_up_single_driver_gpio(uint32_t gpio_port_base, uint32_t gpio_pin_num);
 void set_up_pwm();
 void set_duty_cycle(double new_duty_cycle);
 void scissorMotorControl(double direction, double speed);
+#endif
