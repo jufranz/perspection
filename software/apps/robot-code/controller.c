@@ -163,9 +163,9 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
 
     printf("degrees: %d, speed: %d pos: %d\r\n", testData.tDir, testData.tSpeed, testData.rAngle);
 
-    leds_on(LEDS_BLUE);
+    leds_on(LEDS_RED | LEDS_GREEN);
     broadcastMoveData(&testData, &broadcast);
-    leds_off(LEDS_BLUE);
+    leds_off(LEDS_RED | LEDS_GREEN);
 
     unpackMoveData(&testData);
     printf("degrees: %d, speed: %d pos: %d\r\n", testData.tDir, testData.tSpeed, testData.rAngle);

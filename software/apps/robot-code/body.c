@@ -64,7 +64,7 @@ static struct moveData_t recvMoveData;
 static void
 movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
-  leds_on(LEDS_RED);
+  leds_on(LEDS_RED | LEDS_GREEN);
 
   unpackMoveData(&recvMoveData);
   //scissorMotorControl(recvMoveData.sDir, recvMoveData.sSpeed);
@@ -78,14 +78,14 @@ movement_recv(struct broadcast_conn *c, const linkaddr_t *from)
   spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);
   spi_wrapper_send_gimbal_pos(recvMoveData.rAngle);
 
-  leds_off(LEDS_RED);
+  leds_off(LEDS_RED | LEDS_GREEN);
 }
 /*---------------------------------------------------------------------------*/
 static struct gimbalData_t recvGimbalData;
 static void
 gimbal_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
-  leds_on(LEDS_GREEN);
+  leds_on(LEDS_GREEN | LEDS_BLUE);
 
   unpackGimbalData(&recvGimbalData);
 
@@ -96,7 +96,7 @@ gimbal_recv(struct broadcast_conn *c, const linkaddr_t *from)
 
   //do magic shit
 
-  leds_off(LEDS_GREEN);
+  leds_off(LEDS_GREEN | LEDS_BLUE);
 }
 /*---------------------------------------------------------------------------*/
 static void
