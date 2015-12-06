@@ -32,9 +32,9 @@
 
 /**
  * \file
- *         Testing the broadcast layer in Rime
+ *         Code for broadcasting headset IMU data
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         Jason Leung <jasleung@umich.edu>
  */
 
 #include "contiki.h"
@@ -59,23 +59,36 @@ void delay(uint16_t msec){
 }
 
 /*---------------------------------------------------------------------------*/
-PROCESS(example_broadcast_process, "Broadcast example");
-AUTOSTART_PROCESSES(&example_broadcast_process);
+PROCESS(init_wireless_process, "Start wireless comms");
+PROCESS(init_imu_process, "Start IMU and initialization settings");
+PROCESS(obtain_orientation_process, "Loop for obtaining orientation data");
+AUTOSTART_PROCESSES(&init_wireless_process);
 /*---------------------------------------------------------------------------*/
-static void
+/*static void
 broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
   return;
-}
-static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
+}*/
+static const struct broadcast_callbacks broadcast_call = {NULL};//broadcast_recv};
 static struct broadcast_conn broadcast;
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(example_broadcast_process, ev, data)
-{
-  static struct etimer et;
+PROCESS_THREAD(init_wireless_process, ev, data){
+  PROCESS_BEGIN();
+  
+  static linkaddr_t nodeAddr;
+  nodeAddr.u8[0] = HEADSET_ADDR_A;
+  nodeAddr.u8[1] = HEADSET_ADDR_B;
+  linkaddr_set_node_addr(&nodeAddr);
 
-  PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
+  initGimbalNetwork(&broadcast, &broadcast_call);
+  
+  //once network initialized, start IMU initialization
+  process_start(&init_imu_process, NULL);
 
+  PROCESS_END();
+}
+
+PROCESS_THREAD(init_imu_process, ev, data) {
   PROCESS_BEGIN();
 
   delay(500);
@@ -83,21 +96,24 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
   if(!bno055_init()){
     leds_on(LEDS_RED);
   }
-
+  
   bno055_set_mode(BNO055_OPERATION_MODE_NDOF_FMC_OFF);
-  delay(1);
-  bno055_set_axis_map_config(BNO055_ZAXIS, BNO055_YAXIS, BNO055_XAXIS);
-  delay(1);
-  bno055_set_axis_map_sign(BNO055_POSITIVE, BNO055_POSITIVE, BNO055_NEGATIVE);
-  static struct moveData_t testData;
 
-  static linkaddr_t nodeAddr;
-  nodeAddr.u8[0] = CTRL_ADDR_A;//HEADSET_ADDR_A;
-  nodeAddr.u8[1] = CTRL_ADDR_B;//HEADSET_ADDR_B;
-  linkaddr_set_node_addr(&nodeAddr);
+  //once everything is set up, start IMU process
+  //or start IMU calibration check process
+  //or start both simultaneously
+  process_start(&obtain_orientation_process, NULL);
 
-  initMoveNetwork(&broadcast, &broadcast_call);
-  //initGimbalNetwork(&broadcast, &broadcast_call);
+  PROCESS_END();
+}
+
+PROCESS_THREAD(obtain_orientation_process, ev, data) {
+  PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
+
+  PROCESS_BEGIN();
+
+  static struct etimer et;
+  static struct gimbalData_t headData;
 
   while(1) {
 
@@ -108,12 +124,17 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
    
     leds_on(LEDS_GREEN);
     bno055_vector_t euler_data = bno055_get_vector(BNO055_EULER_VECTOR);
-    //testData.rAngle = euler_data.y/16;
-    //testData.rAngle = (uint16_t)(((double)(((int16_t)euler_data.y/16)+180)*511.0)/360.0);
-    testData.rAngle = (uint16_t)(((double)(euler_data.z/16)*511.0)/360.0);
-    printf("sent: %d , x(pitch): %d, y(roll): %d, z(yaw): %d\n", testData.rAngle & 0x1FF, euler_data.x/16, euler_data.y/16, euler_data.z/16);
-    broadcastMoveData(&testData, &broadcast);
-    //broadcastGimbalData(&broadcast);
+
+    headData.gYaw = scaleForEncoder(euler_data.z);
+    #if BOARD_MOUNTED_ON_HEADSET_NORMALLY
+    headData.gPitch = scaleForEncoder(euler_data.x);
+    #else
+    headData.gPitch = scaleForEncoder(euler_data.y);
+    #endif
+
+    printf("sentYaw: %d, sentPitch: %d, x(pitch): %d, y(roll): %d, z(yaw): %d, x: %d, y: %d, z: %d\n", headData.gYaw, headData.gPitch, euler_data.x/16, euler_data.y/16, euler_data.z/16, euler_data.x, euler_data.y, euler_data.z);
+
+    broadcastGimbalData(&headData, &broadcast);
     leds_off(LEDS_GREEN);
   }
 

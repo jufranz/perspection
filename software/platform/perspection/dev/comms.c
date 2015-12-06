@@ -24,8 +24,8 @@ void broadcastMoveData(struct moveData_t *d, struct broadcast_conn *bcc){
 void unpackMoveData(struct moveData_t *d){
   movePacket_t data;
   char *packet = (char *)packetbuf_dataptr();
-  uint8_t i = 0;
-  for(i; i < MOVEDATA_LEN; i++){
+  uint8_t i;
+  for(i = 0; i < MOVEDATA_LEN; i++){
     data.c[i] = packet[i];
   }
 
@@ -37,7 +37,27 @@ void unpackMoveData(struct moveData_t *d){
   d->sSpeed = (uint8_t)((data.u64  & 0x000000007F) >> SSPEED_OFFSET);
 }
 
-void broadcastGimbalData(struct broadcast_conn *bcc){
-  packetbuf_copyfrom("poop", 4);
+void broadcastGimbalData(struct gimbalData_t *d, struct broadcast_conn *bcc){
+  gimbalPacket_t data;
+  data.u32 =  ((uint32_t) d->gYaw )    << GYAW_OFFSET;
+  data.u32 |= ((uint32_t) d->gPitch )  & 0x00FF;
+
+  packetbuf_copyfrom(&data.c, GIMBALDATA_LEN);
   broadcast_send(bcc);
+}
+
+void unpackGimbalData(struct gimbalData_t *d){
+  gimbalPacket_t data;
+  char *packet = (char *)packetbuf_dataptr();
+  uint8_t i;
+  for(i = 0; i < GIMBALDATA_LEN; i++){
+    data.c[i] = packet[i];
+  }
+
+  d->gYaw = (uint16_t)(data.u32 >> GYAW_OFFSET);
+  d->gPitch = (uint16_t)(data.u32 >> GPITCH_OFFSET);
+}
+
+int16_t scaleForEncoder(int16_t d){
+  return (int16_t)((double)d * (double) ENCODER_RES_PPR / (double)IMU_360_DEG_VAL);
 }
