@@ -31,7 +31,7 @@ void scissorMotorControl(double direction, double speed) {
     double dirInRads = (direction * M_PI) / 180.0;
     double dutyCycle1 = (speed * cos(((150.0 * M_PI) / 180.0) - dirInRads));
 
-    uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
+    //uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
 
     dutyCycle1 = (dutyCycle1 < 0.0) ? (dutyCycle1 * -1.0) : dutyCycle1;
 
