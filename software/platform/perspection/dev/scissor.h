@@ -17,7 +17,7 @@
 
 //DIR(PHASE pin of DRV8801) connected to Atum B4
 //PWM(ENABLE pin of DRV8801) connected to Atum B3
-
+static double haptics_duty_cycle;
 void set_up_single_driver_gpio(uint32_t gpio_port_base, uint32_t gpio_pin_num);
 void set_up_pwm();
 void set_duty_cycle(double new_duty_cycle);

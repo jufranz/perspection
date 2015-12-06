@@ -16,6 +16,7 @@
 
 #define SAMPLES_PER_SEC 100
 #define HEADSET_MAIN_DEBUG 0
+#define WAIT_FOR_IMU_POWERED 0
 #define SEPARATE_CALIBRATION_STEP 1
 
 // Contiki process declarations
@@ -67,10 +68,13 @@ PROCESS_THREAD(init_wireless_process, ev, data){
 // IMU init process
 
 PROCESS_THREAD(init_imu_process, ev, data) {
-    PROCESS_BEGIN();
-    leds_off(LEDS_ALL);
+  PROCESS_BEGIN();
+  leds_off(LEDS_ALL);
 
-    //clock_wrapper_delay_msec(500);
+#if WAIT_FOR_IMU_POWERED
+  //turn on this flag if experiencing issues initialising imu...
+  clock_wrapper_delay_msec(500);
+#endif
 
     if(!bno055_init()) {
         while(1) {
