@@ -152,7 +152,7 @@ PROCESS_THREAD(calibrate_imu_process, ev, data) {
     clock_wrapper_delay_msec(10);
   }
   
-  clock_wrapper_delay_msec(750);
+  clock_wrapper_delay_msec(1000);
 
   process_start(&obtain_orientation_process, NULL);
   
