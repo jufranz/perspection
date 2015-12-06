@@ -3,6 +3,7 @@
 #include "random.h"
 #include "clock.h"
 #include "dev/comms.h"
+#include "dev/pwm.h"
 #include "dev/leds.h"
 
 #include <stdio.h>
