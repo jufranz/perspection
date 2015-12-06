@@ -31,20 +31,24 @@
 /*--------- STARTUP DATA STRUCTURES AND FUNCTIONS -------*/
 /*------------------------------------------------------------*/
 
-// STARTUP_DATA_LEN specifies number of bytes being
-// sent over broadcast for the following struct
+// STARTUP_DATA_LEN specifies number of bytes the startupData_t takes
+// STARTUP_DATA_PACKET_LEN specifies number of bytes broadcast to send
+// a startupPacket_t over the air
 
 #define STARTUP_DATA_LEN 1
+#define STARTUP_DATA_PACKET_LEN STARTUP_DATA_LEN + 1
+#define STARTUP_DATA_TYPE 1
 
 struct startupData_t {
     uint8_t shouldBeOn;
-}
+};
 
 // packet structure:
 //   7-0:  whether or not the system should be on, 0 or 1
 
 typedef union {
-    char c[STARTUP_DATA_LEN];
+    char c[STARTUP_DATA_PACKET_LEN];
+    uint8_t type;
     uint8_t u8;
 } startupPacket_t;
 
@@ -52,15 +56,14 @@ typedef union {
 // channel number is defined in the header file
 void initStartupNetwork(struct broadcast_conn* bcc, const struct broadcast_callbacks* bcb);
 
-// Function for CTRL to broadcast movement data
-// to the robot boards. just pass in the struct
-// pointer and it will package the data
+// Function for the controller to tell the other systems to turn on or off
 void broadcastStartupData(struct startupData_t* d, struct broadcast_conn* bcc);
 
-// Function for robot boards to parse and unpack
-// movement data from CTRL to robot boards. pass
-// in a pointer to the desired struct variable
-// into which to unpack
+// Function to check if the received packet was startup data
+bool didGetStartupData();
+
+// Function for other boards to parse and unpack startup data
+// from the controller
 void unpackStartupData(struct startupData_t* d);
 
 /*------------------------------------------------------------*/
@@ -69,9 +72,13 @@ void unpackStartupData(struct startupData_t* d);
 
 #define BOARD_MOUNTED_ON_HEADSET_NORMALLY 0
 
-// GIMBALDATA_LEN specifies number of bytes being
-// sent over broadcast for the following struct
+// GIMBALDATA_LEN specifies number of bytes the gimbalData_t takes
+// GIMBALDATA_PACKET_LEN specifies number of bytes broadcast to send
+// a gimbalPacket_t over the air
+
 #define GIMBALDATA_LEN 4
+#define GIMBALDATA_PACKET_LEN GIMBALDATA_LEN + 1
+#define GIMBALDATA_TYPE 2
 
 // Sent over broadcast for the following struct
 struct gimbalData_t {
@@ -115,7 +122,8 @@ struct gimbalData_t {
 #define GPITCH_OFFSET 0
 
 typedef union {
-    char c[GIMBALDATA_LEN];
+    char c[GIMBALDATA_PACKET_LEN];
+    uint8_t type;
     uint32_t u32;
 } gimbalPacket_t;
 
@@ -137,6 +145,9 @@ void initGimbalNetwork(struct broadcast_conn* bcc, const struct broadcast_callba
 // in the struct pointer and it will packaget the data
 void broadcastGimbalData(struct gimbalData_t* d, struct broadcast_conn* bcc);
 
+// Function to check if the received packet was gimbal data
+bool didGetGimbalData();
+
 // Function for robot boards to parse and unpack
 // gimbal data from HEADSET to robot boards.
 // pass in a pointer to the desired struct variable
@@ -147,9 +158,13 @@ void unpackGimbalData(struct gimbalData_t* d);
 /*-------- ROBOT MOVEMENT DATA STRUCTURES AND FUNCTIONS ------*/
 /*------------------------------------------------------------*/
 
-// MOVEDATA specifies number of bytes being
-// sent over broadcast for the following struct
+// MOVEDATA_LEN specifies number of bytes the moveData_t takes
+// MOVEDATA_PACKET_LEN specifies number of bytes broadcast to send
+// a movePacket_t over the air
+
 #define MOVEDATA_LEN 5
+#define MOVEDATA_PACKET_LEN MOVEDATA_LEN + 1
+#define MOVEDATA_TYPE 3
 
 struct moveData_t {
     // translational speed
@@ -193,7 +208,8 @@ struct moveData_t {
 #define SSPEED_OFFSET 0
 
 typedef union {
-    char c[MOVEDATA_LEN];
+    char c[MOVEDATA_PACKET_LEN];
+    uint8_t type;
     uint64_t u64;
 } movePacket_t;
 
@@ -205,6 +221,9 @@ void initMoveNetwork(struct broadcast_conn* bcc, const struct broadcast_callback
 // to the robot boards. just pass in the struct
 // pointer and it will package the data
 void broadcastMoveData(struct moveData_t* d, struct broadcast_conn* bcc);
+
+// Function to check if the received packet was move data
+bool didGetMoveData();
 
 // Function for robot boards to parse and unpack
 // movement data from CTRL to robot boards. pass

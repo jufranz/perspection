@@ -7,14 +7,13 @@
 
 #include "dev/comms.h"
 #include "dev/leds.h"
-/*#include "dev/scissor.h"*/
 #include "dev/spi_wrapper.h"
 
 #include <stdio.h>
 
 // Defines
 
-#define BODY_MAIN_DEBUG 0
+#define CAMERA_MAIN_DEBUG 0
 
 // Contiki process declarations
 
@@ -37,26 +36,6 @@ static void startup_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     broadcastStartupData(&recvStartupData);
 
     leds_off(LEDS_BLUE);
-}
-
-// Receiving movement commands from the controller
-
-static struct moveData_t recvMoveData;
-static void movement_recv(struct broadcast_conn* c, const linkaddr_t* from) {
-    leds_on(LEDS_RED | LEDS_GREEN);
-
-    unpackMoveData(&recvMoveData);
-
-    /*scissorMotorControl(recvMoveData.sDir, recvMoveData.sSpeed);*/
-
-#if BODY_MAIN_DEBUG
-    printf("Dir: %d, Speed: %d, Pos: %d\r\n", recvMoveData.tDir, recvMoveData.tSpeed);
-#endif
-
-    // Sending the command off to the C2000
-    /*spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);*/
-
-    leds_off(LEDS_RED | LEDS_GREEN);
 }
 
 // Receiving gimbal position commands from the headset
@@ -86,8 +65,6 @@ static void broadcast_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     } else if(from->u8[0] == CTRL_ADDR_A && from->u8[1] == CTRL_ADDR_B) {
         if(didGetStartupData()) {
             startup_recv(c, from);
-        } else if(didGetMoveData()) {
-            movement_recv(c, from);
         }
     }
 }
@@ -119,7 +96,6 @@ PROCESS_THREAD(init_network_process, ev, data) {
     PROCESS_BEGIN();
 
     initStartupNetwork(&broadcast, &broadcast_call);
-    initMoveNetwork(&broadcast, &broadcast_call);
     initGimbalNetwork(&broadcast, &broadcast_call);
 
     PROCESS_END();

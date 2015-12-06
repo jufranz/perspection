@@ -19,6 +19,10 @@
 #define WAIT_FOR_IMU_POWERED 0
 #define SEPARATE_CALIBRATION_STEP 1
 
+// Globals
+
+static uint8_t shouldBeBroadcasting = 0;
+
 // Contiki process declarations
 
 PROCESS(init_wireless_process, "Start wireless comms");
@@ -40,9 +44,32 @@ void blink_for(uint8_t led, uint8_t j, uint16_t len) {
     }
 }
 
-// No need for a receive function because this device does not need to listen
+// Receiving startup commands from the controller
 
-static const struct broadcast_callbacks broadcast_call = { NULL };
+static struct startupData_t recvStartupData;
+static void startup_recv(struct broadcast_conn* c, const linkaddr_t* from) {
+    leds_on(LEDS_BLUE);
+
+    unpackStartupData(&recvStartupData);
+    shouldBeBroadcasting = recvStartupData.shouldBeOn;
+
+    // Acknowledge the startup data by sending it back to the controller
+    broadcastStartupData(&recvStartupData);
+
+    leds_off(LEDS_BLUE);
+}
+
+// Receiving packets and sending them off for processing
+
+static void broadcast_recv(struct broadcast_conn* c, const linkaddr_t* from) {
+    if(from->u8[0] == CTRL_ADDR_A && from->u8[1] == CTRL_ADDR_B) {
+        if(didGetStartupData()) {
+            // Got startup data from the controller
+            startup_recv(c, from);
+        }
+    }
+}
+static const struct broadcast_callbacks broadcast_call = { broadcast_recv };
 static struct broadcast_conn broadcast;
 
 // Wireless/address init process
@@ -57,6 +84,7 @@ PROCESS_THREAD(init_wireless_process, ev, data){
     nodeAddr.u8[1] = HEADSET_ADDR_B;
     linkaddr_set_node_addr(&nodeAddr);
 
+    initStartupNetwork(&broadcast, &broadcast_call);
     initGimbalNetwork(&broadcast, &broadcast_call);
 
     // Once network initialized, start IMU initialization
@@ -167,7 +195,9 @@ PROCESS_THREAD(obtain_orientation_process, ev, data) {
             euler_data.x, euler_data.y, euler_data.z);
 #endif
 
-        broadcastGimbalData(&headData, &broadcast);
+        if(shouldBeBroadcasting) {
+            broadcastGimbalData(&headData, &broadcast);
+        }
 
         leds_off(LEDS_BLUE | LEDS_GREEN);
     }
