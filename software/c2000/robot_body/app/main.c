@@ -59,7 +59,7 @@
 
 #define LED_BLINK_FREQ_Hz   5
 #define PI 3.1415926
-#define GIMBAL_ZERO 255
+#define GIMBAL_ZERO 1024
 #define GIMBAL_LIMIT 0.375
 
 // **************************************************************************
@@ -127,6 +127,7 @@ unsigned int ints = 0;
 // the functions
 
 void processSpiMessages();
+void startupControl(HAL_Handle halHandle, bool shouldBeRunning);
 void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData);
 void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData);
 
@@ -246,8 +247,11 @@ void main(void) {
     gTorque_Flux_Iq_pu_to_Nm_sf = USER_computeTorque_Flux_Iq_pu_to_Nm_sf();
 
     for (;;) {
+        processSpiMessages();
+
         // Waiting for enable system flag to be set
-        while (!(gMotorVars.Flag_enableSys)) {
+        if (!(gMotorVars.Flag_enableSys)) {
+            continue;
         }
 
         // Dis-able the Library internal PI.  Iq has no reference now
@@ -255,10 +259,10 @@ void main(void) {
 
         // loop while the enable system flag is true
         while (gMotorVars.Flag_enableSys) {
-            processSpiMessages();
-
             CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
             ST_Obj *stObj = (ST_Obj *) stHandle;
+
+            processSpiMessages();
 
             // increment counters
             gCounter_updateGlobals++;
@@ -428,12 +432,30 @@ void main(void) {
 void processSpiMessages() {
     HAL_Obj *obj = (HAL_Obj *) halHandle;
 
-    if (obj->hasNewRobotBodyControlData) {
+    if (obj->hasNewRobotBodyControlData && gMotorVars.Flag_enableSys) {
         robotBodyMotorControl(halHandle, obj->robotBodyControlData);
         obj->hasNewRobotBodyControlData = false;
-    } else if (obj->hasNewGimbalPositionControlData) {
+    } else if (obj->hasNewGimbalPositionControlData && gMotorVars.Flag_enableSys) {
         gimbalPositionControl(halHandle, obj->gimbalPositionControlData);
         obj->hasNewGimbalPositionControlData = false;
+    } else if (obj->hasNewStartupControlData) {
+        startupControl(halHandle, obj->startupControlData);
+        obj->hasNewStartupControlData = false;
+    }
+}
+
+void startupControl(HAL_Handle halHandle, bool shouldBeRunning) {
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
+
+    gMotorVars.Flag_enableSys = shouldBeRunning;
+    gMotorVars.Flag_Run_Identify = shouldBeRunning;
+
+    if (!shouldBeRunning) {
+        // Reset stuff so we don't jump around acting on old data on the next startup
+        obj->hasNewRobotBodyControlData = false;
+        obj->hasNewGimbalPositionControlData = false;
+        obj->hasNewHapticTorqueControlData = false;
+        obj->desiredGimbalPos = _IQ(0.0);
     }
 }
 
@@ -473,13 +495,13 @@ void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
     }
 
     position = position * GIMBAL_LIMIT;
-    if(position > GIMBAL_LIMIT) {
+    if (position > GIMBAL_LIMIT) {
         position = GIMBAL_LIMIT;
-    } else if(position < -GIMBAL_LIMIT) {
+    } else if (position < -GIMBAL_LIMIT) {
         position = -GIMBAL_LIMIT;
     }
 
-    obj->desiredGimbalPos = _IQ(position);
+    obj->desiredGimbalPos = _IQ(-position);
 }
 
 interrupt void mainISR(void) {
