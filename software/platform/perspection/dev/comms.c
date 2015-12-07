@@ -1,4 +1,5 @@
 #include "dev/comms.h"
+#include <string.h>
 
 // Startup stuff
 
@@ -6,12 +7,12 @@ void initStartupNetwork(struct broadcast_conn* bcc, const struct broadcast_callb
     broadcast_open(bcc, STARTUP_CHANNEL, bcb);
 }
 
-void broadcastStartupData(struct startupData_t* d, struct broadcast_conn* bcc) {
-    startupPacket_t data;
-    data.type = STARTUP_DATA_TYPE;
-    data.u8 = d->shouldBeOn;
+void broadcastStartupData(startupData_t* d, struct broadcast_conn* bcc) {
+    startupPacket_t packet;
+    d->type = STARTUP_DATA_TYPE;
+    packet.data = *d;
 
-    packetbuf_copyfrom(&data.c, STARTUP_DATA_PACKET_LEN);
+    packetbuf_copyfrom(&packet.c, sizeof(startupData_t));
     broadcast_send(bcc);
 }
 
@@ -20,16 +21,12 @@ bool didGetStartupData() {
     return (*packet == STARTUP_DATA_TYPE);
 }
 
-void unpackStartupData(struct startupData_t* d) {
-    startupPacket_t data;
-    char* packet = (char*)packetbuf_dataptr();
+void unpackStartupData(startupData_t* d) {
+    startupPacket_t packet;
+    memcpy(packet.c, packetbuf_dataptr(), sizeof(startupData_t));
 
-    uint8_t i;
-    for(i = 0; i < STARTUP_DATA_PACKET_LEN; i++){
-        data.c[i] = packet[i];
-    }
-
-    d->shouldBeOn = (uint8_t)data.u8;
+    d->type = packet.data.type;
+    d->shouldBeOn = packet.data.shouldBeOn;
 }
 
 // Gimbal stuff
@@ -38,13 +35,12 @@ void initGimbalNetwork(struct broadcast_conn* bcc, const struct broadcast_callba
     broadcast_open(bcc, GIMBAL_CHANNEL, bcb);
 }
 
-void broadcastGimbalData(struct gimbalData_t* d, struct broadcast_conn* bcc) {
-    gimbalPacket_t data;
-    data.type = GIMBALDATA_TYPE;
-    data.u32 = ((uint32_t)d->gYaw) << GYAW_OFFSET;
-    data.u32 |= ((uint32_t)d->gPitch) & 0x00FF;
+void broadcastGimbalData(gimbalData_t* d, struct broadcast_conn* bcc) {
+    gimbalPacket_t packet;
+    d->type = GIMBALDATA_TYPE;
+    packet.data = *d;
 
-    packetbuf_copyfrom(&data.c, GIMBALDATA_PACKET_LEN);
+    packetbuf_copyfrom(&packet.c, sizeof(gimbalData_t));
     broadcast_send(bcc);
 }
 
@@ -53,17 +49,13 @@ bool didGetGimbalData() {
     return (*packet == GIMBALDATA_TYPE);
 }
 
-void unpackGimbalData(struct gimbalData_t* d) {
-    gimbalPacket_t data;
-    char* packet = (char*)packetbuf_dataptr();
+void unpackGimbalData(gimbalData_t* d) {
+    gimbalPacket_t packet;
+    memcpy(packet.c, packetbuf_dataptr(), sizeof(gimbalData_t));
 
-    uint8_t i;
-    for(i = 0; i < GIMBALDATA_PACKET_LEN; i++){
-        data.c[i] = packet[i];
-    }
-
-    d->gYaw = (uint16_t)(data.u32 >> GYAW_OFFSET);
-    d->gPitch = (uint16_t)(data.u32 >> GPITCH_OFFSET);
+    d->type = packet.data.type;
+    d->gYaw = packet.data.gYaw;
+    d->gPitch = packet.data.gPitch;
 }
 
 int16_t scaleForEncoder(int16_t d) {
@@ -76,18 +68,12 @@ void initMoveNetwork(struct broadcast_conn* bcc, const struct broadcast_callback
     broadcast_open(bcc, MOVE_CHANNEL, bcb);
 }
 
-void broadcastMoveData(struct moveData_t* d, struct broadcast_conn* bcc) {
-    movePacket_t data;
+void broadcastMoveData(moveData_t* d, struct broadcast_conn* bcc) {
+    movePacket_t packet;
+    d->type = MOVEDATA_TYPE;
+    packet.data = *d;
 
-    data.type = MOVEDATA_TYPE;
-    data.u64 = ((uint64_t)d->tSpeed  & 0x0000007F) << TSPEED_OFFSET;
-    data.u64 |= ((uint64_t)d->tDir   & 0x000001FF) << TDIR_OFFSET;
-    data.u64 |= ((uint64_t)d->rSpeed & 0x0000007F) << RSPEED_OFFSET;
-    data.u64 |= ((uint64_t)d->rAngle & 0x000001FF) << RANGLE_OFFSET;
-    data.u64 |= ((uint64_t)d->sDir   & 0x00000001) << SDIR_OFFSET;
-    data.u64 |= ((uint64_t)d->sSpeed & 0x0000007F) << SSPEED_OFFSET;
-
-    packetbuf_copyfrom(&data.c, MOVEDATA_PACKET_LEN);
+    packetbuf_copyfrom(&packet.c, sizeof(moveData_t));
     broadcast_send(bcc);
 }
 
@@ -96,20 +82,16 @@ bool didGetMoveData() {
     return (*packet == MOVEDATA_TYPE);
 }
 
-void unpackMoveData(struct moveData_t* d) {
-    movePacket_t data;
-    char* packet = (char*)packetbuf_dataptr();
+void unpackMoveData(moveData_t* d) {
+    movePacket_t packet;
+    memcpy(packet.c, packetbuf_dataptr(), sizeof(moveData_t));
 
-    uint8_t i;
-    for(i = 0; i < MOVEDATA_PACKET_LEN; i++){
-        data.c[i] = packet[i];
-    }
-
-    d->tSpeed = (uint8_t)((data.u64  & 0xFE00000000) >> TSPEED_OFFSET);
-    d->tDir = (uint16_t)((data.u64   & 0x01FF000000) >> TDIR_OFFSET);
-    d->rSpeed = (uint8_t)((data.u64  & 0x0000FE0000) >> RSPEED_OFFSET);
-    d->rAngle = (uint16_t)((data.u64 & 0x000001FF00) >> RANGLE_OFFSET);
-    d->sDir = (uint8_t)((data.u64    & 0x0000000080) >> SDIR_OFFSET);
-    d->sSpeed = (uint8_t)((data.u64  & 0x000000007F) >> SSPEED_OFFSET);
+    d->type = packet.data.type;
+    d->tSpeed = packet.data.tSpeed;
+    d->tDir = packet.data.tDir;
+    d->rSpeed = packet.data.rSpeed;
+    d->rAngle = packet.data.rAngle;
+    d->sDir = packet.data.sDir;
+    d->sSpeed = packet.data.sSpeed;
 }
 

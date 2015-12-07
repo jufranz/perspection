@@ -15,14 +15,16 @@
 
 // Defines
 
-#define SAMPLES_PER_SEC 100
+#define SAMPLES_PER_SEC 50
 #define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4 // BLUE WIRE
 #define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN3 // GREEN WIRE
 #define ADC_CHANNEL_SCISSOR SOC_ADC_ADCCON_CH_AIN5
 
-#define CONTROLLER_MAIN_DEBUG 0
+#define CONTROLLER_MAIN_DEBUG 1
 
 // Globals
+
+static struct broadcast_conn broadcast;
 
 static uint8_t hasHeadsetAckedEnable = 0;
 static uint8_t hasRobotBodyAckedEnable = 0;
@@ -41,11 +43,11 @@ static int16_t isCloseToCenter(int16_t i) {
     else return i;
 }
 
-static int16_t isOutOfBounds(int16_t i) {
-    if(i > 32764) return 32764;
-    else if(i < 0) return 0;
-    else return i;
-}
+/*static int16_t isOutOfBounds(int16_t i) {*/
+    /*if(i > 32764) return 32764;*/
+    /*else if(i < 0) return 0;*/
+    /*else return i;*/
+/*}*/
 
 // Receiving packets
 
@@ -83,27 +85,36 @@ static void broadcast_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     return;
 }
 static const struct broadcast_callbacks broadcast_call = { broadcast_recv };
-static struct broadcast_conn broadcast;
 
 // Initializing the wireless stuff and sending enable signals to the other boards
 
 PROCESS_THREAD(init_wireless_and_control_process, ev, data) {
     PROCESS_BEGIN();
 
-    static struct etimer et;
-    static struct startupData_t testData;
+    linkaddr_t nodeAddr;
+    nodeAddr.u8[0] = CTRL_ADDR_A;
+    nodeAddr.u8[1] = CTRL_ADDR_B;
+    linkaddr_set_node_addr(&nodeAddr);
+    initStartupNetwork(&broadcast, &broadcast_call);
+
+    static struct etimer startup_timer;
+    static startupData_t startupData;
     startupData.shouldBeOn = 1;
 
 #if CONTROLLER_MAIN_DEBUG
-        printf("Startup signal broadcasting, waiting for ACKs\r\n");
+    printf("Startup signal broadcasting, waiting for ACKs\r\n");
 #endif
 
     while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {
         broadcastStartupData(&startupData, &broadcast);
 
-        etimer_set(&et, CLOCK_SECOND / 4);
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+        etimer_set(&startup_timer, CLOCK_SECOND / 2);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&startup_timer));
     }
+
+#if CONTROLLER_MAIN_DEBUG
+    printf("All boards enabled\r\n");
+#endif
 
     // Once everybody has acknowledged the enable, start the control process
     process_start(&control_broadcast_process, NULL);
@@ -118,16 +129,10 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
 
     PROCESS_BEGIN();
 
-    linkaddr_t nodeAddr;
-    nodeAddr.u8[0] = CTRL_ADDR_A;
-    nodeAddr.u8[1] = CTRL_ADDR_B;
-    linkaddr_set_node_addr(&nodeAddr);
-
-    initStartupNetwork(&broadcast, &broadcast_call);
     initMoveNetwork(&broadcast, &broadcast_call);
 
     static struct etimer et;
-    static struct moveData_t testData;
+    static moveData_t testData;
     static int16_t ctrlX;
     static int16_t ctrlY;
 

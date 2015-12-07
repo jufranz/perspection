@@ -13,7 +13,11 @@
 
 // Defines
 
-#define CAMERA_MAIN_DEBUG 0
+#define CAMERA_MAIN_DEBUG 1
+
+// Globals
+
+static struct broadcast_conn broadcast;
 
 // Contiki process declarations
 
@@ -23,9 +27,13 @@ AUTOSTART_PROCESSES(&init_linkaddr_process);
 
 // Receiving startup commands from the controller
 
-static struct startupData_t recvStartupData;
+static startupData_t recvStartupData;
 static void startup_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     leds_on(LEDS_BLUE);
+
+#if CAMERA_MAIN_DEBUG
+    printf("Got startup data\r\n");
+#endif
 
     unpackStartupData(&recvStartupData);
 
@@ -33,21 +41,21 @@ static void startup_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     spi_wrapper_send_startup_control(recvStartupData.shouldBeOn);
 
     // Then acknowledge the startup data by sending it back to the controller
-    broadcastStartupData(&recvStartupData);
+    broadcastStartupData(&recvStartupData, &broadcast);
 
     leds_off(LEDS_BLUE);
 }
 
 // Receiving gimbal position commands from the headset
 
-static struct gimbalData_t recvGimbalData;
+static gimbalData_t recvGimbalData;
 static void gimbal_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     leds_on(LEDS_GREEN | LEDS_BLUE);
 
     unpackGimbalData(&recvGimbalData);
 
 #if CAMERA_MAIN_DEBUG
-    printf("360 scaled to 5760 -- Yaw: %d, Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch);
+    printf("Yaw: %d, Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch);
 #endif
 
     // TODO: Magic shit
@@ -69,7 +77,6 @@ static void broadcast_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     }
 }
 static const struct broadcast_callbacks broadcast_call = { broadcast_recv };
-static struct broadcast_conn broadcast;
 
 // Link address init process
 
@@ -79,8 +86,8 @@ PROCESS_THREAD(init_linkaddr_process, ev, data) {
     spi_wrapper_init();
 
     static linkaddr_t nodeAddr;
-    nodeAddr.u8[0] = BODY_ADDR_A;
-    nodeAddr.u8[1] = BODY_ADDR_B;
+    nodeAddr.u8[0] = CAMERA_ADDR_A;
+    nodeAddr.u8[1] = CAMERA_ADDR_B;
     linkaddr_set_node_addr(&nodeAddr);
 
     process_start(&init_network_process, NULL);
