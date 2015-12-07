@@ -14,10 +14,16 @@
 
 // Defines
 
-#define SAMPLES_PER_SEC 100
-#define HEADSET_MAIN_DEBUG 0
+#define SAMPLES_PER_SEC 50
+#define HEADSET_MAIN_DEBUG 1
 #define WAIT_FOR_IMU_POWERED 0
-#define SEPARATE_CALIBRATION_STEP 1
+#define SEPARATE_CALIBRATION_STEP 0
+
+// Globals
+
+static struct broadcast_conn broadcast;
+
+static uint8_t shouldBeBroadcasting = 0;
 
 // Contiki process declarations
 
@@ -40,10 +46,36 @@ void blink_for(uint8_t led, uint8_t j, uint16_t len) {
     }
 }
 
-// No need for a receive function because this device does not need to listen
+// Receiving startup commands from the controller
 
-static const struct broadcast_callbacks broadcast_call = { NULL };
-static struct broadcast_conn broadcast;
+static startupData_t recvStartupData;
+static void startup_recv(struct broadcast_conn* c, const linkaddr_t* from) {
+    leds_on(LEDS_BLUE);
+
+#if HEADSET_MAIN_DEBUG
+    printf("Got startup data\r\n");
+#endif
+
+    unpackStartupData(&recvStartupData);
+    shouldBeBroadcasting = recvStartupData.shouldBeOn;
+
+    // Acknowledge the startup data by sending it back to the controller
+    broadcastStartupData(&recvStartupData, &broadcast);
+
+    leds_off(LEDS_BLUE);
+}
+
+// Receiving packets and sending them off for processing
+
+static void broadcast_recv(struct broadcast_conn* c, const linkaddr_t* from) {
+    if(from->u8[0] == CTRL_ADDR_A && from->u8[1] == CTRL_ADDR_B) {
+        if(didGetStartupData()) {
+            // Got startup data from the controller
+            startup_recv(c, from);
+        }
+    }
+}
+static const struct broadcast_callbacks broadcast_call = { broadcast_recv };
 
 // Wireless/address init process
 
@@ -57,6 +89,7 @@ PROCESS_THREAD(init_wireless_process, ev, data){
     nodeAddr.u8[1] = HEADSET_ADDR_B;
     linkaddr_set_node_addr(&nodeAddr);
 
+    initStartupNetwork(&broadcast, &broadcast_call);
     initGimbalNetwork(&broadcast, &broadcast_call);
 
     // Once network initialized, start IMU initialization
@@ -141,7 +174,7 @@ PROCESS_THREAD(obtain_orientation_process, ev, data) {
     PROCESS_BEGIN();
 
     static struct etimer et;
-    static struct gimbalData_t headData;
+    static gimbalData_t headData;
 
     leds_off(LEDS_ALL);
 
@@ -160,14 +193,16 @@ PROCESS_THREAD(obtain_orientation_process, ev, data) {
         headData.gPitch = scaleForEncoder(euler_data.y);
 #endif
 
+        if(shouldBeBroadcasting) {
 #if HEADSET_MAIN_DEBUG
-        printf("Yaw: %d, Pitch: %d, xD: %d, yD: %d, zD: %d, x: %d, y: %d, z: %d\n",
-            headData.gYaw, headData.gPitch,
-            euler_data.x / 16, euler_data.y / 16, euler_data.z / 16,
-            euler_data.x, euler_data.y, euler_data.z);
+            printf("Yaw: %d, Pitch: %d, xD: %d, yD: %d, zD: %d, x: %d, y: %d, z: %d\n",
+                headData.gYaw, headData.gPitch,
+                euler_data.x / 16, euler_data.y / 16, euler_data.z / 16,
+                euler_data.x, euler_data.y, euler_data.z);
 #endif
 
-        broadcastGimbalData(&headData, &broadcast);
+            broadcastGimbalData(&headData, &broadcast);
+        }
 
         leds_off(LEDS_BLUE | LEDS_GREEN);
     }
