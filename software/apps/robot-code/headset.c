@@ -14,8 +14,8 @@
 
 // Defines
 
-#define SAMPLES_PER_SEC 50
-#define HEADSET_MAIN_DEBUG 1
+#define SAMPLES_PER_SEC 100
+#define HEADSET_MAIN_DEBUG 0
 #define WAIT_FOR_IMU_POWERED 0
 #define SEPARATE_CALIBRATION_STEP 0
 
@@ -23,7 +23,8 @@
 
 static struct broadcast_conn broadcast;
 
-static uint8_t shouldBeBroadcasting = 0;
+static uint8_t shouldBeBroadcasting = 1; // TODO FOR TESTING
+/*static uint8_t shouldBeBroadcasting = 0;*/
 
 // Contiki process declarations
 
@@ -121,7 +122,7 @@ PROCESS_THREAD(init_imu_process, ev, data) {
         // If shit is gucci, we turn on our desired IMU settings
         // and run our main processes
 
-        bno055_set_mode(BNO055_OPERATION_MODE_NDOF_FMC_OFF);
+        bno055_set_mode(BNO055_OPERATION_MODE_NDOF);
 
         // Once everything is set up, start IMU process or start
         // IMU calibration check process or start both simultaneously
