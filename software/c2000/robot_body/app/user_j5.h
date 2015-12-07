@@ -207,7 +207,7 @@ extern "C" {
 //! \brief This value should be determined by putting SpinTAC Control through a tuning process
 //! \brief If a Bandwidth Scale value has been previously identified
 //! \brief multiply it by 20 to convert into Bandwidth
-#define USER_SYSTEM_BANDWIDTH      (35.0)
+#define USER_SYSTEM_BANDWIDTH      (20.0)
 
 //! \brief Define each motor with a unique name and ID number
 // BLDC & SMPM motors
@@ -324,19 +324,25 @@ extern "C" {
 #define USER_MOTOR_TYPE MOTOR_Type_Pm
 #define USER_MOTOR_NUM_POLE_PAIRS (7)
 #define USER_MOTOR_Rr (NULL)
-#define USER_MOTOR_Rs (0.1100101)
-#define USER_MOTOR_Ls_d (0.00001354213)
-#define USER_MOTOR_Ls_q (0.00001354213)
-#define USER_MOTOR_RATED_FLUX (0.005117521)
+#define USER_MOTOR_Rs (0.1100101)//0.1061251
+#define USER_MOTOR_Ls_d (0.00001354213)//1.999372e-05
+#define USER_MOTOR_Ls_q (0.00001354213)//1.999372e-05
+#define USER_MOTOR_RATED_FLUX (0.005117521)//0.005199701
 #define USER_MOTOR_MAGNETIZING_CURRENT (NULL)
 #define USER_MOTOR_RES_EST_CURRENT (1.0)
 #define USER_MOTOR_IND_EST_CURRENT (-1.0)
 #define USER_MOTOR_MAX_CURRENT (10.0)
 #define USER_MOTOR_FLUX_EST_FREQ_Hz (20.0)
 #define USER_MOTOR_ENCODER_LINES (2048.0)
-#define USER_MOTOR_MAX_SPEED_KRPM (1.0)
-#define USER_SYSTEM_INERTIA (0.9346343875)
-#define USER_SYSTEM_FRICTION (1.122252941)
+#define USER_MOTOR_MAX_SPEED_KRPM (0.5)
+//#define USER_SYSTEM_INERTIA (0.06563723087) //No load
+//#define USER_SYSTEM_INERTIA (5.918201745)//(35.75949818)//40.10355335) //Frisbee
+//#define USER_SYSTEM_FRICTION (0.1372600794) //No load
+//#define USER_SYSTEM_FRICTION (0.2537741661)//(3.045823634)//3.667974234) //Frisbee
+
+#define USER_SYSTEM_INERTIA (27.43280697)//(0.9346343875)
+#define USER_SYSTEM_FRICTION (2.671714365)//(1.122252941)
+//#define USER_SYSTEM_BANDWIDTH_SCALE (70.0)
 
 #else
 #error No motor type specified

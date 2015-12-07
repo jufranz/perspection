@@ -37,13 +37,16 @@
 //!
 //! (C) Copyright 2012, Texas Instruments, Inc.
 
+
 // **************************************************************************
 // the includes
+
 //!
 //!
 //! \defgroup USER USER
 //!
 //@{
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -100,16 +103,18 @@ extern "C" {
 //! \brief ADC current offsets for A, B, and C phases
 //! \brief One-time hardware dependent, though the calibration can be done at run-time as well
 //! \brief After initial board calibration these values should be updated for your specific hardware so they are available after compile in the binary to be loaded to the controller
-#define   I_A_offset    (0.8331743479)
-#define   I_B_offset    (0.8355930448)
-#define   I_C_offset    (0.8392037153)
+#define   I_A_offset    (0.8399002552)//(0.8286009431)
+#define   I_B_offset    (0.8375882506)//(0.8279029727)
+#define   I_C_offset    (0.8230378628)//(0.8265069127)
 
 //! \brief ADC voltage offsets for A, B, and C phases
 //! \brief One-time hardware dependent, though the calibration can be done at run-time as well
 //! \brief After initial board calibration these values should be updated for your specific hardware so they are available after compile in the binary to be loaded to the controller
-#define   V_A_offset    (0.5271264911)
-#define   V_B_offset    (0.5257175565)
-#define   V_C_offset    (0.5249399543)
+#define   V_A_offset    (0.3088234663)//(0.3126853704)
+#define   V_B_offset    (0.3097600341)//(0.3095867038)
+#define   V_C_offset    (0.3090884686)//(0.310525775)
+
+
 
 //! \brief CLOCKS & TIMERS
 // **************************************************************************
@@ -129,6 +134,7 @@ extern "C" {
 //! \brief Set USER_MAX_VS_MAG = 2/3 = 0.6666 to create a trapezoidal voltage waveform.  Current reconstruction will be needed for this scenario (Lab10a-x).
 //! \brief For space vector over-modulation, see lab 10 for details on system requirements that will allow the SVM generator to go all the way to trapezoidal.
 #define USER_MAX_VS_MAG_PU        (2.0/3.0)    // Set to 0.5 if a current reconstruction technique is not used.  Look at the module svgen_current in lab10a-x for more info.
+
 
 //! \brief DECIMATION
 // **************************************************************************
@@ -163,6 +169,7 @@ extern "C" {
 //! \brief Typically the same as the speed rate
 #define USER_NUM_CTRL_TICKS_PER_TRAJ_TICK   (15)   // 15 Typical to match PWM, ex: 10KHz controller & current loop, 1KHz speed loop, 1 KHz Trajectory
 
+
 //! \brief LIMITS
 // **************************************************************************
 //! \brief Defines the maximum negative current to be applied in Id reference
@@ -185,11 +192,13 @@ extern "C" {
 //! \brief Can be positive or negative
 #define USER_FORCE_ANGLE_FREQ_Hz   (2.0 * USER_ZEROSPEEDLIMIT * USER_IQ_FULL_SCALE_FREQ_Hz)      // 1.0 Typical force angle start-up speed
 
+
 //! \brief POLES
 // **************************************************************************
 //! \brief Defines the analog voltage filter pole location, Hz
 //! \brief Must match the hardware filter for Vph
 #define USER_VOLTAGE_FILTER_POLE_Hz  (364.682)   // 364.682, value for boostxldrv8301_revB hardware
+
 
 //! \brief USER MOTOR & ID SETTINGS
 // **************************************************************************
@@ -198,13 +207,14 @@ extern "C" {
 //! \brief This value should be determined by putting SpinTAC Control through a tuning process
 //! \brief If a Bandwidth Scale value has been previously identified
 //! \brief multiply it by 20 to convert into Bandwidth
-#define USER_SYSTEM_BANDWIDTH      (20.0)
+#define USER_SYSTEM_BANDWIDTH      (35.0)
 
 //! \brief Define each motor with a unique name and ID number
 // BLDC & SMPM motors
 #define Estun_EMJ_04APB22           101
 #define Anaheim_BLY172S             102
 #define Teknic_M2310PLN04K          104
+#define MY_MOTOR 					123
 
 // IPM motors
 // If user provides separate Ls-d, Ls-q
@@ -218,10 +228,11 @@ extern "C" {
 //! \brief These motor ID settings and motor parameters are then available to be used by the control system
 //! \brief Once your ideal settings and parameters are identified update the motor section here so it is available in the binary code
 //#define USER_MOTOR Estun_EMJ_04APB22
-#define USER_MOTOR Anaheim_BLY172S
+#define USER_MOTOR MY_MOTOR
 //#define USER_MOTOR Teknic_M2310PLN04K
 //#define USER_MOTOR Belt_Drive_Washer_IPM
 //#define USER_MOTOR Marathon_5K33GN2A
+
 
 #if (USER_MOTOR == Estun_EMJ_04APB22)                  // Name must match the motor #define
 #define USER_MOTOR_TYPE                 MOTOR_Type_Pm  // Motor_Type_Pm (All Synchronous: BLDC, PMSM, SMPM, IPM) or Motor_Type_Induction (Asynchronous ACI)
@@ -308,6 +319,24 @@ extern "C" {
 #define USER_MOTOR_MAX_SPEED_KRPM       (1.725)              // Maximum speed that the motor
 #define USER_SYSTEM_INERTIA             (0.02)               // Inertia of the motor & system, should be estimated by SpinTAC Velocity Identify
 #define USER_SYSTEM_FRICTION            (0.01)               // Friction of the motor & system, should be estimated by SpinTAC Velocity Identify
+
+#elif (USER_MOTOR == MY_MOTOR)
+#define USER_MOTOR_TYPE MOTOR_Type_Pm
+#define USER_MOTOR_NUM_POLE_PAIRS (7)
+#define USER_MOTOR_Rr (NULL)
+#define USER_MOTOR_Rs (0.1100101)
+#define USER_MOTOR_Ls_d (0.00001354213)
+#define USER_MOTOR_Ls_q (0.00001354213)
+#define USER_MOTOR_RATED_FLUX (0.005117521)
+#define USER_MOTOR_MAGNETIZING_CURRENT (NULL)
+#define USER_MOTOR_RES_EST_CURRENT (1.0)
+#define USER_MOTOR_IND_EST_CURRENT (-1.0)
+#define USER_MOTOR_MAX_CURRENT (10.0)
+#define USER_MOTOR_FLUX_EST_FREQ_Hz (20.0)
+#define USER_MOTOR_ENCODER_LINES (2048.0)
+#define USER_MOTOR_MAX_SPEED_KRPM (1.0)
+#define USER_SYSTEM_INERTIA (0.9346343875)
+#define USER_SYSTEM_FRICTION (1.122252941)
 
 #else
 #error No motor type specified
