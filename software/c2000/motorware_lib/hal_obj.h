@@ -187,6 +187,9 @@ typedef struct _HAL_Obj_ {
     uint16_t hapticTorqueControlData;
     bool hasNewHapticTorqueControlData;
 
+    bool startupControlData;
+    bool hasNewStartupControlData;
+
 #ifdef QEP
     QEP_Handle qepHandle[2];        //!< the QEP handles
 #endif

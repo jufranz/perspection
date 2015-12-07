@@ -54,12 +54,14 @@
 #define HAPTIC_TORQUE_OP 0x0003
 #define ENCODER_POS_OP   0x0004
 #define BODY_MOTORS_OP   0x0005
+#define STARTUP_OP       0x0006
 
 #define BODY_CONTROL_CMD_LEN  3
 #define GIMBAL_POS_CMD_LEN    2
 #define HAPTIC_TORQUE_CMD_LEN 2
 #define ENCODER_POS_TX_LEN    1
 #define BODY_MOTORS_TX_LEN    3
+#define STARTUP_CMD_LEN       2
 
 // **************************************************************************
 // the globals
@@ -646,6 +648,9 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
 
     obj->hapticTorqueControlData = 0;
     obj->hasNewHapticTorqueControlData = false;
+
+    obj->startupControlData = false;
+    obj->hasNewStartupControlData = false;
 
     return (handle);
 } // end of HAL_init() function
@@ -1781,6 +1786,9 @@ interrupt void spiISR(void) {
             } else if (word == BODY_MOTORS_OP) {
                 spiSlaveCmdLength = 0;
                 spiSlaveTxLength = BODY_MOTORS_TX_LEN;
+            } else if (word == STARTUP_OP) {
+                spiSlaveCmdLength = STARTUP_CMD_LEN;
+                spiSlaveTxLength = 0;
             } else {
                 // This isn't a valid start word, so skip to the next word
                 continue;
@@ -1806,8 +1814,8 @@ interrupt void spiISR(void) {
             spiSlaveTxIndex++;
         }
 
-        // Check if we got the whole command and sent all the data we needed to send,
-        // once we have the whole command, put its data in the right place and flag it as new
+        // Check if we got the whole command and sent all the data we needed to send.
+        // Once we have the whole command, put its data in the right place and flag it as new
         if (spiSlaveCmdIndex == spiSlaveCmdLength && spiSlaveTxIndex == spiSlaveTxLength) {
             if (spiSlaveCmdBuf[0] == BODY_CONTROL_OP) {
                 // Store the robot body control data
@@ -1822,6 +1830,10 @@ interrupt void spiISR(void) {
                 // Store the haptic torque control data
                 hal.hapticTorqueControlData = spiSlaveCmdBuf[1];
                 hal.hasNewHapticTorqueControlData = true;
+            } else if (spiSlaveCmdBuf[0] == STARTUP_OP) {
+                // Store the startup control data
+                hal.startupControlData = (spiSlaveCmdBuf[1] > 0);
+                hal.hasNewStartupControlData = true;
             }
 
             spiSlaveCmdIndex = 0;
