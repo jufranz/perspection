@@ -16,11 +16,14 @@ void spi_wrapper_init();
 // Sends a 16-bit word and receives a 16-bit word
 uint16_t spi_wrapper_txrx_word(uint16_t tx_word);
 
+// Sends a command to enable or disable the robot
+void spi_wrapper_send_startup_control(uint8_t shouldBeOn);
+
 // Sends a robot body control command to the C2000
 void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed);
 
 // Sends a gimbal position command to the C2000
-void spi_wrapper_send_gimbal_pos(uint16_t position);
+void spi_wrapper_send_gimbal_pos(int16_t position);
 
 // Sends a haptic torque command to the C2000
 void spi_wrapper_send_haptic_torque(uint16_t torque);

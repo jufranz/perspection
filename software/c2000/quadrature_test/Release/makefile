@@ -16,7 +16,6 @@ ORDERED_OBJS += \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/spintac/lib/32b/SpinTAC.lib" \
 "C:/ti/motorware/motorware_1_01_00_15/sw/modules/iqmath/lib/f28x/32b/IQmath.lib" \
 "./CodeStartBranch.obj" \
-"./SPIAslave.obj" \
 "./adc.obj" \
 "./clarke.obj" \
 "./clk.obj" \
@@ -49,7 +48,7 @@ ORDERED_OBJS += \
 "./usDelay.obj" \
 "./user.obj" \
 "./wdog.obj" \
-"C:/ti/motorware/motorware_1_01_00_15/sw/ide/ccs/cmd/f2806x/f28069M_ram_lnk.cmd" \
+"../F28069.cmd" \
 $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init
@@ -159,6 +158,12 @@ quadrature_test.out \
 EXE_OUTPUTS__QUOTED += \
 "quadrature_test.out" \
 
+BIN_OUTPUTS += \
+quadrature_test.hex \
+
+BIN_OUTPUTS__QUOTED += \
+"quadrature_test.hex" \
+
 
 # All Target
 all: quadrature_test.out
@@ -167,15 +172,21 @@ all: quadrature_test.out
 quadrature_test.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: C2000 Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -ml -mt -Ooff -g --define=FAST_ROM_V1p6 --define=QEP --diag_warning=225 --display_error_number -z -m"quadrature_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --disable_auto_rts --diag_suppress=16002 --xml_link_info="quadrature_test_linkInfo.xml" --rom_model -o "quadrature_test.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/cl2000" -v28 -mt -ml --vcu_support=vcu0 --cla_support=cla0 --float_support=fpu32 -Ooff -g --define=FAST_ROM_V1p6 --define=FLASH --define=QEP --diag_warning=225 --display_error_number -z -m"quadrature_test.map" --stack_size=0x3B0 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/include" --reread_libs --priority --disable_auto_rts --diag_suppress=16002 --xml_link_info="quadrature_test_linkInfo.xml" --rom_model -o "quadrature_test.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
+	@echo ' '
+
+quadrature_test.hex: $(EXE_OUTPUTS)
+	@echo 'Invoking: C2000 Hex Utility'
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.9/bin/hex2000"  -o "quadrature_test.hex" $(EXE_OUTPUTS__QUOTED)
+	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "SPIAslave.pp" "adc.pp" "clarke.pp" "clk.pp" "cpu.pp" "ctrlQEP.pp" "drv8301.pp" "enc.pp" "filter_fo.pp" "flash.pp" "gpio.pp" "hal.pp" "ipark.pp" "offset.pp" "osc.pp" "park.pp" "perspection_adc.pp" "perspection_pwm.pp" "pid.pp" "pie.pp" "pll.pp" "pwm.pp" "pwr.pp" "qep.pp" "quadrature_test.pp" "slip.pp" "spi.pp" "svgen.pp" "timer.pp" "traj.pp" "user.pp" "wdog.pp" 
-	-$(RM) "CodeStartBranch.obj" "SPIAslave.obj" "adc.obj" "clarke.obj" "clk.obj" "cpu.obj" "ctrlQEP.obj" "drv8301.obj" "enc.obj" "filter_fo.obj" "flash.obj" "gpio.obj" "hal.obj" "ipark.obj" "offset.obj" "osc.obj" "park.obj" "perspection_adc.obj" "perspection_pwm.obj" "pid.obj" "pie.obj" "pll.obj" "pwm.obj" "pwr.obj" "qep.obj" "quadrature_test.obj" "slip.obj" "spi.obj" "svgen.obj" "timer.obj" "traj.obj" "usDelay.obj" "user.obj" "wdog.obj" 
+	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
+	-$(RM) "adc.pp" "clarke.pp" "clk.pp" "cpu.pp" "ctrlQEP.pp" "drv8301.pp" "enc.pp" "filter_fo.pp" "flash.pp" "gpio.pp" "hal.pp" "ipark.pp" "offset.pp" "osc.pp" "park.pp" "perspection_adc.pp" "perspection_pwm.pp" "pid.pp" "pie.pp" "pll.pp" "pwm.pp" "pwr.pp" "qep.pp" "quadrature_test.pp" "slip.pp" "spi.pp" "svgen.pp" "timer.pp" "traj.pp" "user.pp" "wdog.pp" 
+	-$(RM) "CodeStartBranch.obj" "adc.obj" "clarke.obj" "clk.obj" "cpu.obj" "ctrlQEP.obj" "drv8301.obj" "enc.obj" "filter_fo.obj" "flash.obj" "gpio.obj" "hal.obj" "ipark.obj" "offset.obj" "osc.obj" "park.obj" "perspection_adc.obj" "perspection_pwm.obj" "pid.obj" "pie.obj" "pll.obj" "pwm.obj" "pwr.obj" "qep.obj" "quadrature_test.obj" "slip.obj" "spi.obj" "svgen.obj" "timer.obj" "traj.obj" "usDelay.obj" "user.obj" "wdog.obj" 
 	-$(RM) "CodeStartBranch.pp" "usDelay.pp" 
 	-@echo 'Finished clean'
 	-@echo ' '
