@@ -49,7 +49,8 @@
 #include "main_position.h"
 
 #ifdef FLASH
-#pragma CODE_SECTION(mainISR,"ramfuncs");
+#pragma CODE_SECTION(mainISR, "ramfuncs");
+#pragma CODE_SECTION(spiISR, "ramfuncs");
 #endif
 
 // Include header files used in the main function
@@ -57,9 +58,8 @@
 // **************************************************************************
 // the defines
 
-#define LED_BLINK_FREQ_Hz   5
 #define PI 3.1415926
-#define GIMBAL_ZERO 1024
+#define GIMBAL_ZERO 768
 #define GIMBAL_LIMIT 0.375
 
 // **************************************************************************
@@ -510,12 +510,6 @@ interrupt void mainISR(void) {
 
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
-
-    // toggle status LED
-    if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
-        HAL_toggleLed(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
-        gLEDcnt = 0;
-    }
 
     // compute the electrical angle
     ENC_calcElecAngle(encHandle, HAL_getQepPosnCounts(halHandle));

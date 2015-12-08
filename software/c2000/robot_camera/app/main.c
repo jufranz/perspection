@@ -49,8 +49,8 @@
 #include "main_position.h"
 
 #ifdef FLASH
-#pragma CODE_SECTION(mainISR,"ramfuncs");
-//#pragma CODE_SECTION(spiISR,"ramfuncs");
+#pragma CODE_SECTION(mainISR, "ramfuncs");
+#pragma CODE_SECTION(spiISR, "ramfuncs");
 #endif
 
 // Include header files used in the main function
@@ -58,8 +58,6 @@
 // **************************************************************************
 // the defines
 
-#define LED_BLINK_FREQ_Hz   5
-#define PI 3.1415926
 #define GIMBAL_ZERO 398
 #define GIMBAL_LIMIT 0.22
 
@@ -129,7 +127,6 @@ unsigned int ints = 0;
 
 void processSpiMessages();
 void startupControl(HAL_Handle halHandle, bool shouldBeRunning);
-void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData);
 void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData);
 
 void main(void) {
@@ -457,31 +454,6 @@ void startupControl(HAL_Handle halHandle, bool shouldBeRunning) {
     }
 }
 
-void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData) {
-    double direction = (double) robotBodyControlData.direction;
-    double speed = (double) robotBodyControlData.speed / 127.0;
-
-    double dirInRads = (direction * PI) / 180.0;
-    double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle2 = (speed * cos(((30.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle3 = (speed * cos(((270.0 * PI) / 180.0) - dirInRads));
-
-    uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
-    uint16_t direction2 = (dutyCycle2 > 0.0) ? 1 : 0;
-    uint16_t direction3 = (dutyCycle3 > 0.0) ? 1 : 0;
-
-    dutyCycle1 = (dutyCycle1 < 0.0) ? (dutyCycle1 * -1.0) : dutyCycle1;
-    dutyCycle2 = (dutyCycle2 < 0.0) ? (dutyCycle2 * -1.0) : dutyCycle2;
-    dutyCycle3 = (dutyCycle3 < 0.0) ? (dutyCycle3 * -1.0) : dutyCycle3;
-
-    HAL_setHbridge1Direction(halHandle, direction1);
-    HAL_setHbridge1PwmDutyCycle(halHandle, dutyCycle1);
-    HAL_setHbridge2Direction(halHandle, direction2);
-    HAL_setHbridge2PwmDutyCycle(halHandle, dutyCycle2);
-    HAL_setHbridge3Direction(halHandle, direction3);
-    HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
-}
-
 void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
     HAL_Obj *obj = (HAL_Obj *) halHandle;
 
@@ -499,7 +471,7 @@ void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
         position = -GIMBAL_LIMIT;
     }
 
-    obj->desiredGimbalPos = _IQ(-position);
+    obj->desiredGimbalPos = _IQ(position);
 }
 
 interrupt void mainISR(void) {
@@ -508,12 +480,6 @@ interrupt void mainISR(void) {
 
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
-
-    // toggle status LED
-    if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
-        HAL_toggleLed(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
-        gLEDcnt = 0;
-    }
 
     // compute the electrical angle
     ENC_calcElecAngle(encHandle, HAL_getQepPosnCounts(halHandle));
