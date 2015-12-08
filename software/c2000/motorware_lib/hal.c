@@ -645,6 +645,7 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
     obj->gimbalPositionControlData = 0;
     obj->hasNewGimbalPositionControlData = false;
     obj->desiredGimbalPos = _IQ(0.0);
+    obj->gimbalPosOffset = _IQ(0.0);
 
     obj->hapticTorqueControlData = 0;
     obj->hasNewHapticTorqueControlData = false;

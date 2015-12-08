@@ -505,11 +505,11 @@ void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
 }
 
 interrupt void mainISR(void) {
+    HAL_Obj *halObj = (HAL_Obj*) halHandle;
+    CPU_disableGlobalInts(halObj->cpuHandle);
+
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
-    HAL_Obj *halObj = (HAL_Obj*) halHandle;
-
-    CPU_disableGlobalInts(halObj->cpuHandle);
 
     // toggle status LED
     if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
@@ -669,7 +669,7 @@ void ST_runPosCtl(ST_Handle handle, CTRL_Handle ctrlHandle) {
     HAL_Obj *obj = (HAL_Obj *) halHandle;
 
     // provide the updated references to the SpinTAC Position Control
-    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, obj->desiredGimbalPos);
+    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, (obj->desiredGimbalPos + obj->gimbalPosOffset));
     STPOSCTL_setVelocityReference(stObj->posCtlHandle, 0);
     STPOSCTL_setAccelerationReference(stObj->posCtlHandle, 0);
     // provide the feedback to the SpinTAC Position Control

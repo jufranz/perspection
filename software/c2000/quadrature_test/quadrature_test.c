@@ -1,6 +1,6 @@
 #include "main_position.h"
-#include "perspection_pwm.h"
-#include "perspection_adc.h"
+//#include "perspection_pwm.h"
+//#include "perspection_adc.h"
 
 // Limits and defines
 
@@ -99,8 +99,8 @@ void main(void) {
 	HAL_setupFaults(halHandle);
 
 	// yo these are important
-	HAL_initIntVectorTable(halHandle);
-	HAL_enableAdcInts(halHandle);
+//	HAL_initIntVectorTable(halHandle);
+//	HAL_enableAdcInts(halHandle);
 
 	// enable global interrupts
 	HAL_enableGlobalInts(halHandle);
@@ -110,24 +110,24 @@ void main(void) {
 
 	// enable SPI A slave and SPI interrupts
 //	HAL_setupSpiAslave(halHandle);
-	HAL_enableSpiInt(halHandle);
-
-	// get dis pwm rippin shit up yo
-	perspection_pwm_1a_init(halHandle, 40.0);
-	perspection_pwm_1b_init(halHandle, 40.0);
-	init_duty_cycle_filter();
-
-	// ayyyyydc
-	perspection_adc_init(halHandle);
+//	HAL_enableSpiInt(halHandle);
+//
+//	// get dis pwm rippin shit up yo
+//	perspection_pwm_1a_init(halHandle, 40.0);
+//	perspection_pwm_1b_init(halHandle, 40.0);
+//	init_duty_cycle_filter();
+//
+//	// ayyyyydc
+//	perspection_adc_init(halHandle);
 
 	// calibrate
-	calibrate_zero_torque();
+//	calibrate_zero_torque();
 
 	// reset shit
 	haptics_duty_cycle = 0.0;
 
 	for (;;) {
-//		HAL_turnLedOn(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
+		HAL_turnLedOn(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
 
 //		uint32_t rawPosition = HAL_getQepPosnCounts(halHandle);
 //		double position = (double) (360 * rawPosition) / (double) HAL_getQepPosnMaximum(halHandle);
@@ -141,7 +141,7 @@ void main(void) {
 //
 //		adjust_duty_cycle(desired_torque);
 
-//		HAL_turnLedOff(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
+		HAL_turnLedOff(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
 	}
 }
 
@@ -151,7 +151,7 @@ interrupt void spiISR(void)
 {
   // toggle status LED
 //  HAL_toggleLed(halHandle,(GPIO_Number_e)HAL_Gpio_LED2);
-  rdata = HAL_readSPIAslaveData(halHandle);
+//  rdata = HAL_readSPIAslaveData(halHandle);
   ints++;
   return;
 }
@@ -159,24 +159,24 @@ interrupt void spiISR(void)
 // Helpful function definitions
 
 void set_duty_cycle(double new_duty_cycle) {
-	add_duty_cycle_to_filter(new_duty_cycle);
-    haptics_duty_cycle = get_duty_cycle_filter_value();
-    if(haptics_duty_cycle < -1.0) {
-        haptics_duty_cycle = -1.0;
-    } else if(haptics_duty_cycle > 1.0) {
-        haptics_duty_cycle = 1.0;
-    }
-
-    if(haptics_duty_cycle < 0.0) {
-    	perspection_pwm_1a_set_duty_cycle(0.0);
-    	perspection_pwm_1b_set_duty_cycle(-haptics_duty_cycle);
-    } else if(haptics_duty_cycle > 0.0) {
-    	perspection_pwm_1a_set_duty_cycle(haptics_duty_cycle);
-    	perspection_pwm_1b_set_duty_cycle(0.0);
-    } else {
-    	perspection_pwm_1a_set_duty_cycle(0.0);
-    	perspection_pwm_1b_set_duty_cycle(0.0);
-    }
+//	add_duty_cycle_to_filter(new_duty_cycle);
+//    haptics_duty_cycle = get_duty_cycle_filter_value();
+//    if(haptics_duty_cycle < -1.0) {
+//        haptics_duty_cycle = -1.0;
+//    } else if(haptics_duty_cycle > 1.0) {
+//        haptics_duty_cycle = 1.0;
+//    }
+//
+//    if(haptics_duty_cycle < 0.0) {
+//    	perspection_pwm_1a_set_duty_cycle(0.0);
+//    	perspection_pwm_1b_set_duty_cycle(-haptics_duty_cycle);
+//    } else if(haptics_duty_cycle > 0.0) {
+//    	perspection_pwm_1a_set_duty_cycle(haptics_duty_cycle);
+//    	perspection_pwm_1b_set_duty_cycle(0.0);
+//    } else {
+//    	perspection_pwm_1a_set_duty_cycle(0.0);
+//    	perspection_pwm_1b_set_duty_cycle(0.0);
+//    }
 }
 
 void init_duty_cycle_filter() {
@@ -235,7 +235,7 @@ double get_current_torque() {
 }
 
 uint16_t read_raw_torque() {
-    return perspection_adc_read_vpropi1(halHandle);
+//    return perspection_adc_read_vpropi1(halHandle);
 }
 
 double normalize_raw_torque(uint16_t raw_torque) {
