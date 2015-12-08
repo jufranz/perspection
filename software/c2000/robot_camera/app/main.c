@@ -50,6 +50,7 @@
 
 #ifdef FLASH
 #pragma CODE_SECTION(mainISR,"ramfuncs");
+//#pragma CODE_SECTION(spiISR,"ramfuncs");
 #endif
 
 // Include header files used in the main function
@@ -59,6 +60,8 @@
 
 #define LED_BLINK_FREQ_Hz   5
 #define PI 3.1415926
+#define GIMBAL_ZERO 398
+#define GIMBAL_LIMIT 0.22
 
 // **************************************************************************
 // the globals
@@ -125,7 +128,9 @@ unsigned int ints = 0;
 // the functions
 
 void processSpiMessages();
-void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed);
+void startupControl(HAL_Handle halHandle, bool shouldBeRunning);
+void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData);
+void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData);
 
 void main(void) {
     uint_least8_t estNumber = 0;
@@ -196,7 +201,7 @@ void main(void) {
 
     // enable the SPI interrupts
     HAL_enableSpiInt(halHandle);
-    HAL_writeSpiSlaveData(halHandle, 30);
+    HAL_writeSpiSlaveData(halHandle, 30); // Just some junk for the TX buffer, probably don't need
 
     // enable global interrupts
     HAL_enableGlobalInts(halHandle);
@@ -257,6 +262,8 @@ void main(void) {
         while (gMotorVars.Flag_enableSys) {
             CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
             ST_Obj *stObj = (ST_Obj *) stHandle;
+
+            processSpiMessages();
 
             // increment counters
             gCounter_updateGlobals++;
@@ -424,12 +431,36 @@ void main(void) {
 } // end of main() function
 
 void processSpiMessages() {
-    // TODODODODODODODO
-    // Check if there's new data
-    // Act on it
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
+
+    if (obj->hasNewGimbalPositionControlData) {
+        gimbalPositionControl(halHandle, obj->gimbalPositionControlData);
+        obj->hasNewGimbalPositionControlData = false;
+    } else if (obj->hasNewStartupControlData) {
+        startupControl(halHandle, obj->startupControlData);
+        obj->hasNewStartupControlData = false;
+    }
 }
 
-void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed) {
+void startupControl(HAL_Handle halHandle, bool shouldBeRunning) {
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
+
+    gMotorVars.Flag_enableSys = shouldBeRunning;
+    gMotorVars.Flag_Run_Identify = shouldBeRunning;
+
+    if (!shouldBeRunning) {
+        // Reset stuff so we don't jump around acting on old data on the next startup
+        obj->hasNewRobotBodyControlData = false;
+        obj->hasNewGimbalPositionControlData = false;
+        obj->hasNewHapticTorqueControlData = false;
+        obj->desiredGimbalPos = _IQ(0.0);
+    }
+}
+
+void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData) {
+    double direction = (double) robotBodyControlData.direction;
+    double speed = (double) robotBodyControlData.speed / 127.0;
+
     double dirInRads = (direction * PI) / 180.0;
     double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
     double dutyCycle2 = (speed * cos(((30.0 * PI) / 180.0) - dirInRads));
@@ -451,7 +482,30 @@ void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed)
     HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
 }
 
+void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
+
+    double position = 0.0;
+    if (gimbalPositionData > GIMBAL_ZERO) {
+        position = (((double) (gimbalPositionData - GIMBAL_ZERO)) / ((double) GIMBAL_ZERO));
+    } else {
+        position = -(((double) (GIMBAL_ZERO - gimbalPositionData)) / ((double) GIMBAL_ZERO));
+    }
+
+    position = position * GIMBAL_LIMIT;
+    if (position > GIMBAL_LIMIT) {
+        position = GIMBAL_LIMIT;
+    } else if (position < -GIMBAL_LIMIT) {
+        position = -GIMBAL_LIMIT;
+    }
+
+    obj->desiredGimbalPos = _IQ(-position);
+}
+
 interrupt void mainISR(void) {
+    HAL_Obj *halObj = (HAL_Obj*) halHandle;
+    CPU_disableGlobalInts(halObj->cpuHandle);
+
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
 
@@ -500,6 +554,8 @@ interrupt void mainISR(void) {
     if ((EST_getState(obj->estHandle) == EST_State_Rs) && (USER_MOTOR_TYPE == MOTOR_Type_Pm)) {
         ENC_setZeroOffset(encHandle, (uint32_t) (HAL_getQepPosnMaximum(halHandle) - HAL_getQepPosnCounts(halHandle)));
     }
+
+    CPU_enableGlobalInts(halObj->cpuHandle);
 
     return;
 } // end of mainISR() function
@@ -608,9 +664,10 @@ void ST_runPosConv(ST_Handle handle, ENC_Handle encHandle, CTRL_Handle ctrlHandl
 
 void ST_runPosCtl(ST_Handle handle, CTRL_Handle ctrlHandle) {
     ST_Obj *stObj = (ST_Obj *) handle;
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
 
     // provide the updated references to the SpinTAC Position Control
-    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, 0);
+    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, (obj->desiredGimbalPos + obj->gimbalPosOffset));
     STPOSCTL_setVelocityReference(stObj->posCtlHandle, 0);
     STPOSCTL_setAccelerationReference(stObj->posCtlHandle, 0);
     // provide the feedback to the SpinTAC Position Control
@@ -623,219 +680,3 @@ void ST_runPosCtl(ST_Handle handle, CTRL_Handle ctrlHandle) {
     CTRL_setIq_ref_pu(ctrlHandle, STPOSCTL_getTorqueReference(stObj->posCtlHandle));
 
 }
-
-//@} //defgroup
-// end of file
-
-// THIS IS A HORRIBLE WAY TO ACCOMPLISH THIS, BUT BELOW
-// IS A REALLY SIMPLE EXAMPLE THAT MAKES SURE SPI SLAVE
-// STUFF WORKS
-
-//// system includes
-//#include <math.h>
-//#include "main.h"
-//
-//#ifdef FLASH
-//#pragma CODE_SECTION(mainISR, "ramfuncs");
-//#endif
-//
-//// Include header files used in the main function
-//
-//// **************************************************************************
-//// the defines
-//
-//#define LED_BLINK_FREQ_Hz   5
-//
-//// **************************************************************************
-//// the globals
-//
-//uint_least16_t gCounter_updateGlobals = 0;
-//
-//bool Flag_Latch_softwareUpdate = true;
-//
-//CTRL_Handle ctrlHandle;
-//
-//#ifdef F2802xF
-//#pragma DATA_SECTION(halHandle, "rom_accessed_data");
-//#endif
-//HAL_Handle halHandle;
-//
-//#ifdef F2802xF
-//#pragma DATA_SECTION(gUserParams, "rom_accessed_data");
-//#endif
-//USER_Params gUserParams;
-//
-//HAL_PwmData_t gPwmData = { _IQ(0.0), _IQ(0.0), _IQ(0.0) };
-//
-//HAL_AdcData_t gAdcData;
-//
-//_iq gMaxCurrentSlope = _IQ(0.0);
-//
-//#ifdef FAST_ROM_V1p6
-//CTRL_Obj *controller_obj;
-//#else
-//#ifdef F2802xF
-//#pragma DATA_SECTION(ctrl, "rom_accessed_data");
-//#endif
-//CTRL_Obj ctrl;				//v1p7 format
-//#endif
-//
-//uint16_t gLEDcnt = 0;
-//
-//volatile MOTOR_Vars_t gMotorVars = MOTOR_Vars_INIT;
-//
-//#ifdef FLASH
-//// Used for running BackGround in flash, and ISR in RAM
-//        extern uint16_t *RamfuncsLoadStart, *RamfuncsLoadEnd, *RamfuncsRunStart;
-//
-//#ifdef F2802xF
-//        extern uint16_t *econst_start, *econst_end, *econst_ram_load;
-//        extern uint16_t *switch_start, *switch_end, *switch_ram_load;
-//#endif
-//
-//#endif
-//
-//#ifdef DRV8301_SPI
-//// Watch window interface to the 8301 SPI
-//DRV_SPI_8301_Vars_t gDrvSpi8301Vars;
-//#endif
-//
-//#ifdef DRV8305_SPI
-//// Watch window interface to the 8305 SPI
-//DRV_SPI_8305_Vars_t gDrvSpi8305Vars;
-//#endif
-//
-//// **************************************************************************
-//// the functions
-//uint16_t rdata = 0;
-//uint16_t sdata = 0;
-//unsigned int ints = 0;
-//
-//void main(void) {
-//    uint_least8_t estNumber = 0;
-//
-//#ifdef FAST_ROM_V1p6
-//    uint_least8_t ctrlNumber = 0;
-//#endif
-//
-//    // Only used if running from FLASH
-//    // Note that the variable FLASH is defined by the project
-//#ifdef FLASH
-//    // Copy time critical code and Flash setup code to RAM
-//    // The RamfuncsLoadStart, RamfuncsLoadEnd, and RamfuncsRunStart
-//    // symbols are created by the linker. Refer to the linker files.
-//    memCopy((uint16_t *)&RamfuncsLoadStart,(uint16_t *)&RamfuncsLoadEnd,(uint16_t *)&RamfuncsRunStart);
-//
-//#ifdef F2802xF
-//    //copy .econst to unsecure RAM
-//    if(*econst_end - *econst_start)
-//    {
-//        memCopy((uint16_t *)&econst_start,(uint16_t *)&econst_end,(uint16_t *)&econst_ram_load);
-//    }
-//
-//    //copy .switch ot unsecure RAM
-//    if(*switch_end - *switch_start)
-//    {
-//        memCopy((uint16_t *)&switch_start,(uint16_t *)&switch_end,(uint16_t *)&switch_ram_load);
-//    }
-//#endif
-//
-//#endif
-//
-//    // initialize the hardware abstraction layer
-//    halHandle = HAL_init(&hal, sizeof(hal));
-//
-//    // check for errors in user parameters
-//    USER_checkForErrors(&gUserParams);
-//
-//    // store user parameter error in global variable
-//    gMotorVars.UserErrorCode = USER_getErrorCode(&gUserParams);
-//
-//    // do not allow code execution if there is a user parameter error
-//    if (gMotorVars.UserErrorCode != USER_ErrorCode_NoError) {
-//        for (;;) {
-//            gMotorVars.Flag_enableSys = false;
-//        }
-//    }
-//
-//    // initialize the user parameters
-//    USER_setParams(&gUserParams);
-//
-//    // set the hardware abstraction layer parameters
-//    HAL_setParams(halHandle, &gUserParams);
-//
-//    // initialize the controller
-//#ifdef FAST_ROM_V1p6
-//    ctrlHandle = CTRL_initCtrl(ctrlNumber, estNumber);  		//v1p6 format (06xF and 06xM devices)
-//    controller_obj = (CTRL_Obj *) ctrlHandle;
-//#else
-//    ctrlHandle = CTRL_initCtrl(estNumber,&ctrl,sizeof(ctrl));	//v1p7 format default
-//#endif
-//
-//    {
-//        CTRL_Version version;
-//
-//        // get the version number
-//        CTRL_getVersion(ctrlHandle, &version);
-//
-//        gMotorVars.CtrlVersion = version;
-//    }
-//
-//    // set the default controller parameters
-//    CTRL_setParams(ctrlHandle, &gUserParams);
-//
-//    // setup faults
-//    HAL_setupFaults(halHandle);
-//
-//    // initialize the interrupt vector table
-//    HAL_initIntVectorTable(halHandle);
-//
-//    // enable the ADC interrupts
-//    HAL_enableAdcInts(halHandle);
-//
-//    // enable the SPI interrupts
-//    HAL_enableSpiInt(halHandle);
-//
-//    // enable global interrupts
-//    HAL_enableGlobalInts(halHandle);
-//
-//    // enable debug interrupts
-//    HAL_enableDebugInt(halHandle);
-//
-//    // disable the PWM
-//    HAL_disablePwm(halHandle);
-//
-//#ifdef DRV8301_SPI
-//    // turn on the DRV8301 if present
-//    HAL_enableDrv(halHandle);
-//    // initialize the DRV8301 interface
-//    HAL_setupDrvSpi(halHandle, &gDrvSpi8301Vars);
-//#endif
-//
-//    // enable DC bus compensation
-////    CTRL_setFlag_enableDcBusComp(ctrlHandle, true);
-//    sdata = 0;
-//    rdata = 0;
-//    for (;;) {
-//        //sdata = HAL_spiIntStatus(halHandle);
-//        //if(sdata != 0)
-//        //sdata = 100;
-//        //HAL_writeSPIB(halHandle, sdata);
-//        //rdata = HAL_readArduinoData(halHandle);
-//    } // end of for(;;) loop
-//
-//} // end of main() function
-//
-//interrupt void mainISR(void) {
-//
-//} // end of mainISR() function
-//
-//interrupt void spiISR(void) {
-//    rdata = HAL_readSpiSlaveData(halHandle);
-//    ints++;
-//    return;
-//}
-//
-////@} //defgroup
-//// end of file
-//

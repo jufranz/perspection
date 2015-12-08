@@ -13,6 +13,7 @@
 #define HAPTIC_TORQUE_OP 0x0003
 #define ENCODER_POS_OP   0x0004
 #define BODY_MOTORS_OP   0x0005
+#define STARTUP_OP       0x0006
 
 // Defines how many microseconds to wait between SPI frames
 #define INTER_FRAME_DELAY 10
@@ -52,6 +53,14 @@ uint16_t spi_wrapper_txrx_word(uint16_t tx_word) {
     return rx_word;
 }
 
+void spi_wrapper_send_startup_control(uint8_t shouldBeOn) {
+    // Send a header indicating that the Atum is sending startup control dawta
+    spi_wrapper_txrx_word(STARTUP_OP);
+
+    // Send the direction
+    spi_wrapper_txrx_word((uint16_t)shouldBeOn);
+}
+
 void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed) {
     // Send a header indicating that the Atum is sending body control data
     spi_wrapper_txrx_word(BODY_CONTROL_OP);
@@ -63,7 +72,7 @@ void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed) {
     spi_wrapper_txrx_word((uint16_t)speed);
 }
 
-void spi_wrapper_send_gimbal_pos(uint16_t position) {
+void spi_wrapper_send_gimbal_pos(int16_t position) {
     // Send a header indicating that the Atum is sending gimbal position data
     spi_wrapper_txrx_word(GIMBAL_POS_OP);
 
