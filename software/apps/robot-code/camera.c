@@ -10,20 +10,51 @@
 #include "dev/spi_wrapper.h"
 
 #include <stdio.h>
+#include <stdbool.h>
 
 // Defines
 
 #define CAMERA_MAIN_DEBUG 0
 
+#define MAX_PITCH -114  // Should be around +80 degrees
+#define MIN_PITCH -910  // Should be around -80 degrees
+
+#define LAST_PITCH_UNINIT 9000
+#define PITCH_COUNTS_PER_REV 2047
+#define PITCH_FLIP_THRESHOLD 1500
+
 // Globals
 
 static struct broadcast_conn broadcast;
+
+int16_t lastPitch = LAST_PITCH_UNINIT;
+int16_t revolutionsDone = 0;
 
 // Contiki process declarations
 
 PROCESS(init_linkaddr_process, "Initialize linkaddr Address");
 PROCESS(init_network_process, "Initialize Broadcast Channel");
 AUTOSTART_PROCESSES(&init_linkaddr_process);
+
+// Helper functions
+
+int32_t getAbsolutePitchFromRawPitch(int16_t rawPitch) {
+    if(lastPitch == LAST_PITCH_UNINIT) {
+        lastPitch = rawPitch;
+        return rawPitch;
+    }
+
+    int16_t pitchDelta = (rawPitch - lastPitch);
+    if(pitchDelta > PITCH_FLIP_THRESHOLD) {
+        revolutionsDone--;
+    } else if(pitchDelta < -PITCH_FLIP_THRESHOLD) {
+        revolutionsDone++;
+    }
+
+    lastPitch = rawPitch;
+
+    return ((uint32_t)rawPitch + ((uint32_t)revolutionsDone * PITCH_COUNTS_PER_REV));
+}
 
 // Receiving startup commands from the controller
 
@@ -54,17 +85,18 @@ static void gimbal_recv(struct broadcast_conn* c, const linkaddr_t* from) {
 
     unpackGimbalData(&recvGimbalData);
 
+    int32_t pitchToSend = getAbsolutePitchFromRawPitch(recvGimbalData.gPitch);
+
+    // Limit and zero pitch
+    if(pitchToSend > MAX_PITCH) pitchToSend = MAX_PITCH;
+    if(pitchToSend < MIN_PITCH) pitchToSend = MIN_PITCH;
+    pitchToSend -= MIN_PITCH;
+
 #if CAMERA_MAIN_DEBUG
-    printf("Yaw: %d, Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch);
+    printf("Yaw: %d, Pitch: %d, Sent Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch, pitchToSend);
 #endif
 
-    int16_t pitchToSend = recvGimbalData.gPitch;
-    if(pitchToSend > -114) pitchToSend = -114;
-    if(pitchToSend < -910) pitchToSend = -910;
-    pitchToSend = pitchToSend * -1;
-    pitchToSend -= 114;
-
-    spi_wrapper_send_gimbal_pos(pitchToSend);
+    spi_wrapper_send_gimbal_pos((uint16_t)pitchToSend);
 
     leds_off(LEDS_GREEN | LEDS_BLUE);
 }

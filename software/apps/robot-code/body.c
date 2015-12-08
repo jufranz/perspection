@@ -14,17 +14,47 @@
 
 // Defines
 
+#define BODY_MAIN_DEBUG 0
 
+#define MAX_YAW 1792 // Should be around 315 degrees
+#define MIN_YAW 256  // Should be around 45 degrees
+
+#define LAST_YAW_UNINIT 9000
+#define YAW_COUNTS_PER_REV 2047
+#define YAW_FLIP_THRESHOLD 1500
 
 // Globals
 
 static struct broadcast_conn broadcast;
+
+int16_t lastYaw = LAST_YAW_UNINIT;
+int16_t revolutionsDone = 0;
 
 // Contiki process declarations
 
 PROCESS(init_linkaddr_process, "Initialize linkaddr Address");
 PROCESS(init_network_process, "Initialize Broadcast Channel");
 AUTOSTART_PROCESSES(&init_linkaddr_process);
+
+// Helper functions
+
+int32_t getAbsoluteYawFromRawYaw(int16_t rawYaw) {
+    if(lastYaw == LAST_YAW_UNINIT) {
+        lastYaw = rawYaw;
+        return rawYaw;
+    }
+
+    int16_t yawDelta = (rawYaw - lastYaw);
+    if(yawDelta > YAW_FLIP_THRESHOLD) {
+        revolutionsDone--;
+    } else if(yawDelta < -YAW_FLIP_THRESHOLD) {
+        revolutionsDone++;
+    }
+
+    lastYaw = rawYaw;
+
+    return ((uint32_t)rawYaw + ((uint32_t)revolutionsDone * YAW_COUNTS_PER_REV));
+}
 
 // Receiving startup commands from the controller
 
@@ -75,11 +105,18 @@ static void gimbal_recv(struct broadcast_conn* c, const linkaddr_t* from) {
 
     unpackGimbalData(&recvGimbalData);
 
+    int32_t yawToSend = getAbsoluteYawFromRawYaw(recvGimbalData.gYaw);
+
+    // Limit and zero yaw
+    if(yawToSend > MAX_YAW) yawToSend = MAX_YAW;
+    if(yawToSend < MIN_YAW) yawToSend = MIN_YAW;
+    yawToSend -= MIN_YAW;
+
 #if BODY_MAIN_DEBUG
-    printf("Yaw: %d, Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch);
+    printf("Yaw: %d, Pitch: %d, Sent Yaw: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch, yawToSend);
 #endif
 
-    spi_wrapper_send_gimbal_pos(recvGimbalData.gYaw);
+    spi_wrapper_send_gimbal_pos((uint16_t)yawToSend);
 
     leds_off(LEDS_GREEN | LEDS_BLUE);
 }
@@ -107,9 +144,9 @@ PROCESS_THREAD(init_linkaddr_process, ev, data) {
     PROCESS_BEGIN();
 
     spi_wrapper_init();
-    
-    quadrature_init();
-    set_up_pwm();
+
+    /*quadrature_init();*/
+    /*set_up_pwm();*/
 
     static linkaddr_t nodeAddr;
     nodeAddr.u8[0] = BODY_ADDR_A;
