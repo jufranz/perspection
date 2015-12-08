@@ -13,7 +13,7 @@
 
 // Defines
 
-#define CAMERA_MAIN_DEBUG 1
+#define CAMERA_MAIN_DEBUG 0
 
 // Globals
 
@@ -58,7 +58,13 @@ static void gimbal_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     printf("Yaw: %d, Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch);
 #endif
 
-    // TODO: Magic shit
+    int16_t pitchToSend = recvGimbalData.gPitch;
+    if(pitchToSend > -114) pitchToSend = -114;
+    if(pitchToSend < -910) pitchToSend = -910;
+    pitchToSend = pitchToSend * -1;
+    pitchToSend -= 114;
+
+    spi_wrapper_send_gimbal_pos(pitchToSend);
 
     leds_off(LEDS_GREEN | LEDS_BLUE);
 }
