@@ -61,6 +61,7 @@
 #define PI 3.1415926
 #define GIMBAL_ZERO 768
 #define GIMBAL_LIMIT 0.375
+#define LED_BLINK_FREQ_Hz   5
 
 // **************************************************************************
 // the globals
@@ -251,6 +252,7 @@ void main(void) {
 
         // Waiting for enable system flag to be set
         if (!(gMotorVars.Flag_enableSys)) {
+            HAL_turnLedOff(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
             continue;
         }
 
@@ -263,6 +265,7 @@ void main(void) {
             ST_Obj *stObj = (ST_Obj *) stHandle;
 
             processSpiMessages();
+            HAL_turnLedOn(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
 
             // increment counters
             gCounter_updateGlobals++;
@@ -510,6 +513,13 @@ interrupt void mainISR(void) {
 
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
+
+    // toggle status LED
+    if(gLEDcnt++ > (uint_least32_t)(USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz))
+    {
+        HAL_toggleLed(halHandle,(GPIO_Number_e)HAL_Gpio_LED2);
+        gLEDcnt = 0;
+    }
 
     // compute the electrical angle
     ENC_calcElecAngle(encHandle, HAL_getQepPosnCounts(halHandle));

@@ -132,8 +132,8 @@ typedef enum {
 //! \brief Enumeration for the LED numbers
 //!
 typedef enum {
-    HAL_Gpio_LED2 = GPIO_Number_34,  //!< GPIO pin number for LaunchPad LED D9
-    HAL_Gpio_LED3 = GPIO_Number_39   //!< GPIO pin number for LaunchPad LED D10
+    HAL_Gpio_LED2 = GPIO_Number_33,  //!< GPIO pin number for LaunchPad LED D9
+    HAL_Gpio_LED3 = GPIO_Number_42   //!< GPIO pin number for LaunchPad LED D10
 } HAL_LedNumber_e;
 
 //! \brief Enumeration for the sensor types

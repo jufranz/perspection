@@ -1056,10 +1056,20 @@ void HAL_setupGpios(HAL_Handle handle) {
     GPIO_setMode(obj->gpioHandle, GPIO_Number_31, GPIO_31_Mode_CANTXA);
 
     // I2C Data
-    GPIO_setMode(obj->gpioHandle, GPIO_Number_32, GPIO_32_Mode_SDAA);
+    //GPIO_setMode(obj->gpioHandle, GPIO_Number_32, GPIO_32_Mode_SDAA);
 
     // I2C Clock
-    GPIO_setMode(obj->gpioHandle, GPIO_Number_33, GPIO_33_Mode_SCLA);
+    //GPIO_setMode(obj->gpioHandle, GPIO_Number_33, GPIO_33_Mode_SCLA);
+
+    //Green LED
+    GPIO_setMode(obj->gpioHandle, GPIO_Number_33, GPIO_33_Mode_GeneralPurpose);
+    GPIO_setLow(obj->gpioHandle, GPIO_Number_33);
+    GPIO_setDirection(obj->gpioHandle, GPIO_Number_33, GPIO_Direction_Output);
+
+    //Red LED
+    GPIO_setMode(obj->gpioHandle, GPIO_Number_42, GPIO_42_Mode_GeneralPurpose);
+    GPIO_setLow(obj->gpioHandle, GPIO_Number_42);
+    GPIO_setDirection(obj->gpioHandle, GPIO_Number_42, GPIO_Direction_Output);
 
     // LED D9
     GPIO_setMode(obj->gpioHandle, GPIO_Number_34, GPIO_34_Mode_GeneralPurpose);

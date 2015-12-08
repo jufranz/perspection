@@ -60,6 +60,7 @@
 
 #define GIMBAL_ZERO 398
 #define GIMBAL_LIMIT 0.22
+#define LED_BLINK_FREQ_Hz   5
 
 // **************************************************************************
 // the globals
@@ -249,6 +250,7 @@ void main(void) {
 
         // Waiting for enable system flag to be set
         if (!(gMotorVars.Flag_enableSys)) {
+            HAL_turnLedOff(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
             continue;
         }
 
@@ -257,6 +259,7 @@ void main(void) {
 
         // loop while the enable system flag is true
         while (gMotorVars.Flag_enableSys) {
+            HAL_turnLedOn(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
             CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
             ST_Obj *stObj = (ST_Obj *) stHandle;
 
@@ -477,6 +480,13 @@ void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
 interrupt void mainISR(void) {
     HAL_Obj *halObj = (HAL_Obj*) halHandle;
     CPU_disableGlobalInts(halObj->cpuHandle);
+
+    // toggle status LED
+    if(gLEDcnt++ > (uint_least32_t)(USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz))
+    {
+        HAL_toggleLed(halHandle,(GPIO_Number_e)HAL_Gpio_LED2);
+        gLEDcnt = 0;
+    }
 
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
