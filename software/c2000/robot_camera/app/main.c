@@ -50,6 +50,7 @@
 
 #ifdef FLASH
 #pragma CODE_SECTION(mainISR,"ramfuncs");
+//#pragma CODE_SECTION(spiISR,"ramfuncs");
 #endif
 
 // Include header files used in the main function
@@ -59,8 +60,8 @@
 
 #define LED_BLINK_FREQ_Hz   5
 #define PI 3.1415926
-#define GIMBAL_ZERO 255
-#define GIMBAL_LIMIT 0.375
+#define GIMBAL_ZERO 398
+#define GIMBAL_LIMIT 0.22
 
 // **************************************************************************
 // the globals
@@ -261,6 +262,8 @@ void main(void) {
         while (gMotorVars.Flag_enableSys) {
             CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
             ST_Obj *stObj = (ST_Obj *) stHandle;
+
+            processSpiMessages();
 
             // increment counters
             gCounter_updateGlobals++;
@@ -496,15 +499,15 @@ void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData) {
         position = -GIMBAL_LIMIT;
     }
 
-    obj->desiredGimbalPos = _IQ(position);
+    obj->desiredGimbalPos = _IQ(-position);
 }
 
 interrupt void mainISR(void) {
+    HAL_Obj *halObj = (HAL_Obj*) halHandle;
+    CPU_disableGlobalInts(halObj->cpuHandle);
+
     static uint16_t stCnt = 0;
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
-    HAL_Obj *halObj = (HAL_Obj*) halHandle;
-
-    CPU_disableGlobalInts(halObj->cpuHandle);
 
     // toggle status LED
     if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
@@ -664,7 +667,7 @@ void ST_runPosCtl(ST_Handle handle, CTRL_Handle ctrlHandle) {
     HAL_Obj *obj = (HAL_Obj *) halHandle;
 
     // provide the updated references to the SpinTAC Position Control
-    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, obj->desiredGimbalPos);
+    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, (obj->desiredGimbalPos + obj->gimbalPosOffset));
     STPOSCTL_setVelocityReference(stObj->posCtlHandle, 0);
     STPOSCTL_setAccelerationReference(stObj->posCtlHandle, 0);
     // provide the feedback to the SpinTAC Position Control
