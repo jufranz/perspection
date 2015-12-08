@@ -14,7 +14,7 @@
 
 // Defines
 
-#define BODY_MAIN_DEBUG 0
+
 
 // Globals
 
@@ -107,6 +107,9 @@ PROCESS_THREAD(init_linkaddr_process, ev, data) {
     PROCESS_BEGIN();
 
     spi_wrapper_init();
+    
+    quadrature_init();
+    set_up_pwm();
 
     static linkaddr_t nodeAddr;
     nodeAddr.u8[0] = BODY_ADDR_A;
