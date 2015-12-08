@@ -72,7 +72,7 @@ void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed) {
     spi_wrapper_txrx_word((uint16_t)speed);
 }
 
-void spi_wrapper_send_gimbal_pos(uint16_t position) {
+void spi_wrapper_send_gimbal_pos(int16_t position) {
     // Send a header indicating that the Atum is sending gimbal position data
     spi_wrapper_txrx_word(GIMBAL_POS_OP);
 

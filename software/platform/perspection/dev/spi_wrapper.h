@@ -23,7 +23,7 @@ void spi_wrapper_send_startup_control(uint8_t shouldBeOn);
 void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed);
 
 // Sends a gimbal position command to the C2000
-void spi_wrapper_send_gimbal_pos(uint16_t position);
+void spi_wrapper_send_gimbal_pos(int16_t position);
 
 // Sends a haptic torque command to the C2000
 void spi_wrapper_send_haptic_torque(uint16_t torque);

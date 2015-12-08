@@ -14,7 +14,7 @@
 
 // Defines
 
-#define BODY_MAIN_DEBUG 1
+#define BODY_MAIN_DEBUG 0
 
 // Globals
 
@@ -79,7 +79,7 @@ static void gimbal_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     printf("Yaw: %d, Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch);
 #endif
 
-    // TODO: Magic shit
+    spi_wrapper_send_gimbal_pos(recvGimbalData.gYaw);
 
     leds_off(LEDS_GREEN | LEDS_BLUE);
 }
