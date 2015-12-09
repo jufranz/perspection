@@ -1,37 +1,37 @@
-#ifndef ATUM_PWM_H_
-#define ATUM_PWM_H_
-/*HOW THIS SHIT IS GOING TO WORK
-		THIS SHIT WORKS BY INPUTTING A DATA TYPE OF ANY DATATYPE BETWEEN 0 AND 64 BITS AND SIZE 
-	IN BITS TO THE SEND FUNCTION. THE FUNCTION WILL THEN BREAK THIS INPUTTED DATA INTO 
-	16 BIT CHUNKS AND SEND EACH CHUNK ONE BY ONE UNTIL IT'S DONE. THE FIRST 16 BIT 
-	MESSAGE THAT IS SENT WILL TELL THE SLAVE HOW MANY CHUNKS IT NEEDS TO WAIT FOR.
+#ifndef SPI_WRAPPER_H_
+#define SPI_WRAPPER_H_
 
-	THE RECIEVER SIDE OF THIS FUNCTION WON'T RETURN UNTIL ALL THE BITS HAVE BEEN SENT OVER,
-	SO THE RECIEVER USER WILL JUST HAVE TO RECIEVE.
-*/
+#include "contiki.h"
 
+// A struct to hold the body motor torques
+typedef struct {
+    uint16_t motor_1;
+    uint16_t motor_2;
+    uint16_t motor_3;
+} body_motor_torques_t;
 
-
-//call this before your main loop
-//sets up to run with 16 bit messages, 0 phase, 0 polarity, active on high
+// Initializes the SPI wrapper
 void spi_wrapper_init();
 
-/*
-This function sends and receives data back over SPI to a slave
-	input: the data structure you want to send over
-	size: the size of that data structure
-	num_rcv: the number of 16 bit chunks received
-	rbuff: a unsigned short buffer for reading in a data structure from the slave
-	
-	NOTE: Each chunk is 2 BYTES (16 bits) NOT 1 (8 bits)
-	WARNING: YOU WILL NEED TO FREE RBUFF AFTER YOU ARE DONE CASTING IT TO WHATEVER 
-		YOU CASTED IT TO. DYNAMIC MEMORY WAS ALLOCATED FOR IT
-*/
-void spi_wrapper_TxRx(void* input, unsigned short size, 
-                        unsigned short *num_rcv, unsigned short *rbuff);
+// Sends a 16-bit word and receives a 16-bit word
+uint16_t spi_wrapper_txrx_word(uint16_t tx_word);
 
+// Sends a command to enable or disable the robot
+void spi_wrapper_send_startup_control(uint8_t shouldBeOn);
 
-}
+// Sends a robot body control command to the C2000
+void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed);
 
+// Sends a gimbal position command to the C2000
+void spi_wrapper_send_gimbal_pos(int16_t position);
+
+// Sends a haptic torque command to the C2000
+void spi_wrapper_send_haptic_torque(uint16_t torque);
+
+// Retrieves the encoder position from the C2000
+uint16_t spi_wrapper_get_encoder_pos();
+
+// Retrieves the torques on each robot body motor from the C2000
+body_motor_torques_t spi_wrapper_get_body_motor_torques();
 
 #endif

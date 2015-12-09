@@ -6,7 +6,7 @@ endif
 
 CONTIKI_TARGET_DIRS = . dev ../../dev/fm25l04b ../../dev/rv3049
 
-CONTIKI_TARGET_SOURCEFILES += leds.c leds-arch.c quadrature.c pwm.c bno055.c comms.c
+CONTIKI_TARGET_SOURCEFILES += leds.c leds-arch.c quadrature.c pwm.c bno055.c comms.c spi_wrapper.c clock_wrapper.c scissor.c
 CONTIKI_TARGET_SOURCEFILES += contiki-main.c
 CONTIKI_TARGET_SOURCEFILES += fm25l04b.c rv3049.c
 

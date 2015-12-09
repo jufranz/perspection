@@ -207,9 +207,9 @@ typedef enum {
 } bno055_vector_type_t;
 
 #define BNO055_SYSTEM_CAL_MASK (0x3 << 6)
-#define BNO055_GYRO_CAL_MASK (0x3 << 6)
-#define BNO055_ACCEL_CAL_MASK (0x3 << 6)
-#define BNO055_MAG_CAL_MASK (0x3 << 6)
+#define BNO055_GYRO_CAL_MASK (0x3 << 4)
+#define BNO055_ACCEL_CAL_MASK (0x3 << 2)
+#define BNO055_MAG_CAL_MASK (0x3 << 0)
 
 typedef struct {
   bool system_cal;
@@ -247,6 +247,11 @@ typedef struct
   uint16_t mag_radius;
 } bno055_offsets_t;
   
+#define BNO055_XAXIS 0
+#define BNO055_YAXIS 1
+#define BNO055_ZAXIS 2
+#define BNO055_POSITIVE 0
+#define BNO055_NEGATIVE 1
 
 bool bno055_init(void);
 void bno055_set_mode(bno055_opmode_t mode);
@@ -265,5 +270,8 @@ bno055_offsets_t bno055_get_sensor_offsets(void);
 void bno055_set_sensor_offsets(bno055_offsets_t offsets);
 uint8_t bno055_read8(uint8_t reg);
 void bno055_write8(uint8_t reg, uint8_t val);
+//set_axis_mapping(remapped x, remapped y, remapped z)
+void bno055_set_axis_map_config(uint8_t x, uint8_t y, uint8_t z);
+void bno055_set_axis_map_sign(bool x, bool y, bool z);
 
 #endif

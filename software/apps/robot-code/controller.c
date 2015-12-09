@@ -1,143 +1,181 @@
-/*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the Institute nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE INSTITUTE AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE INSTITUTE OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * This file is part of the Contiki operating system.
- *
- */
-
-/**
- * \file
- *         Testing the broadcast layer in Rime
- * \author
- *         Adam Dunkels <adam@sics.se>
- */
+// Includes
 
 #include "contiki.h"
+#include "clock.h"
 #include "net/rime/rime.h"
 #include "random.h"
-#include "clock.h"
-#include <math.h>
+
 #include "dev/adc.h"
 #include "dev/comms.h"
 #include "dev/gpio.h"
-#include "adc.h"
-
 #include "dev/leds.h"
 
+#include <math.h>
 #include <stdio.h>
 
-#define ADC_PIN_NUM 3
-#define ADC_PORT_NUM GPIO_A_NUM
-#define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN3
-#define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN4
+// Defines
 
-/*---------------------------------------------------------------------------*/
-PROCESS(example_broadcast_process, "Broadcast example");
-AUTOSTART_PROCESSES(&example_broadcast_process);
-/*---------------------------------------------------------------------------*/
-static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
-{
-  /*leds_on(LEDS_RED);
-  printf("broadcast message received from %d.%d: '%s'\n",
-         from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
-  leds_off(LEDS_RED);*/
-  return;
-}
-static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
+#define CONTROLLER_MAIN_DEBUG 0
+
+#define SAMPLES_PER_SEC 50
+#define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4 // BLUE WIRE
+#define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN3 // GREEN WIRE
+#define ADC_CHANNEL_SCISSOR SOC_ADC_ADCCON_CH_AIN5
+
+// Globals
+
 static struct broadcast_conn broadcast;
-/*---------------------------------------------------------------------------*/
 
+static uint8_t hasHeadsetAckedEnable = 0;
+static uint8_t hasRobotBodyAckedEnable = 0;
+static uint8_t hasCameraAckedEnable = 0;
 
-static int16_t isCloseToCenter(int16_t i){
-  if(i > -150 && i < 150) return 0;
-  else return i;
+// Contiki process declarations
+
+PROCESS(init_wireless_and_control_process, "Init wireless and control process");
+PROCESS(control_broadcast_process, "Control broadcast process");
+AUTOSTART_PROCESSES(&init_wireless_and_control_process);
+
+// Helper functions
+
+static int16_t isCloseToCenter(int16_t i) {
+    if(i > -150 && i < 150) return 0;
+    else return i;
 }
 
+// Receiving packets
 
-/*---------------------------------------------------------------------------*/
-PROCESS_THREAD(example_broadcast_process, ev, data)
-{
-  static struct etimer et;
+static void broadcast_recv(struct broadcast_conn* c, const linkaddr_t* from) {
+    leds_on(LEDS_RED);
 
-  PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
-
-  PROCESS_BEGIN();
-
-  //initializing ADC
-  adc_init();
-
-  linkaddr_t nodeAddr;
-  nodeAddr.u8[0] = CTRL_ADDR_A;
-  nodeAddr.u8[1] = CTRL_ADDR_B;
-  linkaddr_set_node_addr(&nodeAddr);
-
-  initMoveNetwork(&broadcast, &broadcast_call);
-
-  static struct moveData_t testData;
-  testData.tDir = 0;
-  testData.tSpeed = 100;
-  testData.rAngle = 0;
-  testData.rSpeed = 0;
-
-  static int16_t ctrlX;
-  static int16_t ctrlY;
-
-  while(1) {
-
-    /* Delay 1 second */
-    etimer_set(&et, CLOCK_SECOND/200);
-
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-   
-    //it says AVDD5 but actually use 3V3 input.
-    //32300 - 80, midpoint 17142
-    ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 17142);
-    //32764 - 800, midpoint 16872
-    ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
-
-    printf("X: %d, Y: %d ", ctrlX, ctrlY);
-
-    if(ctrlX == 0 && ctrlY == 0) {
-      testData.tDir = 0;
-      testData.tSpeed = 0;
+    if(from->u8[0] == HEADSET_ADDR_A && from->u8[1] == HEADSET_ADDR_B) {
+        if(didGetStartupData()) {
+            // Got an enable acknowledge from the headset
+            hasHeadsetAckedEnable = 1;
+#if CONTROLLER_MAIN_DEBUG
+            printf("Got enable ack from headset\r\n");
+#endif
+        }
+    } else if(from->u8[0] == BODY_ADDR_A && from->u8[1] == BODY_ADDR_B) {
+        if(didGetStartupData()) {
+            // Got an enable acknowledge from the robot body
+            hasRobotBodyAckedEnable = 1;
+#if CONTROLLER_MAIN_DEBUG
+            printf("Got enable ack from robot body\r\n");
+#endif
+        }
+    } else if(from->u8[0] == CAMERA_ADDR_A && from->u8[1] == CAMERA_ADDR_B) {
+        if(didGetStartupData()) {
+            // Got an enable acknowledge from the camera
+            hasCameraAckedEnable = 1;
+#if CONTROLLER_MAIN_DEBUG
+            printf("Got enable ack from camera\r\n");
+#endif
+        }
     }
-    else testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)ctrlX) * 180 / M_PI) + 180);
 
+    leds_off(LEDS_RED);
 
-    
-    printf("degrees: %d, speed: %d\n", testData.tDir, testData.tSpeed);
-
-    leds_on(LEDS_GREEN);    
-    broadcastMoveData(&testData, &broadcast);
-    leds_off(LEDS_GREEN);
-  }
-
-  PROCESS_END();
+    return;
 }
-/*---------------------------------------------------------------------------*/
+static const struct broadcast_callbacks broadcast_call = { broadcast_recv };
+
+// Initializing the wireless stuff and sending enable signals to the other boards
+
+PROCESS_THREAD(init_wireless_and_control_process, ev, data) {
+    PROCESS_BEGIN();
+
+    linkaddr_t nodeAddr;
+    nodeAddr.u8[0] = CTRL_ADDR_A;
+    nodeAddr.u8[1] = CTRL_ADDR_B;
+    linkaddr_set_node_addr(&nodeAddr);
+    initStartupNetwork(&broadcast, &broadcast_call);
+
+    static struct etimer startup_timer;
+    static startupData_t startupData;
+    startupData.shouldBeOn = 1;
+
+#if CONTROLLER_MAIN_DEBUG
+    printf("Startup signal broadcasting, waiting for ACKs\r\n");
+#endif
+
+    while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {
+        leds_on(LEDS_GREEN);
+
+        broadcastStartupData(&startupData, &broadcast);
+
+        leds_off(LEDS_GREEN);
+
+        etimer_set(&startup_timer, CLOCK_SECOND / 2);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&startup_timer));
+    }
+
+#if CONTROLLER_MAIN_DEBUG
+    printf("All boards enabled\r\n");
+#endif
+
+    // Once everybody has acknowledged the enable, start the control process
+    process_start(&control_broadcast_process, NULL);
+
+    PROCESS_END();
+}
+
+// Reading values from the pots and sending movement commands to the robot
+
+PROCESS_THREAD(control_broadcast_process, ev, data) {
+    PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
+
+    PROCESS_BEGIN();
+
+    initMoveNetwork(&broadcast, &broadcast_call);
+
+    static struct etimer et;
+    static moveData_t testData;
+    static int16_t ctrlX;
+    static int16_t ctrlY;
+
+    testData.tDir = 0;
+    testData.tSpeed = 100;
+    testData.rAngle = 0;
+    testData.rSpeed = 0;
+    testData.sDir = 1;
+    testData.sSpeed = 125;
+
+    while(1) {
+        etimer_set(&et, CLOCK_SECOND / SAMPLES_PER_SEC);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+
+        // It says AVDD5 but the reference voltage is actually 3V3
+        // 32300 - 80, midpoint 17142
+        ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 17142);
+        // 32764 - 800, midpoint 16872
+        ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
+
+#if CONTROLLER_MAIN_DEBUG
+        printf("X: %d, Y: %d\r\n", ctrlX, ctrlY);
+#endif
+
+        // XY control
+        if(ctrlX == 0 && ctrlY == 0) {
+            // All 9 bits are 1's, indicates no direction
+            testData.tDir = 511;
+            testData.tSpeed = 0;
+        } else {
+            testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)ctrlX) * 180 / M_PI) + 180) % 360;
+            testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)133);
+            if(testData.tSpeed > 127) testData.tSpeed = 127;
+        }
+
+#if CONTROLLER_MAIN_DEBUG
+        printf("degrees: %d, speed: %d\r\n", testData.tDir, testData.tSpeed);
+        printf("sdegree: %d, sspeed: %d\r\n", testData.sDir, testData.sSpeed);
+#endif
+
+        leds_on(LEDS_RED | LEDS_GREEN);
+        broadcastMoveData(&testData, &broadcast);
+        leds_off(LEDS_RED | LEDS_GREEN);
+    }
+
+    PROCESS_END();
+}
+
