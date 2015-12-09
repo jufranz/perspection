@@ -12,6 +12,10 @@ bool fault = false;
 bool enabled = true;
 bool btnState = false;
 
+int boobs = 0;
+int val = 0;
+bool ok = true;
+
 void setup() {
   // put your setup code here, to run once:
   //code for recieving from kill switch
@@ -31,8 +35,7 @@ void setup() {
   delay(10);
 }
 
-int boobs = 0;
-int val = 0;
+
 void loop() {
   //val = analogRead(sensePin);
   boobs = parsePacket(MAX);
@@ -46,11 +49,13 @@ void loop() {
   //will kill if we haven't recieved a message for
   //MAX miliseconds, max at the top of the file
   if(boobs == 3 || boobs == 1){
-      enabled = false;
+      ok = false;
       fault = true;
     }
   else
-    enabled = true;
+    ok = true;
+
+  enabled = enabled && ok;
   
   digitalWrite(ledPin, !enabled); //LED will be off when enabled
   digitalWrite(faultPin, !fault); 
@@ -82,7 +87,7 @@ void loop() {
     btnState = false;
   }
 
-  /*if(fault) {
+  if(fault) {
     int m = millis();
     if(m % 1000 < 250) {
       tone(speakerPin, 5000);
@@ -94,7 +99,7 @@ void loop() {
     
   } else {
     noTone(speakerPin);
-  }*/
+  }
 
   //if(!fault) noTone(speakerPin);
 }
