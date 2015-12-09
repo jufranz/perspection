@@ -891,6 +891,7 @@ extern void PIE_unregisterSystemIntHandler(PIE_Handle pieHandle, const PIE_Syste
 //! \brief     Enables the SPI interrupts
 //! \param[in] pieHandle  The peripheral interrupt expansion (PIE) handle
 extern void PIE_enableSpiInt(PIE_Handle pieHandle);
+extern void PIE_enableQEPInt(PIE_Handle pieHandle);
 
 #ifdef __cplusplus
 }

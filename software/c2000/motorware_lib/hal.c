@@ -632,6 +632,9 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
     // initialize the SPI A slave interface
     obj->SpiSlaveHandle = SPI_Slave_init(&obj->SpiSlave, sizeof(obj->SpiSlave));
 
+    // PERSPECTION qep thing
+    obj->qepIndexFound = false;
+
 #ifdef QEP
     // initialize QEP driver
     obj->qepHandle[0] = QEP_init((void*) QEP1_BASE_ADDR, sizeof(QEP_Obj));
@@ -1433,7 +1436,23 @@ void HAL_setupQEP(HAL_Handle handle, HAL_QepSelect_e qep) {
 
     return;
 }
-#endif
+
+void HAL_enableQEPInt(HAL_Handle handle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+
+    //enable the PIE
+    PIE_enableQEPInt(obj->pieHandle);
+
+    //TIMER_enableInt(obj->timerHandle[0]);
+    QEP_enable_interrupt(obj->qepHandle[HAL_Qep_QEP1], QEINT_Iel);
+
+    //enable CPU interrupts
+    CPU_enableInt(obj->cpuHandle, CPU_IntNumber_5);
+
+    //QEP_force_interrupt(obj->qepHandle[HAL_Qep_QEP1], QEINT_Iel);
+    return;
+} // end of HAL_enableSpiInt() function
+#endif //QEP
 
 void HAL_setupSpiA(HAL_Handle handle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
@@ -1854,6 +1873,21 @@ interrupt void spiISR(void) {
         }
     }
 
+    CPU_enableGlobalInts(hal.cpuHandle);
+
+    return;
+}
+
+interrupt void qepISR(void) {
+    CPU_disableGlobalInts(hal.cpuHandle);
+
+    QEP_clear_all_interrupt_flags(hal.qepHandle[HAL_Qep_QEP1]);
+    //hal.qepIndexFound = true;
+    HAL_toggleLed(&hal,(GPIO_Number_e)HAL_Gpio_LED3);
+    hal.qepIndexFound = true;//QEP_clear_posn_counter(hal.qepHandle[HAL_Qep_QEP1]);
+    QEP_disable_all_interrupts(hal.qepHandle[HAL_Qep_QEP1]);
+
+    PIE_clearInt(hal.pieHandle, PIE_GroupNumber_5);
     CPU_enableGlobalInts(hal.cpuHandle);
 
     return;

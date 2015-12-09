@@ -202,6 +202,7 @@ typedef struct _MOTOR_Vars_t_ {
 //!
 interrupt void mainISR(void);
 interrupt void spiISR(void);
+interrupt void eqepISR(void);
 
 void runCurrentIgnore(void);
 

@@ -217,6 +217,7 @@ void main(void) {
 
     // setup the ENC module
     ENC_setup(encHandle, 1, USER_MOTOR_NUM_POLE_PAIRS, USER_MOTOR_ENCODER_LINES, 0, USER_IQ_FULL_SCALE_FREQ_Hz, USER_ISR_FREQ_Hz, 8000.0);
+    HAL_enableQEPInt(halHandle);
 
     // initialize the SLIP module
     slipHandle = SLIP_init(&slip, sizeof(slip));
@@ -252,7 +253,7 @@ void main(void) {
 
         // Waiting for enable system flag to be set
         if (!(gMotorVars.Flag_enableSys)) {
-            HAL_turnLedOff(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
+            //HAL_turnLedOff(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
             continue;
         }
 
@@ -265,7 +266,7 @@ void main(void) {
             ST_Obj *stObj = (ST_Obj *) stHandle;
 
             processSpiMessages();
-            HAL_turnLedOn(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
+            //HAL_turnLedOn(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
 
             // increment counters
             gCounter_updateGlobals++;
@@ -521,7 +522,6 @@ interrupt void mainISR(void) {
         gLEDcnt = 0;
     }
 
-    // compute the electrical angle
     ENC_calcElecAngle(encHandle, HAL_getQepPosnCounts(halHandle));
 
     // acknowledge the ADC interrupt

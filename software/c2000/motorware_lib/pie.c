@@ -388,10 +388,14 @@ void PIE_unregisterSystemIntHandler(PIE_Handle pieHandle, const PIE_SystemInterr
 
 void PIE_enableSpiInt(PIE_Handle pieHandle) {
     PIE_Obj *pie = (PIE_Obj *) pieHandle;
-    uint16_t index = 5;
-    uint16_t setValue = 1;
-
-    pie->PIEIER_PIEIFR[index].IER |= setValue;
+    //uint16_t index = 5;
+    //uint16_t setValue = 1;
+    PIE_enableInt(pie, PIE_GroupNumber_6, PIE_InterruptSource_SCIARX);
+    //pie->PIEIER_PIEIFR[index].IER |= setValue;
 } // end of PIE_enableSpiInt() function
 
+void PIE_enableQEPInt(PIE_Handle pieHandle) {
+    PIE_Obj *pie = (PIE_Obj *) pieHandle;
+    PIE_enableInt(pie, PIE_GroupNumber_5, PIE_InterruptSource_EQEP1);
+}
 // end of file

@@ -176,6 +176,7 @@ typedef struct _HAL_Obj_ {
     // PERSPECTION
     SPI_Slave_Handle SpiSlaveHandle;   //!< the SPI slave interface handle
     SPI_Slave_Obj SpiSlave;         //!< the SPI slave interface object
+    bool qepIndexFound;
 
     HAL_RobotBodyControlData_t robotBodyControlData;
     bool hasNewRobotBodyControlData;
