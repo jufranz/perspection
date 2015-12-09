@@ -1,4 +1,7 @@
-const int ledPin = 10;
+#include <Kill_Switch.h>
+
+#define MAX 10000 // is the timeout time
+const int ledPin = 13;
 const int gatePin = A0;
 const int faultPin = 7;
 const int sensePin = A1;
@@ -9,9 +12,18 @@ bool fault = false;
 bool enabled = true;
 bool btnState = false;
 
+int boobs = 0;
+int val = 0;
+bool ok = true;
+
 void setup() {
   // put your setup code here, to run once:
-  //Serial.begin(9600);
+  //code for recieving from kill switch
+  Serial.begin(9600);
+  delay(10);
+  Serial.println("Ready, Steady, Go");
+  delay(10);
+    
   pinMode(ledPin, OUTPUT);
   pinMode(gatePin, OUTPUT);
   pinMode(faultPin, OUTPUT);
@@ -23,16 +35,41 @@ void setup() {
   delay(10);
 }
 
+
 void loop() {
-  int val = analogRead(sensePin);
+  //val = analogRead(sensePin);
+  boobs = parsePacket(MAX);
+  
   //Serial.println(val);
-  digitalWrite(ledPin, !enabled);
-  digitalWrite(faultPin, !fault);
-  digitalWrite(gatePin, enabled);
   if(val > 600 && !fault) {
     enabled = false;
     fault = true;
   }
+  //xbee manual kill portion
+  //will kill if we haven't recieved a message for
+  //MAX miliseconds, max at the top of the file
+  if(boobs == 3 || boobs == 1){
+      ok = false;
+      fault = true;
+    }
+  else
+    ok = true;
+
+  enabled = enabled && ok;
+  
+  digitalWrite(ledPin, !enabled); //LED will be off when enabled
+  digitalWrite(faultPin, !fault); 
+  digitalWrite(gatePin, enabled);
+
+  /*
+   * If the button is pressed (signal reads low)
+   *  if the button state is false
+   *    if fault is true, set fault to false, set button state to true
+   *    if we've disabled power, set enable it, set enable to true, set button state to true
+   *  otherwise set enable to false, set button state to tru
+   *  
+   *Else set button state to false
+   */
   if(!digitalRead(buttonPin)) {
     if(!btnState) {
       if(fault) {
