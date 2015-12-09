@@ -98,7 +98,7 @@ static void gimbal_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     printf("Yaw: %d, Pitch: %d, Sent Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch, pitchToSend);
 #endif
 
-    /*spi_wrapper_send_gimbal_pos((uint16_t)pitchToSend);*/
+    spi_wrapper_send_gimbal_pos((uint16_t)pitchToSend);
 
     leds_off(LEDS_GREEN | LEDS_BLUE);
 }
@@ -144,32 +144,6 @@ PROCESS_THREAD(init_network_process, ev, data) {
 
     initStartupNetwork(&broadcast, &broadcast_call);
     initGimbalNetwork(&broadcast, &broadcast_call);
-
-    static struct etimer timer;
-    static uint16_t minThing = 6;
-    static uint16_t maxThing = 796;
-    static uint16_t step = 3;
-    static uint16_t testPitch;
-    testPitch = minThing;
-
-    while(1) {
-        etimer_set(&timer, CLOCK_SECOND / 10);
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-
-        if(shouldGo) {
-            spi_wrapper_send_gimbal_pos(testPitch);
-
-            testPitch += step;
-
-            if(testPitch > maxThing) {
-                testPitch = maxThing;
-                step *= -1;
-            } else if(testPitch < minThing) {
-                testPitch = minThing;
-                step *= -1;
-            }
-        }
-    }
 
     PROCESS_END();
 }

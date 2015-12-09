@@ -122,6 +122,7 @@ typedef uint32_t rtimer_clock_t;
 #ifndef STARTUP_CONF_VERBOSE
 #define STARTUP_CONF_VERBOSE        0 /**< Set to 0 to decrease startup verbosity */
 #endif
+
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**
@@ -143,6 +144,10 @@ typedef uint32_t rtimer_clock_t;
  */
 #ifndef SPI_CONF_DEFAULT_INSTANCE
 #define SPI_CONF_DEFAULT_INSTANCE   0
+#endif
+
+#ifndef SPI0_CONF_CPRS_CPSDVSR
+#define SPI0_CONF_CPRS_CPSDVSR 16   // 1 MHz
 #endif
 
 #ifndef UART_CONF_ENABLE
