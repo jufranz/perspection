@@ -100,11 +100,7 @@ PROCESS_THREAD(init_wireless_and_control_process, ev, data) {
 #endif
 
     while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {
-        leds_on(LEDS_GREEN);
-
         broadcastStartupData(&startupData, &broadcast);
-
-        leds_off(LEDS_GREEN);
 
         etimer_set(&startup_timer, CLOCK_SECOND / 2);
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&startup_timer));
