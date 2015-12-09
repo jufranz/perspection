@@ -9,6 +9,9 @@
  *   Main module for the atum platform
  */
 /*---------------------------------------------------------------------------*/
+
+#define SPI0_CONF_CPRS_CPSDVSR 8
+
 #include "contiki.h"
 #include "dev/leds.h"
 #include "dev/sys-ctrl.h"

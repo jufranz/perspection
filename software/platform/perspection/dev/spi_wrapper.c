@@ -16,7 +16,7 @@
 #define STARTUP_OP       0x0006
 
 // Defines how many microseconds to wait between SPI frames
-#define INTER_FRAME_DELAY 10
+#define INTER_FRAME_DELAY 15
 
 void spi_wrapper_init() {
     spix_init(SPI_DEFAULT_INSTANCE);

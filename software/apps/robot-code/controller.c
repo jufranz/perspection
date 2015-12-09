@@ -15,7 +15,7 @@
 
 // Defines
 
-#define CONTROLLER_MAIN_DEBUG 1
+#define CONTROLLER_MAIN_DEBUG 0
 
 #define SAMPLES_PER_SEC 50
 #define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4 // BLUE WIRE
@@ -42,12 +42,6 @@ static int16_t isCloseToCenter(int16_t i) {
     if(i > -150 && i < 150) return 0;
     else return i;
 }
-
-/*static int16_t isOutOfBounds(int16_t i) {*/
-    /*if(i > 32764) return 32764;*/
-    /*else if(i < 0) return 0;*/
-    /*else return i;*/
-/*}*/
 
 // Receiving packets
 
@@ -106,7 +100,11 @@ PROCESS_THREAD(init_wireless_and_control_process, ev, data) {
 #endif
 
     while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {
+        leds_on(LEDS_GREEN);
+
         broadcastStartupData(&startupData, &broadcast);
+
+        leds_off(LEDS_GREEN);
 
         etimer_set(&startup_timer, CLOCK_SECOND / 2);
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&startup_timer));
@@ -143,13 +141,6 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
     testData.sDir = 1;
     testData.sSpeed = 125;
 
-<<<<<<< HEAD
-    static int16_t ctrlX;
-    static int16_t ctrlY;
-    static int16_t ctrlScissor;
-
-=======
->>>>>>> 15a8eb84e12a87a7a3bd7d84f07dbb91690d8f64
     while(1) {
         etimer_set(&et, CLOCK_SECOND / SAMPLES_PER_SEC);
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
@@ -159,15 +150,8 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
         ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 17142);
         // 32764 - 800, midpoint 16872
         ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
-<<<<<<< HEAD
-        ctrlScissor = isOutOfBounds(adc_get(ADC_CHANNEL_SCISSOR, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512)) / 128;
-        
-=======
-        /*ctrlScissor = isOutOfBounds(adc_get(ADC_CHANNEL_SCISSOR, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512)) / 128;*/
->>>>>>> 15a8eb84e12a87a7a3bd7d84f07dbb91690d8f64
 
 #if CONTROLLER_MAIN_DEBUG
-        /*printf("scissor: %d\n", ctrlScissor);*/
         printf("X: %d, Y: %d\r\n", ctrlX, ctrlY);
 #endif
 
@@ -181,21 +165,6 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
             testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)133);
             if(testData.tSpeed > 127) testData.tSpeed = 127;
         }
-        if(ctrlScissor <= 127){
-            testData.sDir = 0;
-            testData.sSpeed = 127 - ctrlScissor;
-        } else {
-            testData.sDir = 1;
-            testData.sSpeed = ctrlScissor - 128;
-        }
-
-        /*if(ctrlScissor <= 127){*/
-          /*testData.sDir = 0;*/
-          /*testData.sSpeed = 127 - ctrlScissor;*/
-        /*} else {*/
-          /*testData.sDir = 1;*/
-          /*testData.sSpeed = ctrlScissor - 128;*/
-        /*}*/
 
 #if CONTROLLER_MAIN_DEBUG
         printf("degrees: %d, speed: %d\r\n", testData.tDir, testData.tSpeed);
