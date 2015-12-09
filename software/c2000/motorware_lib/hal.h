@@ -150,6 +150,8 @@ extern interrupt void mainISR(void);
 
 // PERSPECTION: GETS CALLED WHEN THE C2000 RECEIVES DATA ON SPI A
 extern interrupt void spiISR(void);
+// PERSPECTION: eqep interrupt
+extern interrupt void qepISR(void);
 
 // **************************************************************************
 // the function prototypes
@@ -421,6 +423,7 @@ static inline void HAL_initIntVectorTable(HAL_Handle handle) {
 
     pie->ADCINT1 = &mainISR;
     pie->SPIRXINTA = &spiISR;
+    pie->EQEP1_INT = &qepISR;
 
     DISABLE_PROTECTED_REGISTER_WRITE_MODE;
 
@@ -1136,6 +1139,10 @@ void HAL_setupDrvSpi(HAL_Handle handle, DRV_SPI_8301_Vars_t *Spi_8301_Vars);
 // =========---------------------========= //
 // =========- PERSPECTION STUFF -========= //
 // =========---------------------========= //
+
+//! \brief     Enables the QEP interrupts
+//! \param[in] handle  The hardware abstraction layer (HAL) handle
+extern void HAL_enableQEPInt(HAL_Handle handle);
 
 //! \brief     Reads the SPI A receive buffer
 //! \param[in] handle    The hardware abstraction layer (HAL) handle
