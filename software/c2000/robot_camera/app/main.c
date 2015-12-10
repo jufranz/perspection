@@ -51,6 +51,7 @@
 #ifdef FLASH
 #pragma CODE_SECTION(mainISR, "ramfuncs");
 #pragma CODE_SECTION(spiISR, "ramfuncs");
+//#pragma CODE_SECTION(qepISR, "ramfuncs");
 #endif
 
 // Include header files used in the main function
@@ -215,6 +216,7 @@ void main(void) {
 
     // setup the ENC module
     ENC_setup(encHandle, 1, USER_MOTOR_NUM_POLE_PAIRS, USER_MOTOR_ENCODER_LINES, 0, USER_IQ_FULL_SCALE_FREQ_Hz, USER_ISR_FREQ_Hz, 8000.0);
+    HAL_enableQEPInt(halHandle);
 
     // initialize the SLIP module
     slipHandle = SLIP_init(&slip, sizeof(slip));
@@ -250,7 +252,7 @@ void main(void) {
 
         // Waiting for enable system flag to be set
         if (!(gMotorVars.Flag_enableSys)) {
-            HAL_turnLedOff(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
+            //HAL_turnLedOff(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
             continue;
         }
 
@@ -259,7 +261,7 @@ void main(void) {
 
         // loop while the enable system flag is true
         while (gMotorVars.Flag_enableSys) {
-            HAL_turnLedOn(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
+            //HAL_turnLedOn(halHandle,(GPIO_Number_e)HAL_Gpio_LED3);
             CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
             ST_Obj *stObj = (ST_Obj *) stHandle;
 
@@ -482,9 +484,8 @@ interrupt void mainISR(void) {
     CPU_disableGlobalInts(halObj->cpuHandle);
 
     // toggle status LED
-    if(gLEDcnt++ > (uint_least32_t)(USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz))
-    {
-        HAL_toggleLed(halHandle,(GPIO_Number_e)HAL_Gpio_LED2);
+    if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
+        HAL_toggleLed(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
         gLEDcnt = 0;
     }
 
@@ -535,6 +536,21 @@ interrupt void mainISR(void) {
 
     return;
 } // end of mainISR() function
+
+interrupt void qepISR(void) {
+    CPU_disableGlobalInts(hal.cpuHandle);
+    HAL_Obj *halObj = (HAL_Obj*) halHandle;
+
+    QEP_clear_all_interrupt_flags(halObj->qepHandle[HAL_Qep_QEP1]);
+    HAL_toggleLed(halObj, (GPIO_Number_e) HAL_Gpio_LED3);
+    halObj->gimbalPosOffset = STPOSCONV_getPosition_mrev(st_obj.posConvHandle) - _IQ(0.01);
+    QEP_disable_all_interrupts(halObj->qepHandle[HAL_Qep_QEP1]);
+
+    PIE_clearInt(hal.pieHandle, PIE_GroupNumber_5);
+    CPU_enableGlobalInts(hal.cpuHandle);
+
+    return;
+}
 
 void updateGlobalVariables_motor(CTRL_Handle handle, ST_Handle sthandle) {
     CTRL_Obj *obj = (CTRL_Obj *) handle;
