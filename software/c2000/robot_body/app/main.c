@@ -566,6 +566,22 @@ interrupt void mainISR(void) {
     return;
 } // end of mainISR() function
 
+interrupt void qepISR(void) {
+    CPU_disableGlobalInts(hal.cpuHandle);
+    HAL_Obj *halObj = (HAL_Obj*) halHandle;
+
+    QEP_clear_all_interrupt_flags(halObj->qepHandle[HAL_Qep_QEP1]);
+    //hal.qepIndexFound = true;
+    HAL_toggleLed(halObj,(GPIO_Number_e)HAL_Gpio_LED3);
+    halObj->gimbalPosOffset = _IQmpy(STPOSCONV_getPosition_mrev(st_obj.posConvHandle), _IQ(-1.0));
+    QEP_disable_all_interrupts(halObj->qepHandle[HAL_Qep_QEP1]);
+
+    PIE_clearInt(hal.pieHandle, PIE_GroupNumber_5);
+    CPU_enableGlobalInts(hal.cpuHandle);
+
+    return;
+}
+
 void updateGlobalVariables_motor(CTRL_Handle handle, ST_Handle sthandle) {
     CTRL_Obj *obj = (CTRL_Obj *) handle;
     ST_Obj *stObj = (ST_Obj *) sthandle;

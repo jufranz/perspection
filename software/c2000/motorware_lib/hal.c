@@ -1878,19 +1878,4 @@ interrupt void spiISR(void) {
     return;
 }
 
-interrupt void qepISR(void) {
-    CPU_disableGlobalInts(hal.cpuHandle);
-
-    QEP_clear_all_interrupt_flags(hal.qepHandle[HAL_Qep_QEP1]);
-    //hal.qepIndexFound = true;
-    HAL_toggleLed(&hal,(GPIO_Number_e)HAL_Gpio_LED3);
-    hal.qepIndexFound = true;//QEP_clear_posn_counter(hal.qepHandle[HAL_Qep_QEP1]);
-    QEP_disable_all_interrupts(hal.qepHandle[HAL_Qep_QEP1]);
-
-    PIE_clearInt(hal.pieHandle, PIE_GroupNumber_5);
-    CPU_enableGlobalInts(hal.cpuHandle);
-
-    return;
-}
-
 // end of file
