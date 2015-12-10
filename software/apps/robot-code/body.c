@@ -7,7 +7,6 @@
 
 #include "dev/comms.h"
 #include "dev/leds.h"
-/*#include "dev/scissor.h"*/
 #include "dev/spi_wrapper.h"
 
 #include <stdio.h>
@@ -84,8 +83,6 @@ static void movement_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     leds_on(LEDS_RED | LEDS_GREEN);
 
     unpackMoveData(&recvMoveData);
-
-    /*scissorMotorControl(recvMoveData.sDir, recvMoveData.sSpeed);*/
 
 #if BODY_MAIN_DEBUG
     printf("Dir: %d, Speed: %d\r\n", recvMoveData.tDir, recvMoveData.tSpeed);

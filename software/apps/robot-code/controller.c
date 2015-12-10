@@ -100,7 +100,6 @@ PROCESS_THREAD(init_wireless_and_control_process, ev, data) {
 #endif
 
     while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {
-    while(hasHeadsetAckedEnable == 1 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 1) {
         leds_on(LEDS_BLUE);
 
         broadcastStartupData(&startupData, &broadcast);
