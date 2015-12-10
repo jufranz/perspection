@@ -516,9 +516,8 @@ interrupt void mainISR(void) {
     CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
 
     // toggle status LED
-    if(gLEDcnt++ > (uint_least32_t)(USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz))
-    {
-        HAL_toggleLed(halHandle,(GPIO_Number_e)HAL_Gpio_LED2);
+    if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
+        HAL_toggleLed(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
         gLEDcnt = 0;
     }
 
@@ -571,9 +570,8 @@ interrupt void qepISR(void) {
     HAL_Obj *halObj = (HAL_Obj*) halHandle;
 
     QEP_clear_all_interrupt_flags(halObj->qepHandle[HAL_Qep_QEP1]);
-    //hal.qepIndexFound = true;
-    HAL_toggleLed(halObj,(GPIO_Number_e)HAL_Gpio_LED3);
-    halObj->gimbalPosOffset = _IQmpy(STPOSCONV_getPosition_mrev(st_obj.posConvHandle), _IQ(-1.0));
+    HAL_toggleLed(halObj, (GPIO_Number_e) HAL_Gpio_LED3);
+    halObj->gimbalPosOffset = STPOSCONV_getPosition_mrev(st_obj.posConvHandle);
     QEP_disable_all_interrupts(halObj->qepHandle[HAL_Qep_QEP1]);
 
     PIE_clearInt(hal.pieHandle, PIE_GroupNumber_5);
