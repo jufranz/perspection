@@ -39,7 +39,7 @@ AUTOSTART_PROCESSES(&init_wireless_and_control_process);
 // Helper functions
 
 static int16_t isCloseToCenter(int16_t i) {
-    if(i > -150 && i < 150) return 0;
+    if(i > -1000 && i < 1000) return 0;
     else return i;
 }
 
@@ -100,7 +100,12 @@ PROCESS_THREAD(init_wireless_and_control_process, ev, data) {
 #endif
 
     while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {
+    while(hasHeadsetAckedEnable == 1 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 1) {
+        leds_on(LEDS_BLUE);
+
         broadcastStartupData(&startupData, &broadcast);
+
+        leds_off(LEDS_BLUE);
 
         etimer_set(&startup_timer, CLOCK_SECOND / 2);
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&startup_timer));
@@ -142,10 +147,9 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 
         // It says AVDD5 but the reference voltage is actually 3V3
-        // 32300 - 80, midpoint 17142
-        ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 17142);
-        // 32764 - 800, midpoint 16872
-        ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16832);
+        // Got these center points from testing
+        ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16992);
+        ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16482);
 
 #if CONTROLLER_MAIN_DEBUG
         printf("X: %d, Y: %d\r\n", ctrlX, ctrlY);
@@ -158,7 +162,8 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
             testData.tSpeed = 0;
         } else {
             testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)ctrlX) * 180 / M_PI) + 180) % 360;
-            testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)133);
+            testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)30);
+            testData.tSpeed -= 25;
             if(testData.tSpeed > 127) testData.tSpeed = 127;
         }
 

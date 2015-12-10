@@ -92,7 +92,7 @@ static void movement_recv(struct broadcast_conn* c, const linkaddr_t* from) {
 #endif
 
     // Sending the command off to the C2000
-    /*spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);*/
+    spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);
 
     leds_off(LEDS_RED | LEDS_GREEN);
 }
