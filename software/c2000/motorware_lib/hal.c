@@ -1811,10 +1811,10 @@ interrupt void spiISR(void) {
                 spiSlaveCmdLength = HAPTIC_TORQUE_CMD_LEN;
                 spiSlaveTxLength = 0;
             } else if (word == ENCODER_POS_OP) {
-                spiSlaveCmdLength = 0;
+                spiSlaveCmdLength = 1;
                 spiSlaveTxLength = ENCODER_POS_TX_LEN;
             } else if (word == BODY_MOTORS_OP) {
-                spiSlaveCmdLength = 0;
+                spiSlaveCmdLength = 1;
                 spiSlaveTxLength = BODY_MOTORS_TX_LEN;
             } else if (word == STARTUP_OP) {
                 spiSlaveCmdLength = STARTUP_CMD_LEN;

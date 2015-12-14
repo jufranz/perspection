@@ -5,6 +5,11 @@
         <connection XML_version="1.2" id="Texas Instruments XDS100v2 USB Debug Probe">
             <instance XML_version="1.2" href="drivers/tixds100v2c28x.xml" id="drivers" xml="tixds100v2c28x.xml" xmlpath="drivers"/>
             <instance XML_version="1.2" href="drivers/tixds100v2cla.xml" id="drivers" xml="tixds100v2cla.xml" xmlpath="drivers"/>
+            <property Type="choicelist" Value="2" id="The JTAG TCLK Frequency (MHz)">
+                <choice Name="Fixed with user specified slower value" value="SPECIFIC">
+                    <property Type="stringfield" Value="750KHz" id="-- Enter a value from 488Hz to 1.0MHz"/>
+                </choice>
+            </property>
             <platform XML_version="1.2" id="platform_0">
                 <instance XML_version="1.2" desc="TMS320F28069" href="devices/f28069.xml" id="TMS320F28069" xml="f28069.xml" xmlpath="devices"/>
             </platform>
