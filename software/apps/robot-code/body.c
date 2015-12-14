@@ -7,7 +7,6 @@
 
 #include "dev/comms.h"
 #include "dev/leds.h"
-/*#include "dev/scissor.h"*/
 #include "dev/spi_wrapper.h"
 
 #include <stdio.h>
@@ -85,14 +84,12 @@ static void movement_recv(struct broadcast_conn* c, const linkaddr_t* from) {
 
     unpackMoveData(&recvMoveData);
 
-    /*scissorMotorControl(recvMoveData.sDir, recvMoveData.sSpeed);*/
-
 #if BODY_MAIN_DEBUG
     printf("Dir: %d, Speed: %d\r\n", recvMoveData.tDir, recvMoveData.tSpeed);
 #endif
 
     // Sending the command off to the C2000
-    /*spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);*/
+    spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);
 
     leds_off(LEDS_RED | LEDS_GREEN);
 }

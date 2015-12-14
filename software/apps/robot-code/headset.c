@@ -24,8 +24,7 @@
 
 static struct broadcast_conn broadcast;
 
-static uint8_t shouldBeBroadcasting = 1; // TODO FOR TESTING
-/*static uint8_t shouldBeBroadcasting = 0;*/
+static uint8_t shouldBeBroadcasting = 0;
 
 // Contiki process declarations
 

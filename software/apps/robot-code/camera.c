@@ -16,8 +16,8 @@
 
 #define CAMERA_MAIN_DEBUG 0
 
-#define MAX_PITCH -114  // Should be around +80 degrees
-#define MIN_PITCH -910  // Should be around -80 degrees
+#define MAX_PITCH 425  // Should be around +80 degrees
+#define MIN_PITCH -375  // Should be around -80 degrees
 
 #define LAST_PITCH_UNINIT 9000
 #define PITCH_COUNTS_PER_REV 2047
@@ -93,6 +93,7 @@ static void gimbal_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     if(pitchToSend > MAX_PITCH) pitchToSend = MAX_PITCH;
     if(pitchToSend < MIN_PITCH) pitchToSend = MIN_PITCH;
     pitchToSend -= MIN_PITCH;
+    pitchToSend = ((MAX_PITCH - MIN_PITCH) - pitchToSend);
 
 #if CAMERA_MAIN_DEBUG
     printf("Yaw: %d, Pitch: %d, Sent Pitch: %d\n", recvGimbalData.gYaw, recvGimbalData.gPitch, pitchToSend);
