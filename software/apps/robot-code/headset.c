@@ -14,7 +14,7 @@
 
 // Defines
 
-#define HEADSET_MAIN_DEBUG 0
+#define HEADSET_MAIN_DEBUG 1
 
 #define SAMPLES_PER_SEC 100
 #define WAIT_FOR_IMU_POWERED 0
@@ -24,7 +24,7 @@
 
 static struct broadcast_conn broadcast;
 
-static uint8_t shouldBeBroadcasting = 0;
+static uint8_t shouldBeBroadcasting = 1;
 
 // Contiki process declarations
 

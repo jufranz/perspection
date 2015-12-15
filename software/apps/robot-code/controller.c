@@ -15,7 +15,7 @@
 
 // Defines
 
-#define CONTROLLER_MAIN_DEBUG 0
+#define CONTROLLER_MAIN_DEBUG 1
 
 #define SAMPLES_PER_SEC 50
 #define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4 // BLUE WIRE
@@ -26,9 +26,12 @@
 
 static struct broadcast_conn broadcast;
 
-static uint8_t hasHeadsetAckedEnable = 0;
-static uint8_t hasRobotBodyAckedEnable = 0;
-static uint8_t hasCameraAckedEnable = 0;
+/*static uint8_t hasHeadsetAckedEnable = 0;*/
+/*static uint8_t hasRobotBodyAckedEnable = 0;*/
+/*static uint8_t hasCameraAckedEnable = 0;*/
+static uint8_t hasHeadsetAckedEnable = 1;
+static uint8_t hasRobotBodyAckedEnable = 1;
+static uint8_t hasCameraAckedEnable = 1;
 
 // Contiki process declarations
 
@@ -128,6 +131,7 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
     PROCESS_BEGIN();
 
     initMoveNetwork(&broadcast, &broadcast_call);
+    spi_wrapper_init();
 
     static struct etimer et;
     static moveData_t testData;
@@ -151,7 +155,7 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
         ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16482);
 
 #if CONTROLLER_MAIN_DEBUG
-        printf("X: %d, Y: %d\r\n", ctrlX, ctrlY);
+        /*printf("X: %d, Y: %d\r\n", ctrlX, ctrlY);*/
 #endif
 
         // XY control
@@ -167,8 +171,14 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
         }
 
 #if CONTROLLER_MAIN_DEBUG
-        printf("degrees: %d, speed: %d\r\n", testData.tDir, testData.tSpeed);
-        printf("sdegree: %d, sspeed: %d\r\n", testData.sDir, testData.sSpeed);
+        /*printf("degrees: %d, speed: %d\r\n", testData.tDir, testData.tSpeed);*/
+        /*printf("sdegree: %d, sspeed: %d\r\n", testData.sDir, testData.sSpeed);*/
+#endif
+
+        uint16_t encoderPos = spi_wrapper_get_encoder_pos();
+        spi_wrapper_send_haptic_torque(encoderPos);
+#if CONTROLLER_MAIN_DEBUG
+        printf("encoder pos: %d\r\n", encoderPos);
 #endif
 
         leds_on(LEDS_RED | LEDS_GREEN);
