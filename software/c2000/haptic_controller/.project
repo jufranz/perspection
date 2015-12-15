@@ -92,9 +92,9 @@
 			<locationURI>MW_INSTALL_DIR/sw/modules/fast/lib/32b/f28x/f2806x/2806xRevB_IQmath_BootROMSymbols.lib</locationURI>
 		</link>
 		<link>
-			<name>F28069M_ram_lnk.cmd</name>
+			<name>F28069M.cmd</name>
 			<type>1</type>
-			<locationURI>MW_INSTALL_DIR/sw/ide/ccs/cmd/f2806x/F28069M_ram_lnk.cmd</locationURI>
+			<locationURI>MW_INSTALL_DIR/sw/ide/ccs/cmd/f2806x/F28069M.cmd</locationURI>
 		</link>
 		<link>
 			<name>IQmath.lib</name>

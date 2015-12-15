@@ -1,139 +1,102 @@
-/* --COPYRIGHT--,BSD
- * Copyright (c) 2012, LineStream Technologies Incorporated
- * Copyright (c) 2012, Texas Instruments Incorporated
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * *  Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * *  Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * *  Neither the names of Texas Instruments Incorporated, LineStream
- *    Technologies Incorporated, nor the names of its contributors may be
- *    used to endorse or promote products derived from this software without
- *    specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * --/COPYRIGHT--*/
-//! \file   solutions/instaspin_motion/src/proj_lab13a.c
-//! \brief  Tuning the InstaSPIN-MOTION Position Controller
-//!
-//! (C) Copyright 2012, LineStream Technologies, Inc.
-//! (C) Copyright 2011, Texas Instruments, Inc.
-//! \defgroup PROJ_LAB13A PROJ_LAB13A
-//@{
-//! \defgroup PROJ_LAB13A_OVERVIEW Project Overview
-//!
-//! Tuning the InstaSPIN-MOTION Position Controller
-//!
-// **************************************************************************
-// the includes
-// system includes
-#include <math.h>
 #include "main_position.h"
+#include "perspection_adc.h"
+#include <math.h>
 
 #ifdef FLASH
-#pragma CODE_SECTION(mainISR,"ramfuncs");
+#pragma CODE_SECTION(mainISR, "ramfuncs");
+#pragma CODE_SECTION(spiISR, "ramfuncs");
 #endif
-
-// Include header files used in the main function
-
-// **************************************************************************
-// the defines
-
-#define LED_BLINK_FREQ_Hz   5
-#define PI 3.1415926
-
-// **************************************************************************
-// the globals
-
-uint_least16_t gCounter_updateGlobals = 0;
-
-bool Flag_Latch_softwareUpdate = true;
-
-CTRL_Handle ctrlHandle;
-
-HAL_Handle halHandle;
-
-USER_Params gUserParams;
-
-HAL_PwmData_t gPwmData = { _IQ(0.0), _IQ(0.0), _IQ(0.0) };
-
-HAL_AdcData_t gAdcData;
-
-_iq gMaxCurrentSlope = _IQ(0.0);
-
-#ifdef FAST_ROM_V1p6
-CTRL_Obj *controller_obj;
-#else
-CTRL_Obj ctrl;              //v1p7 format
-#endif
-
-ENC_Handle encHandle;
-ENC_Obj enc;
-
-SLIP_Handle slipHandle;
-SLIP_Obj slip;
-
-ST_Obj st_obj;
-ST_Handle stHandle;
-
-uint16_t gLEDcnt = 0;
-
-volatile MOTOR_Vars_t gMotorVars = MOTOR_Vars_INIT;
 
 #ifdef FLASH
 // Used for running BackGround in flash, and ISR in RAM
-        extern uint16_t *RamfuncsLoadStart,
-*RamfuncsLoadEnd, *RamfuncsRunStart;
+extern uint16_t *RamfuncsLoadStart, *RamfuncsLoadEnd, *RamfuncsRunStart;
 #endif
 
-#ifdef DRV8301_SPI
-// Watch window interface to the 8301 SPI
-DRV_SPI_8301_Vars_t gDrvSpi8301Vars;
-#endif
+// Limits and defines
 
-_iq gFlux_pu_to_Wb_sf;
+#define PWM_FREQUENCY 20000.0
+#define PWM_PERIOD_MS (1000.0 / PWM_FREQUENCY)
 
-_iq gFlux_pu_to_VpHz_sf;
+#define POS_DRIVER_CTL_PORT_NUM GPIO_B_NUM
+#define POS_DRIVER_CTL_PIN_NUM 3
+#define NEG_DRIVER_CTL_PORT_NUM GPIO_B_NUM
+#define NEG_DRIVER_CTL_PIN_NUM 4
 
-_iq gTorque_Ls_Id_Iq_pu_to_Nm_sf;
+#define TORQUE_MAX 1300.0 // Calibrated to the hardware
+#define TORQUE_MIN 0.0
+#define TORQUE_RANGE (TORQUE_MAX - TORQUE_MIN)
 
-_iq gTorque_Flux_Iq_pu_to_Nm_sf;
+#define TORQUE_DIRECTION_POSITIVE 1
+#define TORQUE_DIRECTION_NEGATIVE 0
 
-uint16_t rdata = 0;
-uint16_t sdata = 0;
-unsigned int ints = 0;
+#define DUTY_CYCLE_MAX_ADJUSTMENT 2.0
+#define DUTY_CYCLE_FILTER_LENGTH 10
 
-// **************************************************************************
-// the functions
+// Global state
+
+HAL_Handle halHandle;
+USER_Params gUserParams;
+
+double haptics_duty_cycle;
+double duty_cycle_filter[DUTY_CYCLE_FILTER_LENGTH];
+uint16_t duty_cycle_filter_index;
+bool isSystemEnabled;
+uint16_t currentTorqueDir;
+double lastPosition;
+
+// Functions
+
+void adjust_duty_cycle(double desired_torque);
+void set_duty_cycle(double new_duty_cycle);
+void init_duty_cycle_filter();
+void add_duty_cycle_to_filter(double duty_cycle);
+double get_duty_cycle_filter_value();
 
 void processSpiMessages();
-void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed);
+void startupControl(HAL_Handle halHandle, bool shouldBeRunning);
+void hapticTorqueControl(HAL_Handle halHandle, uint16_t desiredTorque);
+
+double get_current_torque();
+uint16_t read_raw_torque();
+double normalize_raw_torque(uint16_t raw_torque);
+
+// Torque as a function of position
+// Position is in degrees, torque should be -1.0 to 1.0
+
+double torque_from_motion(double position, double velocity) {
+    // Spring
+    double offsetPosition = position - 180.0;
+    double k = 120.0;   // Spring constant
+    double c = 0.0003;  // Damping constant
+    return (offsetPosition / -k) - (velocity * c);
+
+    // Justn damping
+//    return -(velocity * c);
+
+// Wall
+//    if(position > 45.0) {
+//        return -0.5;
+//    } else {
+//        return 0;
+//    }
+
+//    return 0.0;
+}
+
+// The torque control loop
+
+void adjust_duty_cycle(double desired_torque) {
+    double current_torque = get_current_torque();
+
+    double torque_delta = desired_torque - current_torque; // Between -2.0 and 2.0
+    double normalized_torque_delta = torque_delta / 2.0; // Between -1.0 and 1.0
+    double duty_cycle_adjustment = (DUTY_CYCLE_MAX_ADJUSTMENT * normalized_torque_delta);
+    set_duty_cycle(haptics_duty_cycle + duty_cycle_adjustment);
+}
+
+// Real shit yo
 
 void main(void) {
-    uint_least8_t estNumber = 0;
-
-#ifdef FAST_ROM_V1p6
-    uint_least8_t ctrlNumber = 0;
-#endif
-
     // Only used if running from FLASH
     // Note that the variable FLASH is defined by the project
 #ifdef FLASH
@@ -149,54 +112,18 @@ void main(void) {
     // check for errors in user parameters
     USER_checkForErrors(&gUserParams);
 
-    // store user parameter error in global variable
-    gMotorVars.UserErrorCode = USER_getErrorCode(&gUserParams);
-
-    // do not allow code execution if there is a user parameter error
-    if (gMotorVars.UserErrorCode != USER_ErrorCode_NoError) {
-        for (;;) {
-            gMotorVars.Flag_enableSys = false;
-        }
-    }
-
     // initialize the user parameters
     USER_setParams(&gUserParams);
 
     // set the hardware abstraction layer parameters
     HAL_setParams(halHandle, &gUserParams);
 
-    // initialize the controller
-#ifdef FAST_ROM_V1p6
-    ctrlHandle = CTRL_initCtrl(ctrlNumber, estNumber);        //v1p6 format (06xF and 06xM devices)
-    controller_obj = (CTRL_Obj *) ctrlHandle;
-#else
-    ctrlHandle = CTRL_initCtrl(estNumber,&ctrl,sizeof(ctrl)); //v1p7 format default
-#endif
-
-    {
-        CTRL_Version version;
-
-        // get the version number
-        CTRL_getVersion(ctrlHandle, &version);
-
-        gMotorVars.CtrlVersion = version;
-    }
-
-    // set the default controller parameters
-    CTRL_setParams(ctrlHandle, &gUserParams);
-
     // setup faults
     HAL_setupFaults(halHandle);
 
-    // initialize the interrupt vector table
+    // yo these are important
     HAL_initIntVectorTable(halHandle);
-
-    // enable the ADC interrupts
     HAL_enableAdcInts(halHandle);
-
-    // enable the SPI interrupts
-    HAL_enableSpiInt(halHandle);
-    HAL_writeSpiSlaveData(halHandle, 30);
 
     // enable global interrupts
     HAL_enableGlobalInts(halHandle);
@@ -204,638 +131,142 @@ void main(void) {
     // enable debug interrupts
     HAL_enableDebugInt(halHandle);
 
-    // disable the PWM
+    // disable the gimbal PWMs to get their interrupts
     HAL_disablePwm(halHandle);
 
-    // initialize the ENC module
-    encHandle = ENC_init(&enc, sizeof(enc));
+    // enable SPI A slave and SPI interrupts
+    HAL_enableSpiInt(halHandle);
+    HAL_writeSpiSlaveData(halHandle, 30); // Just some junk for the TX buffer, probably don't need
 
-    // setup the ENC module
-    ENC_setup(encHandle, 1, USER_MOTOR_NUM_POLE_PAIRS, USER_MOTOR_ENCODER_LINES, 0, USER_IQ_FULL_SCALE_FREQ_Hz, USER_ISR_FREQ_Hz, 8000.0);
+    // ayyyydc
+    perspection_adc_init(halHandle);
 
-    // initialize the SLIP module
-    slipHandle = SLIP_init(&slip, sizeof(slip));
+    // Start up a timer to calculate angular velocity
+    HAL_startTimer(halHandle, 2);
 
-    // setup the SLIP module
-    SLIP_setup(slipHandle, _IQ(gUserParams.ctrlPeriod_sec));
-
-    // initialize the SpinTAC Components
-    stHandle = ST_init(&st_obj, sizeof(st_obj));
-
-    // setup the SpinTAC Components
-    ST_setupPosConv(stHandle);
-    ST_setupPosCtl(stHandle);
-
-#ifdef DRV8301_SPI
-    // turn on the DRV8301 if present
-    HAL_enableDrv(halHandle);
-    // initialize the DRV8301 interface
-    HAL_setupDrvSpi(halHandle, &gDrvSpi8301Vars);
-#endif
-
-    // enable DC bus compensation
-    CTRL_setFlag_enableDcBusComp(ctrlHandle, true);
-
-    // compute scaling factors for flux and torque calculations
-    gFlux_pu_to_Wb_sf = USER_computeFlux_pu_to_Wb_sf();
-    gFlux_pu_to_VpHz_sf = USER_computeFlux_pu_to_VpHz_sf();
-    gTorque_Ls_Id_Iq_pu_to_Nm_sf = USER_computeTorque_Ls_Id_Iq_pu_to_Nm_sf();
-    gTorque_Flux_Iq_pu_to_Nm_sf = USER_computeTorque_Flux_Iq_pu_to_Nm_sf();
+    // reset shit
+    haptics_duty_cycle = 0.0;
+    isSystemEnabled = false;
+    lastPosition = 0.0;
 
     for (;;) {
+//        HAL_turnLedOn(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
+
         processSpiMessages();
 
-        // Waiting for enable system flag to be set
-        if (!(gMotorVars.Flag_enableSys)) {
-            continue;
+        double position = (360.0 * (double)HAL_getQepPosnCounts(halHandle)) / (double) HAL_getQepPosnMaximum(halHandle);
+
+        uint32_t timeDiff = 0xFFFFFFFF - HAL_readTimerCnt(halHandle, 2);
+        HAL_reloadTimer(halHandle, 2);
+        double velocity = (position - lastPosition) / ((double)timeDiff / ((double)gUserParams.systemFreq_MHz * 1000000.0));
+
+        double desired_torque = torque_from_motion(position, velocity);
+        if (desired_torque < -1.0) {
+            desired_torque = -1.0;
+        } else if (desired_torque > 1.0) {
+            desired_torque = 1.0;
         }
 
-        // Dis-able the Library internal PI.  Iq has no reference now
-        CTRL_setFlag_enableSpeedCtrl(ctrlHandle, false);
+        adjust_duty_cycle(desired_torque);
+        lastPosition = position;
 
-        // loop while the enable system flag is true
-        while (gMotorVars.Flag_enableSys) {
-            CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
-            ST_Obj *stObj = (ST_Obj *) stHandle;
-
-            // increment counters
-            gCounter_updateGlobals++;
-
-            // enable/disable the use of motor parameters being loaded from user.h
-            CTRL_setFlag_enableUserMotorParams(ctrlHandle, gMotorVars.Flag_enableUserParams);
-
-            // enable/disable Rs recalibration during motor startup
-            EST_setFlag_enableRsRecalc(obj->estHandle, gMotorVars.Flag_enableRsRecalc);
-
-            // enable/disable automatic calculation of bias values
-            CTRL_setFlag_enableOffset(ctrlHandle, gMotorVars.Flag_enableOffsetcalc);
-
-            if (CTRL_isError(ctrlHandle)) {
-                // set the enable controller flag to false
-                CTRL_setFlag_enableCtrl(ctrlHandle, false);
-
-                // set the enable system flag to false
-                gMotorVars.Flag_enableSys = false;
-
-                // disable the PWM
-                HAL_disablePwm(halHandle);
-            } else {
-                // update the controller state
-                bool flag_ctrlStateChanged = CTRL_updateState(ctrlHandle);
-
-                // enable or disable the control
-                CTRL_setFlag_enableCtrl(ctrlHandle, gMotorVars.Flag_Run_Identify);
-
-                if (flag_ctrlStateChanged) {
-                    CTRL_State_e ctrlState = CTRL_getState(ctrlHandle);
-
-                    if (ctrlState == CTRL_State_OffLine) {
-                        // enable the PWM
-                        HAL_enablePwm(halHandle);
-                    } else if (ctrlState == CTRL_State_OnLine) {
-                        if (gMotorVars.Flag_enableOffsetcalc == true) {
-                            // update the ADC bias values
-                            HAL_updateAdcBias(halHandle);
-                        } else {
-                            // set the current bias
-                            HAL_setBias(halHandle, HAL_SensorType_Current, 0, _IQ(I_A_offset));
-                            HAL_setBias(halHandle, HAL_SensorType_Current, 1, _IQ(I_B_offset));
-                            HAL_setBias(halHandle, HAL_SensorType_Current, 2, _IQ(I_C_offset));
-
-                            // set the voltage bias
-                            HAL_setBias(halHandle, HAL_SensorType_Voltage, 0, _IQ(V_A_offset));
-                            HAL_setBias(halHandle, HAL_SensorType_Voltage, 1, _IQ(V_B_offset));
-                            HAL_setBias(halHandle, HAL_SensorType_Voltage, 2, _IQ(V_C_offset));
-                        }
-
-                        // Return the bias value for currents
-                        gMotorVars.I_bias.value[0] = HAL_getBias(halHandle, HAL_SensorType_Current, 0);
-                        gMotorVars.I_bias.value[1] = HAL_getBias(halHandle, HAL_SensorType_Current, 1);
-                        gMotorVars.I_bias.value[2] = HAL_getBias(halHandle, HAL_SensorType_Current, 2);
-
-                        // Return the bias value for voltages
-                        gMotorVars.V_bias.value[0] = HAL_getBias(halHandle, HAL_SensorType_Voltage, 0);
-                        gMotorVars.V_bias.value[1] = HAL_getBias(halHandle, HAL_SensorType_Voltage, 1);
-                        gMotorVars.V_bias.value[2] = HAL_getBias(halHandle, HAL_SensorType_Voltage, 2);
-
-                        // enable the PWM
-                        HAL_enablePwm(halHandle);
-                    } else if (ctrlState == CTRL_State_Idle) {
-                        // disable the PWM
-                        HAL_disablePwm(halHandle);
-                        gMotorVars.Flag_Run_Identify = false;
-                    }
-
-                    if ((CTRL_getFlag_enableUserMotorParams(ctrlHandle) == true) && (ctrlState > CTRL_State_Idle) && (gMotorVars.CtrlVersion.minor == 6)) {
-                        // call this function to fix 1p6
-                        USER_softwareUpdate1p6(ctrlHandle);
-                    }
-
-                }
-            }
-
-            if (EST_isMotorIdentified(obj->estHandle)) {
-                // set the current ramp
-                EST_setMaxCurrentSlope_pu(obj->estHandle, gMaxCurrentSlope);
-                gMotorVars.Flag_MotorIdentified = true;
-
-                // set the speed reference
-                CTRL_setSpd_ref_krpm(ctrlHandle, STPOSMOVE_getVelocityReference(stObj->posMoveHandle));
-
-                // set the speed acceleration
-                CTRL_setMaxAccel_pu(ctrlHandle, _IQmpy(MAX_ACCEL_KRPMPS_SF, gMotorVars.MaxAccel_krpmps));
-
-                // enable the SpinTAC Position Controller
-                STPOSCTL_setEnable(stObj->posCtlHandle, true);
-
-                if (EST_getState(obj->estHandle) != EST_State_OnLine) {
-                    // if the system is not running, disable SpinTAC Position Controller
-                    STPOSCTL_setEnable(stObj->posCtlHandle, false);
-                }
-
-                if (Flag_Latch_softwareUpdate) {
-                    Flag_Latch_softwareUpdate = false;
-
-                    USER_calcPIgains(ctrlHandle);
-
-                    // initialize the watch window kp and ki current values with pre-calculated values
-                    gMotorVars.Kp_Idq = CTRL_getKp(ctrlHandle, CTRL_Type_PID_Id);
-                    gMotorVars.Ki_Idq = CTRL_getKi(ctrlHandle, CTRL_Type_PID_Id);
-
-                    // initialize the watch window Bw value with the default value
-                    gMotorVars.SpinTAC.PosCtlBw_radps = STPOSCTL_getBandwidth_radps(stObj->posCtlHandle);
-
-                    // initialize the watch window with maximum and minimum Iq reference
-                    gMotorVars.SpinTAC.PosCtlOutputMax_A = _IQmpy(STPOSCTL_getOutputMaximum(stObj->posCtlHandle), _IQ(USER_IQ_FULL_SCALE_CURRENT_A));
-                    gMotorVars.SpinTAC.PosCtlOutputMin_A = _IQmpy(STPOSCTL_getOutputMinimum(stObj->posCtlHandle), _IQ(USER_IQ_FULL_SCALE_CURRENT_A));
-                }
-
-            } else {
-                Flag_Latch_softwareUpdate = true;
-
-                // the estimator sets the maximum current slope during identification
-                gMaxCurrentSlope = EST_getMaxCurrentSlope_pu(obj->estHandle);
-            }
-
-            // when appropriate, update the global variables
-            if (gCounter_updateGlobals >= NUM_MAIN_TICKS_FOR_GLOBAL_VARIABLE_UPDATE) {
-                // reset the counter
-                gCounter_updateGlobals = 0;
-
-                updateGlobalVariables_motor(ctrlHandle, stHandle);
-            }
-
-            // update Kp and Ki gains
-            updateKpKiGains(ctrlHandle);
-
-            // set the SpinTAC (ST) bandwidth scale
-            STPOSCTL_setBandwidth_radps(stObj->posCtlHandle, gMotorVars.SpinTAC.PosCtlBw_radps);
-
-            // set the maximum and minimum values for Iq reference
-            STPOSCTL_setOutputMaximums(stObj->posCtlHandle, _IQmpy(gMotorVars.SpinTAC.PosCtlOutputMax_A, _IQ(1.0 / USER_IQ_FULL_SCALE_CURRENT_A)), _IQmpy(gMotorVars.SpinTAC.PosCtlOutputMin_A, _IQ(1.0 / USER_IQ_FULL_SCALE_CURRENT_A)));
-
-            // enable/disable the forced angle
-            EST_setFlag_enableForceAngle(obj->estHandle, gMotorVars.Flag_enableForceAngle);
-
-            // enable or disable power warp
-            CTRL_setFlag_enablePowerWarp(ctrlHandle, gMotorVars.Flag_enablePowerWarp);
-
-#ifdef DRV8301_SPI
-            HAL_writeDrvData(halHandle, &gDrvSpi8301Vars);
-
-            HAL_readDrvData(halHandle, &gDrvSpi8301Vars);
-#endif
-
-        } // end of while(gFlag_enableSys) loop
-
-        // disable the PWM
-        HAL_disablePwm(halHandle);
-
-        // set the default controller parameters (Reset the control to re-identify the motor)
-        CTRL_setParams(ctrlHandle, &gUserParams);
-        gMotorVars.Flag_Run_Identify = false;
-
-        // setup the SpinTAC Components
-        ST_setupPosConv(stHandle);
-        ST_setupPosCtl(stHandle);
-
-    } // end of for(;;) loop
-
-} // end of main() function
+//        HAL_turnLedOff(halHandle, (GPIO_Number_e)HAL_Gpio_LED2);
+    }
+}
 
 void processSpiMessages() {
-    // TODODODODODODODO
-    // Check if there's new data
-    // Act on it
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
+
+    if (obj->hasNewStartupControlData) {
+        startupControl(halHandle, obj->startupControlData);
+        obj->hasNewStartupControlData = false;
+    }
 }
 
-void robotBodyMotorControl(HAL_Handle halHandle, double direction, double speed) {
-    double dirInRads = (direction * PI) / 180.0;
-    double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle2 = (speed * cos(((30.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle3 = (speed * cos(((270.0 * PI) / 180.0) - dirInRads));
+void startupControl(HAL_Handle halHandle, bool shouldBeRunning) {
+    HAL_Obj *obj = (HAL_Obj *) halHandle;
 
-    uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
-    uint16_t direction2 = (dutyCycle2 > 0.0) ? 1 : 0;
-    uint16_t direction3 = (dutyCycle3 > 0.0) ? 1 : 0;
+    isSystemEnabled = shouldBeRunning;
 
-    dutyCycle1 = (dutyCycle1 < 0.0) ? (dutyCycle1 * -1.0) : dutyCycle1;
-    dutyCycle2 = (dutyCycle2 < 0.0) ? (dutyCycle2 * -1.0) : dutyCycle2;
-    dutyCycle3 = (dutyCycle3 < 0.0) ? (dutyCycle3 * -1.0) : dutyCycle3;
-
-    HAL_setHbridge1Direction(halHandle, direction1);
-    HAL_setHbridge1PwmDutyCycle(halHandle, dutyCycle1);
-    HAL_setHbridge2Direction(halHandle, direction2);
-    HAL_setHbridge2PwmDutyCycle(halHandle, dutyCycle2);
-    HAL_setHbridge3Direction(halHandle, direction3);
-    HAL_setHbridge3PwmDutyCycle(halHandle, dutyCycle3);
+    if (!shouldBeRunning) {
+        // Reset stuff so we don't jump around acting on old data on the next startup
+        obj->hasNewHapticTorqueControlData = false;
+    }
 }
+
+// Helpful function definitions
+
+void set_duty_cycle(double new_duty_cycle) {
+    add_duty_cycle_to_filter(new_duty_cycle);
+    haptics_duty_cycle = get_duty_cycle_filter_value();
+    if (haptics_duty_cycle < -1.0) {
+        haptics_duty_cycle = -1.0;
+    } else if (haptics_duty_cycle > 1.0) {
+        haptics_duty_cycle = 1.0;
+    }
+
+    if (haptics_duty_cycle < 0.0) {
+        currentTorqueDir = TORQUE_DIRECTION_NEGATIVE;
+        HAL_setAuxHbridgePwmDutyCycle(halHandle, -haptics_duty_cycle);
+    } else if (haptics_duty_cycle > 0.0) {
+        currentTorqueDir = TORQUE_DIRECTION_POSITIVE;
+        HAL_setAuxHbridgePwmDutyCycle(halHandle, haptics_duty_cycle);
+    } else {
+        HAL_setAuxHbridgePwmDutyCycle(halHandle, 0.0);
+    }
+
+    HAL_setAuxHbridgeDirection(halHandle, currentTorqueDir);
+}
+
+void init_duty_cycle_filter() {
+    duty_cycle_filter_index = 0;
+    uint16_t i;
+    for (i = 0; i < DUTY_CYCLE_FILTER_LENGTH; i++) {
+        duty_cycle_filter[i] = 0.0;
+    }
+}
+
+void add_duty_cycle_to_filter(double duty_cycle) {
+    duty_cycle_filter[duty_cycle_filter_index] = duty_cycle;
+    duty_cycle_filter_index++;
+    if (duty_cycle_filter_index >= DUTY_CYCLE_FILTER_LENGTH) {
+        duty_cycle_filter_index = 0;
+    }
+}
+
+double get_duty_cycle_filter_value() {
+    double duty_cycle_average = 0.0;
+    uint16_t i;
+    for (i = 0; i < DUTY_CYCLE_FILTER_LENGTH; i++) {
+        duty_cycle_average += duty_cycle_filter[i];
+    }
+    return (duty_cycle_average / (double) DUTY_CYCLE_FILTER_LENGTH);
+}
+
+double get_current_torque() {
+    uint16_t raw_torque = read_raw_torque();
+
+    if (currentTorqueDir == TORQUE_DIRECTION_NEGATIVE) {
+        return -normalize_raw_torque(raw_torque);
+    } else {
+        return normalize_raw_torque(raw_torque);
+    }
+}
+
+uint16_t read_raw_torque() {
+    return perspection_adc_read_aux_vpropi(halHandle);
+}
+
+double normalize_raw_torque(uint16_t raw_torque) {
+    return (((double)raw_torque) / TORQUE_RANGE);
+}
+
+// TI bullshit
 
 interrupt void mainISR(void) {
-    static uint16_t stCnt = 0;
-    CTRL_Obj *obj = (CTRL_Obj *) ctrlHandle;
-
-    // toggle status LED
-    if (gLEDcnt++ > (uint_least32_t) (USER_ISR_FREQ_Hz / LED_BLINK_FREQ_Hz)) {
-        HAL_toggleLed(halHandle, (GPIO_Number_e) HAL_Gpio_LED2);
-        gLEDcnt = 0;
-    }
-
-    // compute the electrical angle
-    ENC_calcElecAngle(encHandle, HAL_getQepPosnCounts(halHandle));
-
-    // acknowledge the ADC interrupt
-    HAL_acqAdcInt(halHandle, ADC_IntNumber_1);
-
-    // convert the ADC data
-    HAL_readAdcData(halHandle, &gAdcData);
-
-    // Run the SpinTAC Components
-    if (stCnt++ >= ISR_TICKS_PER_SPINTAC_TICK) {
-        ST_runPosConv(stHandle, encHandle, ctrlHandle);
-        ST_runPosCtl(stHandle, ctrlHandle);
-        stCnt = 1;
-    }
-
-    if (USER_MOTOR_TYPE == MOTOR_Type_Induction) {
-        // update the electrical angle for the SLIP module
-        SLIP_setElectricalAngle(slipHandle, ENC_getElecAngle(encHandle));
-        // compute the amount of slip
-        SLIP_run(slipHandle);
-
-        // run the controller
-        CTRL_run(ctrlHandle, halHandle, &gAdcData, &gPwmData, SLIP_getMagneticAngle(slipHandle));
-    } else {
-        // run the controller
-        CTRL_run(ctrlHandle, halHandle, &gAdcData, &gPwmData, ENC_getElecAngle(encHandle));
-    }
-
-    // write the PWM compare values
-    HAL_writePwmData(halHandle, &gPwmData);
-
-    // setup the controller
-    CTRL_setup(ctrlHandle);
-
-    // if we are forcing alignment, using the Rs Recalculation, align the eQEP angle with the rotor angle
-    if ((EST_getState(obj->estHandle) == EST_State_Rs) && (USER_MOTOR_TYPE == MOTOR_Type_Pm)) {
-        ENC_setZeroOffset(encHandle, (uint32_t) (HAL_getQepPosnMaximum(halHandle) - HAL_getQepPosnCounts(halHandle)));
-    }
-
-    return;
-} // end of mainISR() function
-
-void updateGlobalVariables_motor(CTRL_Handle handle, ST_Handle sthandle) {
-    CTRL_Obj *obj = (CTRL_Obj *) handle;
-    ST_Obj *stObj = (ST_Obj *) sthandle;
-
-    // get the speed estimate
-    gMotorVars.Speed_krpm = _IQmpy(STPOSCONV_getVelocityFiltered(stObj->posConvHandle), _IQ(ST_SPEED_KRPM_PER_PU));
-
-    // get the position error
-    gMotorVars.PositionError_MRev = STPOSCTL_getPositionError_mrev(stObj->posCtlHandle);
-
-    // get the torque estimate
-    gMotorVars.Torque_Nm = USER_computeTorque_Nm(handle, gTorque_Flux_Iq_pu_to_Nm_sf, gTorque_Ls_Id_Iq_pu_to_Nm_sf);
-
-    // get the magnetizing current
-    gMotorVars.MagnCurr_A = EST_getIdRated(obj->estHandle);
-
-    // get the rotor resistance
-    gMotorVars.Rr_Ohm = EST_getRr_Ohm(obj->estHandle);
-
-    // get the stator resistance
-    gMotorVars.Rs_Ohm = EST_getRs_Ohm(obj->estHandle);
-
-    // get the stator inductance in the direct coordinate direction
-    gMotorVars.Lsd_H = EST_getLs_d_H(obj->estHandle);
-
-    // get the stator inductance in the quadrature coordinate direction
-    gMotorVars.Lsq_H = EST_getLs_q_H(obj->estHandle);
-
-    // get the flux in V/Hz in floating point
-    gMotorVars.Flux_VpHz = EST_getFlux_VpHz(obj->estHandle);
-
-    // get the flux in Wb in fixed point
-    gMotorVars.Flux_Wb = USER_computeFlux(handle, gFlux_pu_to_Wb_sf);
-
-    // get the controller state
-    gMotorVars.CtrlState = CTRL_getState(handle);
-
-    // get the estimator state
-    gMotorVars.EstState = EST_getState(obj->estHandle);
-
-    // Get the DC buss voltage
-    gMotorVars.VdcBus_kV = _IQmpy(gAdcData.dcBus, _IQ(USER_IQ_FULL_SCALE_VOLTAGE_V / 1000.0));
-
-    // get the Iq reference from the position controller
-    gMotorVars.IqRef_A = _IQmpy(STPOSCTL_getTorqueReference(stObj->posCtlHandle), _IQ(USER_IQ_FULL_SCALE_CURRENT_A));
-
-    // gets the Position Controller status
-    gMotorVars.SpinTAC.PosCtlStatus = STPOSCTL_getStatus(stObj->posCtlHandle);
-
-    // get the inertia setting
-    gMotorVars.SpinTAC.InertiaEstimate_Aperkrpm = _IQmpy(STPOSCTL_getInertia(stObj->posCtlHandle), _IQ(ST_SPEED_PU_PER_KRPM * USER_IQ_FULL_SCALE_CURRENT_A));
-
-    // get the friction setting
-    gMotorVars.SpinTAC.FrictionEstimate_Aperkrpm = _IQmpy(STPOSCTL_getFriction(stObj->posCtlHandle), _IQ(ST_SPEED_PU_PER_KRPM * USER_IQ_FULL_SCALE_CURRENT_A));
-
-    // get the Position Controller error
-    gMotorVars.SpinTAC.PosCtlErrorID = STPOSCTL_getErrorID(stObj->posCtlHandle);
-
-    // get the Position Converter error
-    gMotorVars.SpinTAC.PosConvErrorID = STPOSCONV_getErrorID(stObj->posConvHandle);
-
-    return;
-} // end of updateGlobalVariables_motor() function
-
-void updateKpKiGains(CTRL_Handle handle) {
-    if ((gMotorVars.CtrlState == CTRL_State_OnLine) && (gMotorVars.Flag_MotorIdentified == true) && (Flag_Latch_softwareUpdate == false)) {
-        // set the kp and ki speed values from the watch window
-        CTRL_setKp(handle, CTRL_Type_PID_spd, gMotorVars.Kp_spd);
-        CTRL_setKi(handle, CTRL_Type_PID_spd, gMotorVars.Ki_spd);
-
-        // set the kp and ki current values for Id and Iq from the watch window
-        CTRL_setKp(handle, CTRL_Type_PID_Id, gMotorVars.Kp_Idq);
-        CTRL_setKi(handle, CTRL_Type_PID_Id, gMotorVars.Ki_Idq);
-        CTRL_setKp(handle, CTRL_Type_PID_Iq, gMotorVars.Kp_Idq);
-        CTRL_setKi(handle, CTRL_Type_PID_Iq, gMotorVars.Ki_Idq);
-    }
-
-    return;
-} // end of updateKpKiGains() function
-
-void ST_runPosConv(ST_Handle handle, ENC_Handle encHandle, CTRL_Handle ctrlHandle) {
-    ST_Obj *stObj = (ST_Obj *) handle;
-
-    // get the electrical angle from the ENC module
-    STPOSCONV_setElecAngle_erev(stObj->posConvHandle, ENC_getElecAngle(encHandle));
-
-    if (USER_MOTOR_TYPE == MOTOR_Type_Induction) {
-        // The CurrentVector feedback is only needed for ACIM
-        // get the vector of the direct/quadrature current input vector values from CTRL
-        STPOSCONV_setCurrentVector(stObj->posConvHandle, CTRL_getIdq_in_addr(ctrlHandle));
-    }
-
-    // run the SpinTAC Position Converter
-    STPOSCONV_run(stObj->posConvHandle);
-
-    if (USER_MOTOR_TYPE == MOTOR_Type_Induction) {
-        // The Slip Velocity is only needed for ACIM
-        // update the slip velocity in electrical angle per second, Q24
-        SLIP_setSlipVelocity(slipHandle, STPOSCONV_getSlipVelocity(stObj->posConvHandle));
-    }
-}
-
-void ST_runPosCtl(ST_Handle handle, CTRL_Handle ctrlHandle) {
-    ST_Obj *stObj = (ST_Obj *) handle;
-
-    // provide the updated references to the SpinTAC Position Control
-    STPOSCTL_setPositionReference_mrev(stObj->posCtlHandle, 0);
-    STPOSCTL_setVelocityReference(stObj->posCtlHandle, 0);
-    STPOSCTL_setAccelerationReference(stObj->posCtlHandle, 0);
-    // provide the feedback to the SpinTAC Position Control
-    STPOSCTL_setPositionFeedback_mrev(stObj->posCtlHandle, STPOSCONV_getPosition_mrev(stObj->posConvHandle));
-
-    // Run SpinTAC Position Control
-    STPOSCTL_run(stObj->posCtlHandle);
-
-    // Provide SpinTAC Position Control Torque Output to the FOC
-    CTRL_setIq_ref_pu(ctrlHandle, STPOSCTL_getTorqueReference(stObj->posCtlHandle));
 
 }
 
-//@} //defgroup
-// end of file
+interrupt void qepISR(void) {
 
-// THIS IS A HORRIBLE WAY TO ACCOMPLISH THIS, BUT BELOW
-// IS A REALLY SIMPLE EXAMPLE THAT MAKES SURE SPI SLAVE
-// STUFF WORKS
-
-//// system includes
-//#include <math.h>
-//#include "main.h"
-//
-//#ifdef FLASH
-//#pragma CODE_SECTION(mainISR, "ramfuncs");
-//#endif
-//
-//// Include header files used in the main function
-//
-//// **************************************************************************
-//// the defines
-//
-//#define LED_BLINK_FREQ_Hz   5
-//
-//// **************************************************************************
-//// the globals
-//
-//uint_least16_t gCounter_updateGlobals = 0;
-//
-//bool Flag_Latch_softwareUpdate = true;
-//
-//CTRL_Handle ctrlHandle;
-//
-//#ifdef F2802xF
-//#pragma DATA_SECTION(halHandle, "rom_accessed_data");
-//#endif
-//HAL_Handle halHandle;
-//
-//#ifdef F2802xF
-//#pragma DATA_SECTION(gUserParams, "rom_accessed_data");
-//#endif
-//USER_Params gUserParams;
-//
-//HAL_PwmData_t gPwmData = { _IQ(0.0), _IQ(0.0), _IQ(0.0) };
-//
-//HAL_AdcData_t gAdcData;
-//
-//_iq gMaxCurrentSlope = _IQ(0.0);
-//
-//#ifdef FAST_ROM_V1p6
-//CTRL_Obj *controller_obj;
-//#else
-//#ifdef F2802xF
-//#pragma DATA_SECTION(ctrl, "rom_accessed_data");
-//#endif
-//CTRL_Obj ctrl;				//v1p7 format
-//#endif
-//
-//uint16_t gLEDcnt = 0;
-//
-//volatile MOTOR_Vars_t gMotorVars = MOTOR_Vars_INIT;
-//
-//#ifdef FLASH
-//// Used for running BackGround in flash, and ISR in RAM
-//        extern uint16_t *RamfuncsLoadStart, *RamfuncsLoadEnd, *RamfuncsRunStart;
-//
-//#ifdef F2802xF
-//        extern uint16_t *econst_start, *econst_end, *econst_ram_load;
-//        extern uint16_t *switch_start, *switch_end, *switch_ram_load;
-//#endif
-//
-//#endif
-//
-//#ifdef DRV8301_SPI
-//// Watch window interface to the 8301 SPI
-//DRV_SPI_8301_Vars_t gDrvSpi8301Vars;
-//#endif
-//
-//#ifdef DRV8305_SPI
-//// Watch window interface to the 8305 SPI
-//DRV_SPI_8305_Vars_t gDrvSpi8305Vars;
-//#endif
-//
-//// **************************************************************************
-//// the functions
-//uint16_t rdata = 0;
-//uint16_t sdata = 0;
-//unsigned int ints = 0;
-//
-//void main(void) {
-//    uint_least8_t estNumber = 0;
-//
-//#ifdef FAST_ROM_V1p6
-//    uint_least8_t ctrlNumber = 0;
-//#endif
-//
-//    // Only used if running from FLASH
-//    // Note that the variable FLASH is defined by the project
-//#ifdef FLASH
-//    // Copy time critical code and Flash setup code to RAM
-//    // The RamfuncsLoadStart, RamfuncsLoadEnd, and RamfuncsRunStart
-//    // symbols are created by the linker. Refer to the linker files.
-//    memCopy((uint16_t *)&RamfuncsLoadStart,(uint16_t *)&RamfuncsLoadEnd,(uint16_t *)&RamfuncsRunStart);
-//
-//#ifdef F2802xF
-//    //copy .econst to unsecure RAM
-//    if(*econst_end - *econst_start)
-//    {
-//        memCopy((uint16_t *)&econst_start,(uint16_t *)&econst_end,(uint16_t *)&econst_ram_load);
-//    }
-//
-//    //copy .switch ot unsecure RAM
-//    if(*switch_end - *switch_start)
-//    {
-//        memCopy((uint16_t *)&switch_start,(uint16_t *)&switch_end,(uint16_t *)&switch_ram_load);
-//    }
-//#endif
-//
-//#endif
-//
-//    // initialize the hardware abstraction layer
-//    halHandle = HAL_init(&hal, sizeof(hal));
-//
-//    // check for errors in user parameters
-//    USER_checkForErrors(&gUserParams);
-//
-//    // store user parameter error in global variable
-//    gMotorVars.UserErrorCode = USER_getErrorCode(&gUserParams);
-//
-//    // do not allow code execution if there is a user parameter error
-//    if (gMotorVars.UserErrorCode != USER_ErrorCode_NoError) {
-//        for (;;) {
-//            gMotorVars.Flag_enableSys = false;
-//        }
-//    }
-//
-//    // initialize the user parameters
-//    USER_setParams(&gUserParams);
-//
-//    // set the hardware abstraction layer parameters
-//    HAL_setParams(halHandle, &gUserParams);
-//
-//    // initialize the controller
-//#ifdef FAST_ROM_V1p6
-//    ctrlHandle = CTRL_initCtrl(ctrlNumber, estNumber);  		//v1p6 format (06xF and 06xM devices)
-//    controller_obj = (CTRL_Obj *) ctrlHandle;
-//#else
-//    ctrlHandle = CTRL_initCtrl(estNumber,&ctrl,sizeof(ctrl));	//v1p7 format default
-//#endif
-//
-//    {
-//        CTRL_Version version;
-//
-//        // get the version number
-//        CTRL_getVersion(ctrlHandle, &version);
-//
-//        gMotorVars.CtrlVersion = version;
-//    }
-//
-//    // set the default controller parameters
-//    CTRL_setParams(ctrlHandle, &gUserParams);
-//
-//    // setup faults
-//    HAL_setupFaults(halHandle);
-//
-//    // initialize the interrupt vector table
-//    HAL_initIntVectorTable(halHandle);
-//
-//    // enable the ADC interrupts
-//    HAL_enableAdcInts(halHandle);
-//
-//    // enable the SPI interrupts
-//    HAL_enableSpiInt(halHandle);
-//
-//    // enable global interrupts
-//    HAL_enableGlobalInts(halHandle);
-//
-//    // enable debug interrupts
-//    HAL_enableDebugInt(halHandle);
-//
-//    // disable the PWM
-//    HAL_disablePwm(halHandle);
-//
-//#ifdef DRV8301_SPI
-//    // turn on the DRV8301 if present
-//    HAL_enableDrv(halHandle);
-//    // initialize the DRV8301 interface
-//    HAL_setupDrvSpi(halHandle, &gDrvSpi8301Vars);
-//#endif
-//
-//    // enable DC bus compensation
-////    CTRL_setFlag_enableDcBusComp(ctrlHandle, true);
-//    sdata = 0;
-//    rdata = 0;
-//    for (;;) {
-//        //sdata = HAL_spiIntStatus(halHandle);
-//        //if(sdata != 0)
-//        //sdata = 100;
-//        //HAL_writeSPIB(halHandle, sdata);
-//        //rdata = HAL_readArduinoData(halHandle);
-//    } // end of for(;;) loop
-//
-//} // end of main() function
-//
-//interrupt void mainISR(void) {
-//
-//} // end of mainISR() function
-//
-//interrupt void spiISR(void) {
-//    rdata = HAL_readSpiSlaveData(halHandle);
-//    ints++;
-//    return;
-//}
-//
-////@} //defgroup
-//// end of file
-//
+}
