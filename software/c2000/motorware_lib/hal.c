@@ -810,9 +810,9 @@ void HAL_setupAdcs(HAL_Handle handle) {
     ADC_setTempSensorSrc(obj->adcHandle, ADC_TempSensorSrc_Ext);
 
     // configure the interrupt sources
-    ADC_disableInt(obj->adcHandle, ADC_IntNumber_1);
-    ADC_setIntMode(obj->adcHandle, ADC_IntNumber_1, ADC_IntMode_ClearFlag);
-    ADC_setIntSrc(obj->adcHandle, ADC_IntNumber_1, ADC_IntSrc_EOC7);
+//    ADC_disableInt(obj->adcHandle, ADC_IntNumber_1);
+//    ADC_setIntMode(obj->adcHandle, ADC_IntNumber_1, ADC_IntMode_ClearFlag);
+//    ADC_setIntSrc(obj->adcHandle, ADC_IntNumber_1, ADC_IntSrc_EOC7);
 
     //configure the SOCs for boostxldrv8301_revB on J5 Connection
     // EXT IA-FB
@@ -856,20 +856,25 @@ void HAL_setupAdcs(HAL_Handle handle) {
     ADC_setSocTrigSrc(obj->adcHandle, ADC_SocNumber_7, ADC_SocTrigSrc_EPWM4_ADCSOCA);
     ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_7, ADC_SocSampleDelay_9_cycles);
 
-    // VPROPI1
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_8, ADC_SocChanNumber_B0);
-    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_8, ADC_Int1TriggersSOC);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_8, ADC_SocSampleDelay_9_cycles);
-
-    // VPROPI2
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_9, ADC_SocChanNumber_B1);
-    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_9, ADC_Int1TriggersSOC);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_9, ADC_SocSampleDelay_9_cycles);
-
-    // VPROPI3
-    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_10, ADC_SocChanNumber_B2);
-    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_10, ADC_Int1TriggersSOC);
-    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_10, ADC_SocSampleDelay_9_cycles);
+    // AUX_VPROPI
+//    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_11, ADC_SocChanNumber_A6);
+//    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_11, ADC_Int1TriggersSOC);
+//    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_11, ADC_SocSampleDelay_9_cycles);
+//
+//    // VPROPI1
+//    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_8, ADC_SocChanNumber_B0);
+//    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_8, ADC_Int1TriggersSOC);
+//    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_8, ADC_SocSampleDelay_9_cycles);
+//
+//    // VPROPI2
+//    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_9, ADC_SocChanNumber_B1);
+//    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_9, ADC_Int1TriggersSOC);
+//    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_9, ADC_SocSampleDelay_9_cycles);
+//
+//    // VPROPI3
+//    ADC_setSocChanNumber(obj->adcHandle, ADC_SocNumber_10, ADC_SocChanNumber_B2);
+//    ADC_setupSocTrigSrc(obj->adcHandle, ADC_SocNumber_10, ADC_Int1TriggersSOC);
+//    ADC_setSocSampleDelay(obj->adcHandle, ADC_SocNumber_10, ADC_SocSampleDelay_9_cycles);
 
     return;
 } // end of HAL_setupAdcs() function
@@ -1569,6 +1574,12 @@ void HAL_setupTimers(HAL_Handle handle, const float_t systemFreq_MHz) {
     TIMER_setPeriod(obj->timerHandle[1], timerPeriod_cnts);
     TIMER_setPreScaler(obj->timerHandle[1], 0);
 
+    // use timer 2 for timing... stuff
+    TIMER_setDecimationFactor(obj->timerHandle[2], 0);
+    TIMER_setEmulationMode(obj->timerHandle[2], TIMER_EmulationMode_RunFree);
+    TIMER_setPeriod(obj->timerHandle[2], 0xFFFFFFFF);
+    TIMER_setPreScaler(obj->timerHandle[2], 0);
+
     return;
 }  // end of HAL_setupTimers() function
 
@@ -1725,6 +1736,11 @@ extern void HAL_setPwmDutyCycle(PWM_Handle pwmHandle, bool a_or_b, double dutyCy
     }
 } // end of HAL_setPwmDutyCycle() function
 
+extern void HAL_setAuxHbridgePwmDutyCycle(HAL_Handle handle, double dutyCycle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    HAL_setPwmDutyCycle(obj->hbridgePwm1, true, dutyCycle);
+} // end of HAL_setAuxHbridgePwmDutyCycle() function
+
 extern void HAL_setHbridge1PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
     HAL_setPwmDutyCycle(obj->hbridgePwm1, false, dutyCycle);
@@ -1739,6 +1755,12 @@ extern void HAL_setHbridge3PwmDutyCycle(HAL_Handle handle, double dutyCycle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
     HAL_setPwmDutyCycle(obj->hbridgePwm2, false, dutyCycle);
 } // end of HAL_setHbridge3PwmDutyCycle() function
+
+extern void HAL_setAuxHbridgeDirection(HAL_Handle handle, uint16_t direction) {
+    // NOTE THAT BECAUSE JOSH AND JASON SUCK, WE HAD TO DO REWORK ON THE
+    // CONTROLLER BOARD, SO THE AUX PHASE IS NOW ACTUALLY DRIVEN BY PHASE1
+    HAL_setHbridge1Direction(handle, direction);
+} // end of HAL_setHbridge1Direction() function
 
 extern void HAL_setHbridge1Direction(HAL_Handle handle, uint16_t direction) {
     HAL_Obj *obj = (HAL_Obj *) handle;
@@ -1767,6 +1789,11 @@ extern void HAL_setHbridge3Direction(HAL_Handle handle, uint16_t direction) {
     }
 } // end of HAL_setHbridge3Direction() function
 
+extern uint16_t HAL_getAuxHbridgeTorque(HAL_Handle handle) {
+    HAL_Obj *obj = (HAL_Obj *) handle;
+    return ADC_readResult(obj->adcHandle, ADC_ResultNumber_11);
+} // end of HAL_getAuxHbridgeTorque() function
+
 extern uint16_t HAL_getHbridge1Torque(HAL_Handle handle) {
     HAL_Obj *obj = (HAL_Obj *) handle;
     return ADC_readResult(obj->adcHandle, ADC_ResultNumber_8);
@@ -1784,7 +1811,7 @@ extern uint16_t HAL_getHbridge3Torque(HAL_Handle handle) {
 
 extern uint16_t HAL_getEncoderPosition(HAL_Handle handle) {
     return ((HAL_getQepPosnCounts(handle) * 0x0000FFFF) / HAL_getQepPosnMaximum(handle));
-} // end of HAL_getHbridge3Torque() function
+} // end of HAL_getEncoderPosition() function
 
 interrupt void spiISR(void) {
     uint16_t buf[4];
