@@ -14,6 +14,7 @@
 #define ENCODER_POS_OP   0x0004
 #define BODY_MOTORS_OP   0x0005
 #define STARTUP_OP       0x0006
+#define ROTATION_OP      0x0007
 
 // Defines how many microseconds to wait between SPI frames
 #define INTER_FRAME_DELAY 20
@@ -70,6 +71,14 @@ void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed) {
 
     // Send the speed
     spi_wrapper_txrx_word((uint16_t)speed);
+}
+
+void spi_wrapper_send_rotation_control(uint16_t angular_velocity) {
+    // Send a header indicating that the Atum is rotation control data
+    spi_wrapper_txrx_word(ROTATION_OP);
+
+    // Send the angular velocity
+    spi_wrapper_txrx_word(angular_velocity);
 }
 
 void spi_wrapper_send_gimbal_pos(int16_t position) {
