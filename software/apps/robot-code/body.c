@@ -85,11 +85,14 @@ static void movement_recv(struct broadcast_conn* c, const linkaddr_t* from) {
     unpackMoveData(&recvMoveData);
 
 #if BODY_MAIN_DEBUG
-    printf("Dir: %d, Speed: %d\r\n", recvMoveData.tDir, recvMoveData.tSpeed);
+    printf("Dir: %d, Speed: %d, rspeed: %d\r\n", recvMoveData.tDir, recvMoveData.tSpeed, recvMoveData.rSpeed);
 #endif
 
-    // Sending the command off to the C2000
+    // Sending the motion command off to the C2000
     spi_wrapper_send_body_control(recvMoveData.tDir, recvMoveData.tSpeed);
+
+    // Sending the rotational speed command off to the C2000
+    spi_wrapper_send_rotation_control(recvMoveData.rSpeed);
 
     leds_off(LEDS_RED | LEDS_GREEN);
 }

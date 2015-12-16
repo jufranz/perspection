@@ -22,6 +22,9 @@ void spi_wrapper_send_startup_control(uint8_t shouldBeOn);
 // Sends a robot body control command to the C2000
 void spi_wrapper_send_body_control(uint16_t direction, uint8_t speed);
 
+// Sends a robot rotation command to the C2000
+void spi_wrapper_send_rotation_control(uint16_t angular_velocity);
+
 // Sends a gimbal position command to the C2000
 void spi_wrapper_send_gimbal_pos(int16_t position);
 

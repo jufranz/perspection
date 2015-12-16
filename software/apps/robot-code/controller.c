@@ -9,29 +9,35 @@
 #include "dev/comms.h"
 #include "dev/gpio.h"
 #include "dev/leds.h"
+#include "dev/spi_wrapper.h"
 
 #include <math.h>
 #include <stdio.h>
 
 // Defines
 
-#define CONTROLLER_MAIN_DEBUG 1
+#define CONTROLLER_MAIN_DEBUG 0
 
 #define SAMPLES_PER_SEC 50
-#define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4 // BLUE WIRE
-#define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN3 // GREEN WIRE
-#define ADC_CHANNEL_SCISSOR SOC_ADC_ADCCON_CH_AIN5
+#define ADC_CHANNEL_X SOC_ADC_ADCCON_CH_AIN4
+#define ADC_CHANNEL_Y SOC_ADC_ADCCON_CH_AIN5
+
+#define X_DEADZONE_MAX 18700
+#define X_DEADZONE_MIN 16400
+#define X_MAX 24000
+#define X_MIN 10000
+#define Y_DEADZONE_MAX 18800
+#define Y_DEADZONE_MIN 16600
+#define Y_MAX 25000
+#define Y_MIN 10000
 
 // Globals
 
 static struct broadcast_conn broadcast;
 
-/*static uint8_t hasHeadsetAckedEnable = 0;*/
-/*static uint8_t hasRobotBodyAckedEnable = 0;*/
-/*static uint8_t hasCameraAckedEnable = 0;*/
-static uint8_t hasHeadsetAckedEnable = 1;
-static uint8_t hasRobotBodyAckedEnable = 1;
-static uint8_t hasCameraAckedEnable = 1;
+static uint8_t hasHeadsetAckedEnable = 0;
+static uint8_t hasRobotBodyAckedEnable = 0;
+static uint8_t hasCameraAckedEnable = 0;
 
 // Contiki process declarations
 
@@ -40,10 +46,26 @@ PROCESS(control_broadcast_process, "Control broadcast process");
 AUTOSTART_PROCESSES(&init_wireless_and_control_process);
 
 // Helper functions
+// Silly duplication
 
-static int16_t isCloseToCenter(int16_t i) {
-    if(i > -1000 && i < 1000) return 0;
-    else return i;
+static int16_t processXValue(int16_t x) {
+    if(x < X_DEADZONE_MAX && x > X_DEADZONE_MIN) {
+        return 0;
+    } else if(x >= X_DEADZONE_MAX) {
+        return (x - X_DEADZONE_MAX);
+    } else {
+        return (x - X_DEADZONE_MIN);
+    }
+}
+
+static int16_t processYValue(int16_t y) {
+    if(y < Y_DEADZONE_MAX && y > Y_DEADZONE_MIN) {
+        return 0;
+    } else if(y >= Y_DEADZONE_MAX) {
+        return (y - Y_DEADZONE_MAX);
+    } else {
+        return (y - Y_DEADZONE_MIN);
+    }
 }
 
 // Receiving packets
@@ -102,7 +124,11 @@ PROCESS_THREAD(init_wireless_and_control_process, ev, data) {
     printf("Startup signal broadcasting, waiting for ACKs\r\n");
 #endif
 
-    while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {
+    // TODO DEBUGGING
+    process_start(&control_broadcast_process, NULL);
+
+    /*while(hasHeadsetAckedEnable == 0 || hasRobotBodyAckedEnable == 0 || hasCameraAckedEnable == 0) {*/
+    while(1) {
         leds_on(LEDS_BLUE);
 
         broadcastStartupData(&startupData, &broadcast);
@@ -149,10 +175,8 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
         etimer_set(&et, CLOCK_SECOND / SAMPLES_PER_SEC);
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 
-        // It says AVDD5 but the reference voltage is actually 3V3
-        // Got these center points from testing
-        ctrlX = isCloseToCenter(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16992);
-        ctrlY = isCloseToCenter(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512) - 16482);
+        ctrlX = processXValue(adc_get(ADC_CHANNEL_X, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512));
+        ctrlY = processYValue(adc_get(ADC_CHANNEL_Y, SOC_ADC_ADCCON_REF_AVDD5, SOC_ADC_ADCCON_DIV_512));
 
 #if CONTROLLER_MAIN_DEBUG
         /*printf("X: %d, Y: %d\r\n", ctrlX, ctrlY);*/
@@ -164,21 +188,18 @@ PROCESS_THREAD(control_broadcast_process, ev, data) {
             testData.tDir = 511;
             testData.tSpeed = 0;
         } else {
-            testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)ctrlX) * 180 / M_PI) + 180) % 360;
-            testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)30);
-            testData.tSpeed -= 25;
+            testData.tDir = (uint16_t)((atan2((double)ctrlY, (double)-ctrlX) * 180 / M_PI) + 180) % 360;
+            testData.tSpeed = (uint8_t)((uint32_t)sqrt(pow((double)ctrlY, 2) + pow((double)ctrlX, 2))/(uint32_t)22);
             if(testData.tSpeed > 127) testData.tSpeed = 127;
         }
 
-#if CONTROLLER_MAIN_DEBUG
-        /*printf("degrees: %d, speed: %d\r\n", testData.tDir, testData.tSpeed);*/
-        /*printf("sdegree: %d, sspeed: %d\r\n", testData.sDir, testData.sSpeed);*/
-#endif
 
+        // Get the encoder position and just scale it to 0-127 for the robot body
         uint16_t encoderPos = spi_wrapper_get_encoder_pos();
-        spi_wrapper_send_haptic_torque(encoderPos);
+        testData.rSpeed = (uint8_t)(((uint32_t)encoderPos * 127) / 0x0000FFFF);
+
 #if CONTROLLER_MAIN_DEBUG
-        printf("encoder pos: %d\r\n", encoderPos);
+        printf("degrees: %d, speed: %d, rspeed: %d\r\n", testData.tDir, testData.tSpeed, testData.rSpeed);
 #endif
 
         leds_on(LEDS_RED | LEDS_GREEN);
