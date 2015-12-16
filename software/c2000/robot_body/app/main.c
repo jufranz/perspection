@@ -129,7 +129,7 @@ unsigned int ints = 0;
 
 void processSpiMessages();
 void startupControl(HAL_Handle halHandle, bool shouldBeRunning);
-void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData);
+void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData, uint16_t rotation_speed);
 void gimbalPositionControl(HAL_Handle halHandle, uint16_t gimbalPositionData);
 
 void main(void) {
@@ -437,7 +437,7 @@ void processSpiMessages() {
     HAL_Obj *obj = (HAL_Obj *) halHandle;
 
     if (obj->hasNewRobotBodyControlData && gMotorVars.Flag_enableSys) {
-        robotBodyMotorControl(halHandle, obj->robotBodyControlData);
+        robotBodyMotorControl(halHandle, obj->robotBodyControlData, obj->rotationControlData);
         obj->hasNewRobotBodyControlData = false;
     } else if (obj->hasNewGimbalPositionControlData && gMotorVars.Flag_enableSys) {
         gimbalPositionControl(halHandle, obj->gimbalPositionControlData);
@@ -445,6 +445,9 @@ void processSpiMessages() {
     } else if (obj->hasNewStartupControlData) {
         startupControl(halHandle, obj->startupControlData);
         obj->hasNewStartupControlData = false;
+    } else if (obj->hasNewRotationControlData) {
+        robotBodyMotorControl(halHandle, obj->robotBodyControlData, obj->rotationControlData);
+        obj->hasNewRotationControlData = false;
     }
 }
 
@@ -463,14 +466,23 @@ void startupControl(HAL_Handle halHandle, bool shouldBeRunning) {
     }
 }
 
-void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData) {
+void robotBodyMotorControl(HAL_Handle halHandle, HAL_RobotBodyControlData_t robotBodyControlData, uint16_t rotation_speed) {
     double direction = (double) robotBodyControlData.direction;
     double speed = (double) robotBodyControlData.speed / 127.0;
 
+    // sry this is hacky
+    double rotationalSpeed = 0.0;
+    if(rotation_speed > 64) {
+        rotationalSpeed = (double)(rotation_speed - 64) / 64.0;
+    } else {
+        rotationalSpeed = (double)(64 - rotation_speed) / -64.0;
+    }
+    rotationalSpeed *= 0.5; // Limit how much it can affect the duty cycles
+
     double dirInRads = (direction * PI) / 180.0;
-    double dutyCycle1 = (speed * cos(((150.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle2 = (speed * cos(((30.0 * PI) / 180.0) - dirInRads));
-    double dutyCycle3 = (speed * cos(((270.0 * PI) / 180.0) - dirInRads));
+    double dutyCycle1 = (speed * cos(dirInRads - ((210.0 * PI) / 180.0))) + rotationalSpeed;
+    double dutyCycle2 = (speed * cos(dirInRads - (( 90.0 * PI) / 180.0))) + rotationalSpeed;
+    double dutyCycle3 = (speed * cos(dirInRads - ((330.0 * PI) / 180.0))) + rotationalSpeed;
 
     uint16_t direction1 = (dutyCycle1 > 0.0) ? 1 : 0;
     uint16_t direction2 = (dutyCycle2 > 0.0) ? 1 : 0;

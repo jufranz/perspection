@@ -55,6 +55,7 @@
 #define ENCODER_POS_OP   0x0004
 #define BODY_MOTORS_OP   0x0005
 #define STARTUP_OP       0x0006
+#define ROTATION_OP      0x0007
 
 #define BODY_CONTROL_CMD_LEN  3
 #define GIMBAL_POS_CMD_LEN    2
@@ -62,6 +63,7 @@
 #define ENCODER_POS_TX_LEN    1
 #define BODY_MOTORS_TX_LEN    3
 #define STARTUP_CMD_LEN       2
+#define ROTATION_CMD_LEN      2
 
 // **************************************************************************
 // the globals
@@ -655,6 +657,9 @@ HAL_Handle HAL_init(void *pMemory, const size_t numBytes) {
 
     obj->startupControlData = false;
     obj->hasNewStartupControlData = false;
+
+    obj->rotationControlData = 64; // 64 encodes 0
+    obj->hasNewRotationControlData = false;
 
     return (handle);
 } // end of HAL_init() function
@@ -1846,6 +1851,9 @@ interrupt void spiISR(void) {
             } else if (word == STARTUP_OP) {
                 spiSlaveCmdLength = STARTUP_CMD_LEN;
                 spiSlaveTxLength = 0;
+            } else if (word == ROTATION_OP) {
+                spiSlaveCmdLength = ROTATION_CMD_LEN;
+                spiSlaveTxLength = 0;
             } else {
                 // This isn't a valid start word, so skip to the next word
                 continue;
@@ -1891,6 +1899,10 @@ interrupt void spiISR(void) {
                 // Store the startup control data
                 hal.startupControlData = (spiSlaveCmdBuf[1] > 0);
                 hal.hasNewStartupControlData = true;
+            } else if (spiSlaveCmdBuf[0] == ROTATION_OP) {
+                // Store the rotation control data
+                hal.rotationControlData = spiSlaveCmdBuf[1];
+                hal.hasNewRotationControlData = true;
             }
 
             spiSlaveCmdIndex = 0;

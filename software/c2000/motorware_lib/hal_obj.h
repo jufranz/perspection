@@ -192,6 +192,9 @@ typedef struct _HAL_Obj_ {
     bool startupControlData;
     bool hasNewStartupControlData;
 
+    uint16_t rotationControlData;
+    bool hasNewRotationControlData;
+
 #ifdef QEP
     QEP_Handle qepHandle[2];        //!< the QEP handles
 #endif

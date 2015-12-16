@@ -60,8 +60,14 @@ double get_current_torque();
 uint16_t read_raw_torque();
 double normalize_raw_torque(uint16_t raw_torque);
 
-// Torque as a function of position
-// Position is in degrees, torque should be -1.0 to 1.0
+// TODO
+// Test out what's currently in there
+// Try doing normalized_torque_delta ^ 2
+// Switch doubles to floats, maybe IQ values if needed
+
+// Torque as a function of position and velocity
+// Position is in degrees, velocity is degrees/s
+// Torque should be -1.0 to 1.0
 
 double torque_from_motion(double position, double velocity) {
     // Spring
