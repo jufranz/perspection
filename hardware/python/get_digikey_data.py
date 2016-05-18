@@ -22,13 +22,13 @@ except:
     print "error: invalid url or unable to connect"
     sys.exit(1)
 
-d = next(item for item in items if item.itemtype[0] == microdata.URI("http://schema.org/Product")).json_dict()
+d = next(item for item in items if item.itemtype[0] == microdata.URI("http://schema.org/WebPage")).json_dict()
 #d = item.json_dict()
 DIST_NAME = "Digi-Key"
-DIST_PN = d['properties']['productID'][0][4:].encode('ascii','ignore')
-MFG_NAME = d['properties']['manufacturer'][0].encode('ascii','ignore')
-MFG_PN = d['properties']['model'][0].encode('ascii','ignore')
-DESC = d['properties']['description'][0].encode('ascii','ignore').replace('\n', '<br>')
+DIST_PN = d['properties']['mainEntity'][0]['properties']['productID'][0][4:].encode('ascii','ignore').strip()
+MFG_NAME = d['properties']['mainEntity'][0]['properties']['manufacturer'][0].encode('ascii','ignore').strip()
+MFG_PN = d['properties']['mainEntity'][0]['properties']['model'][0].encode('ascii','ignore').strip()
+DESC = d['properties']['mainEntity'][0]['properties']['description'][0].encode('ascii','ignore').strip().replace('\n', '<br>')
 print "DIST_NAME: " + DIST_NAME
 print "DIST_PN: " + DIST_PN
 print "MFG_NAME: " + MFG_NAME
